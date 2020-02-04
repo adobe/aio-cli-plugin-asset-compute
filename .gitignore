@@ -1,3 +1,5 @@
+.DS_Store
+
 *-debug.log
 *-error.log
 /.nyc_output
@@ -5,3 +7,8 @@
 /tmp
 /yarn.lock
 node_modules
+coverage
+.vscode/
+
+oclif.manifest.json
+package-lock.json
