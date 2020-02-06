@@ -19,7 +19,7 @@ $ npm install -g @nui/aio-cli-plugin-nui
 $ @nui/aio-cli-plugin-nui COMMAND
 running command...
 $ @nui/aio-cli-plugin-nui (-v|--version|version)
-@nui/aio-cli-plugin-nui/0.0.0 darwin-x64 node-v12.13.0
+@nui/aio-cli-plugin-nui/0.0.1 darwin-x64 node-v12.13.0
 $ @nui/aio-cli-plugin-nui --help [COMMAND]
 USAGE
   $ @nui/aio-cli-plugin-nui COMMAND
@@ -43,7 +43,7 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/base-command.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.0/src/commands/base-command.js)_
+_See code: [src/commands/base-command.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/base-command.js)_
 
 ## `@nui/aio-cli-plugin-nui nui:envinfo`
 
@@ -58,7 +58,7 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/nui/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.0/src/commands/nui/envinfo.js)_
+_See code: [src/commands/nui/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/nui/envinfo.js)_
 
 ## `@nui/aio-cli-plugin-nui nui:test-worker`
 
@@ -72,5 +72,5 @@ OPTIONS
   -u, --updateRenditions  Replace expected renditions of failing test cases with the generated rendition.
 ```
 
-_See code: [src/commands/nui/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.0/src/commands/nui/test-worker.js)_
+_See code: [src/commands/nui/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/nui/test-worker.js)_
 <!-- commandsstop -->

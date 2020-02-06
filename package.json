@@ -1,7 +1,7 @@
 {
   "name": "@nui/aio-cli-plugin-nui",
   "description": "Asset Compute Plugin for Adobe I/O Command Line Interface",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Adobe Inc.",
   "publishConfig": {
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-nui-release-local"
