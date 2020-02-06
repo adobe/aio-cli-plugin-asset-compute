@@ -548,6 +548,11 @@ TestWorkerCommand.flags = {
         char: 'u', 
         description: 'Replace expected renditions of failing test cases with the generated rendition.'
     }),
+    ...BaseCommand.flags
 }
+
+TestWorkerCommand.aliases = [
+    'nui:tw'
+]
 
 module.exports = TestWorkerCommand
