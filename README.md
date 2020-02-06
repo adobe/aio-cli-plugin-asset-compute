@@ -46,7 +46,7 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/nui/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/nui/envinfo.js)_
+_See code: [src/commands/nui/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.0/src/commands/nui/envinfo.js)_
 
 ## `@nui/aio-cli-plugin-nui nui:test-worker`
 
@@ -65,5 +65,5 @@ ALIASES
   $ @nui/aio-cli-plugin-nui nui:tw
 ```
 
-_See code: [src/commands/nui/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/nui/test-worker.js)_
+_See code: [src/commands/nui/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.0/src/commands/nui/test-worker.js)_
 <!-- commandsstop -->
