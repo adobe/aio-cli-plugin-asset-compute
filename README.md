@@ -5,7 +5,7 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 <!--- when a new release happens, the VERSION and URL in the badge have to be manually updated because it's a private registry --->
-[![npm version](https://img.shields.io/badge/%40nui%2Faio--cli--plugin--nui-1.0.0-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/aio-cli-plugin-nui/-/@nui/aio-cli-plugin-nui-1.0.0.tgz)
+[![npm version](https://img.shields.io/badge/%40nui%2Faio--cli--plugin--nui-1.0.1-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/aio-cli-plugin-nui/-/@nui/aio-cli-plugin-nui-1.0.1.tgz)
 
 <!-- toc -->
 * [Usage](#usage)
