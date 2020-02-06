@@ -17,7 +17,7 @@
 
 'use strict';
 
-const BaseCommand = require('../base-command');
+const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
 
 const serverless = require('../../lib/serverless');

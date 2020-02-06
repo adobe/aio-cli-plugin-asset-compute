@@ -17,7 +17,7 @@
 
 'use strict';
 
-const BaseCommand = require('../base-command');
+const BaseCommand = require('../../base-command');
 const envinfo = require('envinfo');
 
 class EnvInfoCommand extends BaseCommand {

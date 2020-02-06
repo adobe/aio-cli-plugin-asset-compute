@@ -12,38 +12,27 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
+
 # Usage
-<!-- usage -->
+
+
+
 ```sh-session
-$ npm install -g @nui/aio-cli-plugin-nui
-$ @nui/aio-cli-plugin-nui COMMAND
-running command...
-$ @nui/aio-cli-plugin-nui (-v|--version|version)
-@nui/aio-cli-plugin-nui/0.0.1 darwin-x64 node-v12.13.0
-$ @nui/aio-cli-plugin-nui --help [COMMAND]
-USAGE
-  $ @nui/aio-cli-plugin-nui COMMAND
-...
+$ aio plugins:install @nui/aio-cli-plugin-nui
+$ aio nui:envinfo
+Environment information
+$ aio nui:test-worker --help
+Usage information of the test-worker command
+$ aio nui:test-worker -u
+Update rendition output
+$ aio nui:tw
+Alias for the test-worker command
 ```
-<!-- usagestop -->
+
 # Commands
 <!-- commands -->
-* [`@nui/aio-cli-plugin-nui base-command`](#nuiaio-cli-plugin-nui-base-command)
 * [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
 * [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
-
-## `@nui/aio-cli-plugin-nui base-command`
-
-```
-USAGE
-  $ @nui/aio-cli-plugin-nui base-command
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-```
-
-_See code: [src/commands/base-command.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/base-command.js)_
 
 ## `@nui/aio-cli-plugin-nui nui:envinfo`
 
@@ -70,6 +59,11 @@ USAGE
 
 OPTIONS
   -u, --updateRenditions  Replace expected renditions of failing test cases with the generated rendition.
+  -v, --verbose           Verbose output
+  --version               Show version
+
+ALIASES
+  $ @nui/aio-cli-plugin-nui nui:tw
 ```
 
 _See code: [src/commands/nui/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.1/src/commands/nui/test-worker.js)_
