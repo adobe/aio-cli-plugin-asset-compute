@@ -218,6 +218,7 @@ function stripAnsi(str) {
     return str.replace(ansiRegex, "");
 }
 
+// eslint-disable-next-line no-unused-vars
 function filterServerlessNuiLogMessages(logFn) {
     return function(msg) {
         // only log the messages from our serverless-nui plugin

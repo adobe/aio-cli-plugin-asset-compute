@@ -16,35 +16,61 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 <!-- usage -->
 ```sh-session
 $ npm install -g @nui/aio-cli-plugin-nui
-$ oclif-example COMMAND
+$ @nui/aio-cli-plugin-nui COMMAND
 running command...
-$ oclif-example (-v|--version|version)
+$ @nui/aio-cli-plugin-nui (-v|--version|version)
 @nui/aio-cli-plugin-nui/0.0.0 darwin-x64 node-v12.13.0
-$ oclif-example --help [COMMAND]
+$ @nui/aio-cli-plugin-nui --help [COMMAND]
 USAGE
-  $ oclif-example COMMAND
+  $ @nui/aio-cli-plugin-nui COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`oclif-example hello`](#oclif-example-hello)
+* [`@nui/aio-cli-plugin-nui base-command`](#nuiaio-cli-plugin-nui-base-command)
+* [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
+* [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
 
-## `oclif-example hello`
-
-Describe the command here
+## `@nui/aio-cli-plugin-nui base-command`
 
 ```
 USAGE
-  $ oclif-example hello
+  $ @nui/aio-cli-plugin-nui base-command
 
 OPTIONS
-  -n, --name=name  name to print
-
-DESCRIPTION
-  ...
-  Extra documentation goes here
+  -v, --verbose  Verbose output
+  --version      Show version
 ```
 
-_See code: [src/commands/hello.js](https://github.com/nui/aio-cli-plugin-nui/blob/v0.0.0/src/commands/hello.js)_
+_See code: [src/commands/base-command.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.0/src/commands/base-command.js)_
+
+## `@nui/aio-cli-plugin-nui nui:envinfo`
+
+Display dev environment version information
+
+```
+USAGE
+  $ @nui/aio-cli-plugin-nui nui:envinfo
+
+OPTIONS
+  -v, --verbose  Verbose output
+  --version      Show version
+```
+
+_See code: [src/commands/nui/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.0/src/commands/nui/envinfo.js)_
+
+## `@nui/aio-cli-plugin-nui nui:test-worker`
+
+Run tests from local project
+
+```
+USAGE
+  $ @nui/aio-cli-plugin-nui nui:test-worker
+
+OPTIONS
+  -u, --updateRenditions  Replace expected renditions of failing test cases with the generated rendition.
+```
+
+_See code: [src/commands/nui/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/0.0.0/src/commands/nui/test-worker.js)_
 <!-- commandsstop -->
