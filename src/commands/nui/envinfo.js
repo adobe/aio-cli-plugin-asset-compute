@@ -27,7 +27,7 @@ class EnvInfoCommand extends BaseCommand {
                 System: ['OS', 'CPU', 'Memory'],
                 Binaries: ['Node', 'Yarn', 'npm'],
                 Virtualization: ['Docker'],
-                npmPackages: ['@nui/serverless-nui', '@nui/eslint-config'],
+                npmPackages: ['@nui/serverless-nui'],
             },
             { markdown: true, console: true, showNotFound: true }
         );

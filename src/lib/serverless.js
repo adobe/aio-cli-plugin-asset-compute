@@ -218,7 +218,6 @@ function stripAnsi(str) {
     return str.replace(ansiRegex, "");
 }
 
-// eslint-disable-next-line no-unused-vars
 function filterServerlessNuiLogMessages(logFn) {
     return function(msg) {
         // only log the messages from our serverless-nui plugin
@@ -233,8 +232,7 @@ function filterServerlessNuiLogMessages(logFn) {
 function runServerlessEmbedded(args) {
     return new Promise((resolve, reject) => {
         // use our bundled serverless & plugins
-        const modulePath = `${__dirname}/../node_modules`;
-        console.log('runServerlessEmbedded 1', modulePath);
+        const modulePath = `${__dirname}/../../node_modules`;
 
         // hack to get serverless to lookup plugins in our cli modulePath as well
         const old_nodeModulePaths = Module._nodeModulePaths;
@@ -243,26 +241,17 @@ function runServerlessEmbedded(args) {
             paths.unshift(modulePath);
             return paths;
         }
-        console.log('runServerlessEmbedded 2', args);
 
         // serverless has no fully quiet mode, so overwrite the console.log() unless we are in verbose mode
         const standardConsoleLog = console.log;
-        console.log('runServerlessEmbedded 2a');
-
         if (!args.includes("--verbose")) {
-            console.log('runServerlessEmbedded 2b');
-            // console.log = filterServerlessNuiLogMessages(standardConsoleLog);
-            console.log('runServerlessEmbedded 2c');
+            console.log = filterServerlessNuiLogMessages(standardConsoleLog);
         }
-
-        console.log('runServerlessEmbedded 3');
 
         // overwrite cli args, as Serverless has no way of passing it otherwise
         process.argv = ["node", "serverless"].concat(shellParse(args));
 
-        console.log('runServerlessEmbedded 4');
         const Serverless = require('serverless/lib/Serverless');
-        console.log('runServerlessEmbedded 2 ', Serverless);
         const sls = new Serverless();
         sls.init()
             .then(() => sls.run())
@@ -323,8 +312,6 @@ function run(args, options) {
         args += ' --mode production';
         util.log("generating smaller javascript");
     }
-    util.log('run 1 ', options.cli);
-
     const serverless = options.cli ?
         runServerlessExternalProcess(args) :
         runServerlessEmbedded(args);
@@ -367,8 +354,6 @@ function run(args, options) {
  */
 function invokeLocal(opts) {
 
-    util.log('invokeLocal 1');
-
     let cmd = `invoke local -f ${FUNCTION_NAME}`;
     let dockerArgs = ` --dockerArgs='`;
 
@@ -404,9 +389,6 @@ function invokeLocal(opts) {
         const data = util.shellEscapeSingleQuotes( JSON.stringify(opts.params) );
         cmd += ` --data '${data}'`;
     }
-    util.log('invokeLocal 2');
-    util.log(cmd);
-
     return run(cmd, {verbose: opts.verbose})
         .then(() => {
             util.log();

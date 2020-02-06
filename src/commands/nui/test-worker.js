@@ -203,10 +203,8 @@ function testWorker(argv) {
     // 8. stop container
 
     // 1. create temp folder with in & out
-    util.log('1');
     const dirs = util.prepareInOutDir();
     // 2. start container
-    util.log('2');
     let chain = serverless.invokeLocal({
         start: true,
         name: containerName,
@@ -215,11 +213,10 @@ function testWorker(argv) {
         verbose: argv.verbose,
         dockerArgs:  ` -e WORKER_TEST_MODE='true' `
     }).catch(e => {
-        util.log('2a');
+        util.log('');
         util.logError(e.message || e);
         process.exit(4);
     });
-    util.log('3');
 
     let testCasesStart;
     chain = chain.then(() => {
