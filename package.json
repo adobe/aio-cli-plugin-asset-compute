@@ -13,6 +13,7 @@
   "dependencies": {
     "@nui/serverless-nui": "^1.0.4",
     "@oclif/command": "^1.5.11",
+    "@oclif/config": "^1.12.9",
     "adm-zip": "^0.4.13",
     "amazon-s3-uri": "0.0.3",
     "envinfo": "^7.5.0",
