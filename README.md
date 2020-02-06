@@ -30,11 +30,8 @@ Alias for the test-worker command
 
 # Commands
 <!-- commands -->
-- [@nui/aio-cli-plugin-nui](#nuiaio-cli-plugin-nui)
-- [Usage](#usage)
-- [Commands](#commands)
-  - [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
-  - [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
+* [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
+* [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
 
 ## `@nui/aio-cli-plugin-nui nui:envinfo`
 
