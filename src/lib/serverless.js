@@ -255,7 +255,6 @@ function runServerlessEmbedded(args) {
             paths.unshift(modulePath);
             return paths;
         }
-        console.log(Module._nodeModulePaths('.'));
 
         // serverless has no fully quiet mode, so overwrite the console.log() unless we are in verbose mode
         const standardConsoleLog = console.log;
