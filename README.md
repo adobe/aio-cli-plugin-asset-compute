@@ -15,7 +15,7 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 
 # Usage
 
-
+This plugin has [aio-cli](https://github.com/adobe/aio-cli) as a prerequisite. Once `aio-cli` has been installed, the plugin can be installed and used as follows:
 
 ```sh-session
 $ aio plugins:install @nui/aio-cli-plugin-nui
@@ -31,8 +31,11 @@ Alias for the test-worker command
 
 # Commands
 <!-- commands -->
-* [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
-* [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
+- [@nui/aio-cli-plugin-nui](#nuiaio-cli-plugin-nui)
+- [Usage](#usage)
+- [Commands](#commands)
+  - [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
+  - [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
 
 ## `@nui/aio-cli-plugin-nui nui:envinfo`
 
