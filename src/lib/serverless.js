@@ -228,11 +228,25 @@ function filterServerlessNuiLogMessages(logFn) {
     };
 }
 
+// find serverless module
+function findServerlessModulePath(modulePath) {
+    const NODE_MODULES = 'node_modules';
+    const NUI_SERVERLESS_NUI = NODE_MODULES + '/@nui/serverless-nui';
+    let p = modulePath;
+    while (path.dirname(p) !== p) {
+        if (fs.existsSync(`${p}/${NUI_SERVERLESS_NUI}`)) {
+            return path.resolve(p, NODE_MODULES);
+        }
+        p = path.dirname(p);
+    }
+    throw Error(`Unable to find ${NUI_SERVERLESS_NUI} in ${modulePath}`);
+}
+
 // call serverless as node module
 function runServerlessEmbedded(args) {
     return new Promise((resolve, reject) => {
         // use our bundled serverless & plugins
-        const modulePath = `${__dirname}/../../node_modules`;
+        const modulePath = findServerlessModulePath(__dirname);
 
         // hack to get serverless to lookup plugins in our cli modulePath as well
         const old_nodeModulePaths = Module._nodeModulePaths;
