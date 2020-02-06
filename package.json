@@ -40,7 +40,7 @@
     "/oclif.manifest.json",
     "/src"
   ],
-  "homepage": "https://github.com/nui/aio-cli-plugin-nui",
+  "homepage": "https://git.corp.adobe.com/nui/aio-cli-plugin-nui",
   "keywords": [
     "oclif-plugin"
   ],
