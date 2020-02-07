@@ -74,7 +74,7 @@ class DevToolCommand extends BaseCommand {
             server.on('listening', () => onListening(server));
             server.on('close', () => {
                 util.log("Asset Compute Developer Tool Server Stopped");
-                resolve();
+                process.exit();
             });
             process.on('SIGINT', function() {
                 util.log("Stopping Asset Compute Developer Tool Server");
