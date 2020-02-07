@@ -30,8 +30,25 @@ Alias for the test-worker command
 
 # Commands
 <!-- commands -->
+* [`@nui/aio-cli-plugin-nui nui:devtool`](#nuiaio-cli-plugin-nui-nuidevtool)
 * [`@nui/aio-cli-plugin-nui nui:envinfo`](#nuiaio-cli-plugin-nui-nuienvinfo)
 * [`@nui/aio-cli-plugin-nui nui:test-worker`](#nuiaio-cli-plugin-nui-nuitest-worker)
+
+## `@nui/aio-cli-plugin-nui nui:devtool`
+
+Runs the Asset Compute Developer Tool UI
+
+```
+USAGE
+  $ @nui/aio-cli-plugin-nui nui:devtool
+
+OPTIONS
+  -v, --verbose  Verbose output
+  --port=port    [default: 9000] Http port of the Asset Compute Developer Tool Server
+  --version      Show version
+```
+
+_See code: [src/commands/nui/devtool.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.5/src/commands/nui/devtool.js)_
 
 ## `@nui/aio-cli-plugin-nui nui:envinfo`
 
