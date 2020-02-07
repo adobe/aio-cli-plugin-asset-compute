@@ -50,7 +50,7 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/asset-compute/devtool.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.5/src/commands/asset-compute/devtool.js)_
+_See code: [src/commands/asset-compute/devtool.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.6/src/commands/asset-compute/devtool.js)_
 
 ## `@nui/aio-cli-plugin-nui asset-compute:envinfo`
 
@@ -65,7 +65,7 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/asset-compute/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.5/src/commands/asset-compute/envinfo.js)_
+_See code: [src/commands/asset-compute/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.6/src/commands/asset-compute/envinfo.js)_
 
 ## `@nui/aio-cli-plugin-nui asset-compute:test-worker`
 
@@ -84,5 +84,5 @@ ALIASES
   $ @nui/aio-cli-plugin-nui asset-compute:tw
 ```
 
-_See code: [src/commands/asset-compute/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.5/src/commands/asset-compute/test-worker.js)_
+_See code: [src/commands/asset-compute/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.6/src/commands/asset-compute/test-worker.js)_
 <!-- commandsstop -->
