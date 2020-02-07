@@ -552,7 +552,7 @@ TestWorkerCommand.flags = {
 }
 
 TestWorkerCommand.aliases = [
-    'nui:tw'
+    'asset-compute:tw'
 ]
 
 module.exports = TestWorkerCommand
