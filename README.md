@@ -5,7 +5,7 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 <!--- when a new release happens, the VERSION and URL in the badge have to be manually updated because it's a private registry --->
-[![npm version](https://img.shields.io/badge/%40nui%2Faio--cli--plugin--nui-1.0.5-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/aio-cli-plugin-nui/-/@nui/aio-cli-plugin-nui-1.0.5.tgz)
+[![npm version](https://img.shields.io/badge/%40nui%2Faio--cli--plugin--nui-1.0.6-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/aio-cli-plugin-nui/-/@nui/aio-cli-plugin-nui-1.0.6.tgz)
 
 <!-- toc -->
 * [Usage](#usage)
@@ -32,12 +32,9 @@ Runs the Asset Compute Developer Tool UI
 
 # Commands
 <!-- commands -->
-- [@nui/aio-cli-plugin-nui](#nuiaio-cli-plugin-nui)
-- [Usage](#usage)
-- [Commands](#commands)
-  - [`@nui/aio-cli-plugin-nui asset-compute:devtool`](#nuiaio-cli-plugin-nui-asset-computedevtool)
-  - [`@nui/aio-cli-plugin-nui asset-compute:envinfo`](#nuiaio-cli-plugin-nui-asset-computeenvinfo)
-  - [`@nui/aio-cli-plugin-nui asset-compute:test-worker`](#nuiaio-cli-plugin-nui-asset-computetest-worker)
+* [`@nui/aio-cli-plugin-nui asset-compute:devtool`](#nuiaio-cli-plugin-nui-asset-computedevtool)
+* [`@nui/aio-cli-plugin-nui asset-compute:envinfo`](#nuiaio-cli-plugin-nui-asset-computeenvinfo)
+* [`@nui/aio-cli-plugin-nui asset-compute:test-worker`](#nuiaio-cli-plugin-nui-asset-computetest-worker)
 
 ## `@nui/aio-cli-plugin-nui asset-compute:devtool`
 
