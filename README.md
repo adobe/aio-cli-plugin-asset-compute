@@ -1,4 +1,4 @@
-@nui/aio-cli-plugin-nui
+@nui/aio-cli-plugin-asset-compute
 =======================
 
 Asset Compute Plugin for Adobe I/O Command Line Interface
@@ -10,14 +10,16 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 <!-- toc -->
 * [Usage](#usage)
 * [Commands](#commands)
+* [Contributing](#contributing)
+* [Licensing](#licensing)
 <!-- tocstop -->
 
-# Usage
+## Usage
 
 This plugin has [aio-cli](https://github.com/adobe/aio-cli) as a prerequisite. Once `aio-cli` has been installed, the plugin can be installed and used as follows:
 
 ```sh-session
-$ aio plugins:install @nui/aio-cli-plugin-nui
+$ aio plugins:install @nui/aio-cli-plugin-asset-compute
 $ aio asset-compute:envinfo
 Environment information
 $ aio asset-compute:test-worker --help
@@ -30,19 +32,24 @@ $ aio asset-compute:devtool
 Runs the Asset Compute Developer Tool UI
 ```
 
-# Commands
+## Commands
 <!-- commands -->
-* [`@nui/aio-cli-plugin-nui asset-compute:devtool`](#nuiaio-cli-plugin-nui-asset-computedevtool)
-* [`@nui/aio-cli-plugin-nui asset-compute:envinfo`](#nuiaio-cli-plugin-nui-asset-computeenvinfo)
-* [`@nui/aio-cli-plugin-nui asset-compute:test-worker`](#nuiaio-cli-plugin-nui-asset-computetest-worker)
+- [@nui/aio-cli-plugin-asset-compute](#nuiaio-cli-plugin-asset-compute)
+  - [Usage](#usage)
+  - [Commands](#commands)
+  - [`@nui/aio-cli-plugin-asset-compute asset-compute:devtool`](#nuiaio-cli-plugin-asset-compute-asset-computedevtool)
+  - [`@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`](#nuiaio-cli-plugin-asset-compute-asset-computeenvinfo)
+  - [`@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`](#nuiaio-cli-plugin-asset-compute-asset-computetest-worker)
+  - [Contributing](#contributing)
+  - [Licensing](#licensing)
 
-## `@nui/aio-cli-plugin-nui asset-compute:devtool`
+## `@nui/aio-cli-plugin-asset-compute asset-compute:devtool`
 
 Runs the Asset Compute Developer Tool UI
 
 ```
 USAGE
-  $ @nui/aio-cli-plugin-nui asset-compute:devtool
+  $ @nui/aio-cli-plugin-asset-compute asset-compute:devtool
 
 OPTIONS
   -v, --verbose  Verbose output
@@ -50,30 +57,30 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/asset-compute/devtool.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.7/src/commands/asset-compute/devtool.js)_
+_See code: [src/commands/asset-compute/devtool.js](https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute/blob/1.0.7/src/commands/asset-compute/devtool.js)_
 
-## `@nui/aio-cli-plugin-nui asset-compute:envinfo`
+## `@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`
 
 Display dev environment version information
 
 ```
 USAGE
-  $ @nui/aio-cli-plugin-nui asset-compute:envinfo
+  $ @nui/aio-cli-plugin-asset-compute asset-compute:envinfo
 
 OPTIONS
   -v, --verbose  Verbose output
   --version      Show version
 ```
 
-_See code: [src/commands/asset-compute/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.7/src/commands/asset-compute/envinfo.js)_
+_See code: [src/commands/asset-compute/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute/blob/1.0.7/src/commands/asset-compute/envinfo.js)_
 
-## `@nui/aio-cli-plugin-nui asset-compute:test-worker`
+## `@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`
 
 Run tests from local project
 
 ```
 USAGE
-  $ @nui/aio-cli-plugin-nui asset-compute:test-worker
+  $ @nui/aio-cli-plugin-asset-compute asset-compute:test-worker
 
 OPTIONS
   -u, --updateRenditions  Replace expected renditions of failing test cases with the generated rendition.
@@ -81,8 +88,16 @@ OPTIONS
   --version               Show version
 
 ALIASES
-  $ @nui/aio-cli-plugin-nui asset-compute:tw
+  $ @nui/aio-cli-plugin-asset-compute asset-compute:tw
 ```
 
-_See code: [src/commands/asset-compute/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-nui/blob/1.0.7/src/commands/asset-compute/test-worker.js)_
+_See code: [src/commands/asset-compute/test-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute/blob/1.0.7/src/commands/asset-compute/test-worker.js)_
 <!-- commandsstop -->
+
+## Contributing
+
+Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.
+
+## Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.

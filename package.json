@@ -1,5 +1,5 @@
 {
-  "name": "@nui/aio-cli-plugin-nui",
+  "name": "@nui/aio-cli-plugin-asset-compute",
   "description": "Asset Compute Plugin for Adobe I/O Command Line Interface",
   "version": "1.0.7",
   "author": "Adobe Inc.",
@@ -8,36 +8,36 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.corp.adobe.com/nui/aio-cli-plugin-nui.git"
+    "url": "https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute.git"
   },
   "dependencies": {
     "@nui/asset-compute-dev-tool": "^1.0.0",
-    "@nui/serverless-nui": "^1.0.4",
-    "@oclif/command": "^1.5.11",
-    "@oclif/config": "^1.12.9",
-    "@oclif/plugin-help": "^2.1.6",
-    "adm-zip": "^0.4.13",
+    "@nui/serverless-nui": "^2.0.0",
+    "@oclif/command": "^1.5.19",
+    "@oclif/config": "^1.14.0",
+    "@oclif/plugin-help": "^2.2.3",
+    "adm-zip": "^0.4.14",
     "amazon-s3-uri": "0.0.3",
     "envinfo": "^7.5.0",
-    "fast-csv": "^2.5.0",
+    "fast-csv": "^4.1.1",
     "http-terminator": "^2.0.2",
     "js-yaml": "^3.13.1",
-    "open": "^7.0.2",
-    "openwhisk": "^3.20.0",
+    "open": "^7.0.3",
+    "openwhisk": "^3.21.1",
     "pretty-bytes": "^5.3.0",
-    "request": "^2.88.0",
-    "rimraf": "^2.7.1",
-    "serverless": "1.44.1",
-    "serverless-openwhisk": "^0.18.1",
+    "request": "^2.88.2",
+    "rimraf": "^3.0.2",
+    "serverless": "1.66.0",
+    "serverless-openwhisk": "^0.18.4",
     "serverless-webpack": "^5.3.1",
     "shell-quote": "^1.7.2",
-    "webpack": "^4.41.5",
-    "write": "^1.0.3",
+    "webpack": "^4.42.0",
+    "write": "^2.0.0",
     "xml": "^1.0.1"
   },
   "devDependencies": {
     "@nui/eslint-config": "^1.0.4",
-    "@oclif/dev-cli": "^1.21.3",
+    "@oclif/dev-cli": "^1.22.2",
     "@oclif/test": "^1.2.5"
   },
   "engines": {
@@ -47,7 +47,7 @@
     "/oclif.manifest.json",
     "/src"
   ],
-  "homepage": "https://git.corp.adobe.com/nui/aio-cli-plugin-nui",
+  "homepage": "https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute",
   "keywords": [
     "oclif-plugin"
   ],
