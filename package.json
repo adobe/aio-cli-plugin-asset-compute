@@ -25,19 +25,19 @@
     "open": "^7.0.3",
     "openwhisk": "^3.21.1",
     "pretty-bytes": "^5.3.0",
-    "request": "^2.88.2",
-    "rimraf": "^3.0.2",
-    "serverless": "1.66.0",
-    "serverless-openwhisk": "^0.18.4",
+    "request": "^2.88.0",
+    "rimraf": "^2.7.1",
+    "serverless": "1.44.1",
+    "serverless-openwhisk": "^0.18.1",
     "serverless-webpack": "^5.3.1",
     "shell-quote": "^1.7.2",
-    "webpack": "^4.42.0",
-    "write": "^2.0.0",
+    "webpack": "^4.41.5",
+    "write": "^1.0.3",
     "xml": "^1.0.1"
   },
   "devDependencies": {
     "@nui/eslint-config": "^1.0.4",
-    "@oclif/dev-cli": "^1.22.2",
+    "@oclif/dev-cli": "^1.21.3",
     "@oclif/test": "^1.2.5"
   },
   "engines": {

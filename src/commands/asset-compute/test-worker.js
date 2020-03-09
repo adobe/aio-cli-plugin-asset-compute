@@ -111,7 +111,7 @@ function writeTestResults(testResults, filePath) {
 }
 
 function writeTimingResults(testResults, filePath) {
-    const csv = fastCsv.createWriteStream({headers: true});
+    const csv = fastCsv.format({headers: true});
     csv.pipe(fse.createWriteStream(filePath));
     let totalProc = 0;
     testResults.tests.forEach(testCase => {
