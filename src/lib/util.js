@@ -104,7 +104,8 @@ module.exports = {
             work: this.dotNui(uniqueName),
             in: this.dotNui(uniqueName, 'in'),
             out: this.dotNui(uniqueName, 'out'),
-            failed: this.dotNui(uniqueName, 'failed')
+            failed: this.dotNui(uniqueName, 'failed'),
+            mock_crt: this.dotNui(uniqueName, 'mock-crt')
         }
         fse.ensureDirSync(dirs.in);
         // ensure readable by mounted docker container by giving everyone read
@@ -115,13 +116,18 @@ module.exports = {
         fse.ensureDirSync(dirs.failed);
         // ensure writeable by mounted docker container by giving everyone read+write
         fse.chmodSync(dirs.failed, 0o777);
+        // mock certificate directory
+        fse.ensureDirSync(dirs.mock_crt);
+        // ensure readable by mounted docker container by giving everyone read
+        fse.chmodSync(dirs.mock_crt, 0o755);
         return dirs;
     },
 
     // remove temporary .nui/in + out dirs and failed if empty
     cleanupInOutDir: function(dirs) {
         fse.removeSync(dirs.in);
-        fse.removeSync(dirs.out);     
+        fse.removeSync(dirs.out);
+        fse.removeSync(dirs.mock_crt);     
         if (fse.readdirSync(dirs.failed).length === 0) {
             fse.removeSync(dirs.failed);
         }
