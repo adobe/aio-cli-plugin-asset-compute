@@ -37,7 +37,7 @@ jobs:
             npm install -g @adobe/aio-cli
             npm install
             npm test
-      - save_cache: # special step to save the dependency cache
+      - save_cache: #save the dependency cache
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
