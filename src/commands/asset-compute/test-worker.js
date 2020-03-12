@@ -38,11 +38,11 @@ function getFile(dir, pattern, description) {
     if (files.length === 0) {
          return Promise.resolve(null);
     }
-    if (files.length > 1) {
-        util.logWarn("multiple", description, "files found in `" + path.basename(process.cwd()) + "`, only using the first one:", files);
-    }
     if (pattern.includes('mock')) {
         return Promise.resolve(files);
+    }
+    if (files.length > 1) {
+        util.logWarn("multiple", description, "files found in `" + path.basename(process.cwd()) + "`, only using the first one:", files);
     }
     return testfiles.getFile(files[0]);
 }
