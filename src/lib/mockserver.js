@@ -119,7 +119,7 @@ async function setUpMocks(httpMocks, name) {
 
 			index++;
 		}
-		return index
+		return index;
 	} catch (e) {
 		logToFile(e);
 		return index;
