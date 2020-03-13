@@ -33,11 +33,31 @@ async function onListening(server) {
     await open(`http://localhost:${addr.port}`);
 }
 
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    const port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+      // named pipe
+      return val;
+    }
+
+    if (port >= 0) {
+      // port number
+      return port;
+    }
+
+    return false;
+  }
+
 class DevToolCommand extends BaseCommand {
     async run() {
         const { flags } = this.parse(DevToolCommand);
         return new Promise((resolve, reject) => {
-            const port = flags.port;
+            const port = normalizePort(process.env.ASSET_COMPUTE_DEV_PORT || flags.port);
             app.set('port', port);
 
             // Create HTTP server.
