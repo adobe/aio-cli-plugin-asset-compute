@@ -38,14 +38,14 @@ function asContainerName(name) {
 }
 
 function getHostName(file) {
-	return file.substring(5,file.length -5);
+	return file.substring(5, file.length - 5);
 }
 
 // Sleep in milliseconds
 function sleep(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
+	return new Promise(resolve => {
+		setTimeout(resolve, ms);
+	});
 }
 
 
@@ -56,7 +56,7 @@ function sleep(ms) {
 async function waitUntilReady(index) {
 	let count = 1;
 	while (count <= 10) {
-		await sleep(500*count); // to account for cold starts
+		await sleep(500 * count); // to account for cold starts
 		const logs = await exec(`docker logs mock-server-${index}`);
 		const portIsRunning = logs.stdout.includes('started on ports: [80, 443]');
 		if (portIsRunning) {
@@ -102,7 +102,7 @@ async function setUpMocks(httpMocks, name) {
 			logToFile('- image   :', MOCK_SERVER_IMAGE);
 			logToFile('- hostname:', hostName);
 			if (stderr) {
-				logToFile('stderr:', stderr);	
+				logToFile('stderr:', stderr);
 			}
 
 			await waitUntilReady(index);
@@ -138,7 +138,7 @@ async function stopMocks(amount, name) {
 			index++;
 		}
 
-	} catch(e) {
+	} catch (e) {
 		logToFile('error shutting down mock container or network: ', e);
 	}
 	await sleep(2000); // wait while container shuts down
@@ -147,17 +147,17 @@ async function stopMocks(amount, name) {
 async function preCleanCheck(index, containerName) {
 	try {
 		await exec(`docker stop mock-server-${index}`);
-	} catch(e) {
+	} catch (e) {
 		// ignore if no docker container running
 	}
 	try {
 		await exec(`docker network disconnect mock-network-${index} ${containerName}`);
-	} catch(e) {
+	} catch (e) {
 		// ignore if no docker container running
 	}
 	try {
 		await exec(`docker network rm mock-network-${index}`);
-	} catch(e) {
+	} catch (e) {
 		// ignore if no docker container running
 	}
 

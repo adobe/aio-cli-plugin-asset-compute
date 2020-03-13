@@ -36,7 +36,7 @@ const TIMING_RESULT_FILE = path.resolve(BUILD_DIR, 'test-timing-results.csv');
 function getFile(dir, pattern, description) {
     const files = glob.sync(dir + '/' + pattern);
     if (files.length === 0) {
-         return Promise.resolve(null);
+        return Promise.resolve(null);
     }
     if (pattern.includes('mock')) {
         return Promise.resolve(files);
@@ -53,7 +53,7 @@ function findMocks(testFolder) {
     const mock = fse.readdirSync(testFolder).some((testcase) => {
         const dir = path.resolve(testFolder, testcase);
         const files = glob.sync(dir + '/' + 'mock-*.json');
-        if(files.length > 0) {
+        if (files.length > 0) {
             return true;
         }
         return false;
@@ -129,7 +129,7 @@ function writeTestResults(testResults, filePath) {
 }
 
 function writeTimingResults(testResults, filePath) {
-    const csv = fastCsv.format({headers: true});
+    const csv = fastCsv.format({ headers: true });
     csv.pipe(fse.createWriteStream(filePath));
     let totalProc = 0;
     testResults.tests.forEach(testCase => {
@@ -154,7 +154,7 @@ function writeTimingResults(testResults, filePath) {
 
         }
     });
-    if (testResults.time){
+    if (testResults.time) {
         csv.write({
             name: "total",
             "processing time": totalProc.toFixed(3),
@@ -219,7 +219,7 @@ function testWorker(argv) {
     const dirs = util.prepareInOutDir();
     // go through test cases to see if there are any cases that use mocks... if there are, add mock cert to env vars
     let dockerArgs = ` -e WORKER_TEST_MODE='true' `
-    if(findMocks(testFolder)) {
+    if (findMocks(testFolder)) {
         fse.copySync(`${__dirname}/../../lib/mock-crt`, dirs.mock_crt);
         dockerArgs += `-v ${dirs.mock_crt}:/mock-crt -e NODE_EXTRA_CA_CERTS='/mock-crt/CertificateAuthorityCertificate.pem'`
     }
@@ -230,7 +230,7 @@ function testWorker(argv) {
         inDir: dirs.in,
         outDir: dirs.out,
         verbose: argv.verbose,
-        dockerArgs:  dockerArgs
+        dockerArgs: dockerArgs
     }).catch(e => {
         util.log('');
         util.logError(e.message || e);
@@ -251,306 +251,306 @@ function testWorker(argv) {
     });
 
     chain
-    .catch(e => {
-        util.logError(e.message || e);
-        process.exitCode = 2;
-    })
-    .finally(() => {
-        const testCasesTime = util.timerEnd(testCasesStart);
-        process.chdir(baseDir);
-
-        util.log();
-
-        // 8. stop container
-        serverless.invokeLocal({
-            stop: true,
-            name: containerName,
-            verbose: argv.verbose
-        })
         .catch(e => {
-            util.logWarn('Problem while stopping container:', e.message || e);
-            process.exitCode = 3;
+            util.logError(e.message || e);
+            process.exitCode = 2;
         })
         .finally(() => {
+            const testCasesTime = util.timerEnd(testCasesStart);
             process.chdir(baseDir);
 
-            util.cleanupInOutDir(dirs)
-
-            util.logToFile(`${new Date().toISOString()} Finished tests for ${moduleName}.`);
-
-            const totalTime = util.timerEnd(start);
-            testResults.time = totalTime.getSeconds();
-            testResults.skipped = testResults.tests.length - testResults.passes - testResults.failures - testResults.errors -testResults.expectedErrors;
-
-            writeTestResults(testResults, testResultFile);
-            writeTimingResults(testResults, timingResultFile);
-
-            if (testResults.failures > 0 && testResults.errors > 0) {
-                util.logError(red('There were test failures and errors.'));
-            } else if (testResults.failures > 0) {
-                util.logError(red('There were test failures.'));
-            } else if (testResults.errors > 0) {
-                util.logError(red('There were test errors.'));
-            } else {
-                util.log('✔︎ All tests were successful.')
-            }
-
-            util.log(        '  - Tests run      :', (testResults.passes + testResults.failures + testResults.errors + testResults.expectedErrors));
-            if (testResults.failures > 0) {
-                util.log(red(`  - Failures       : ${testResults.failures}`));
-            } else {
-                util.log(    '  - Failures       : 0');
-            }
-            if (testResults.errors > 0) {
-                util.log(red(`  - Errors         : ${testResults.errors}`));
-            } else {
-                util.log(    '  - Errors         : 0');
-            }
-            if (testResults.skipped > 0) {
-                util.log(yellow(`  - Skipped        : ${testResults.skipped}`));
-            }
-            if (testResults.expectedErrors > 0) {
-               util.log(        `  - Expected errors: ${testResults.expectedErrors}`);
-            }
-
             util.log();
-            util.log("Test time :", testCasesTime.toString());
-            util.log("Total time:", totalTime.toString());
 
-            util.log();
-            util.log('Test results   :', testResultFile);
-            util.log('Timing results :', timingResultFile);
-            util.log('Test log       :', testLogFile);
+            // 8. stop container
+            serverless.invokeLocal({
+                stop: true,
+                name: containerName,
+                verbose: argv.verbose
+            })
+                .catch(e => {
+                    util.logWarn('Problem while stopping container:', e.message || e);
+                    process.exitCode = 3;
+                })
+                .finally(() => {
+                    process.chdir(baseDir);
 
-            if (testResults.failures > 0 || testResults.errors > 0) {
-                process.exitCode = 1;
-            }
+                    util.cleanupInOutDir(dirs)
+
+                    util.logToFile(`${new Date().toISOString()} Finished tests for ${moduleName}.`);
+
+                    const totalTime = util.timerEnd(start);
+                    testResults.time = totalTime.getSeconds();
+                    testResults.skipped = testResults.tests.length - testResults.passes - testResults.failures - testResults.errors - testResults.expectedErrors;
+
+                    writeTestResults(testResults, testResultFile);
+                    writeTimingResults(testResults, timingResultFile);
+
+                    if (testResults.failures > 0 && testResults.errors > 0) {
+                        util.logError(red('There were test failures and errors.'));
+                    } else if (testResults.failures > 0) {
+                        util.logError(red('There were test failures.'));
+                    } else if (testResults.errors > 0) {
+                        util.logError(red('There were test errors.'));
+                    } else {
+                        util.log('✔︎ All tests were successful.')
+                    }
+
+                    util.log('  - Tests run      :', (testResults.passes + testResults.failures + testResults.errors + testResults.expectedErrors));
+                    if (testResults.failures > 0) {
+                        util.log(red(`  - Failures       : ${testResults.failures}`));
+                    } else {
+                        util.log('  - Failures       : 0');
+                    }
+                    if (testResults.errors > 0) {
+                        util.log(red(`  - Errors         : ${testResults.errors}`));
+                    } else {
+                        util.log('  - Errors         : 0');
+                    }
+                    if (testResults.skipped > 0) {
+                        util.log(yellow(`  - Skipped        : ${testResults.skipped}`));
+                    }
+                    if (testResults.expectedErrors > 0) {
+                        util.log(`  - Expected errors: ${testResults.expectedErrors}`);
+                    }
+
+                    util.log();
+                    util.log("Test time :", testCasesTime.toString());
+                    util.log("Total time:", totalTime.toString());
+
+                    util.log();
+                    util.log('Test results   :', testResultFile);
+                    util.log('Timing results :', timingResultFile);
+                    util.log('Test log       :', testLogFile);
+
+                    if (testResults.failures > 0 || testResults.errors > 0) {
+                        process.exitCode = 1;
+                    }
+                });
         });
-    });
 }
 
 // runs a single test case
 function runTest(baseDir, testFolder, testcase, dirs, argv, testResults, containerName) {
-        return new Promise(resolve => {
-            const start = util.timerStart();
+    return new Promise(resolve => {
+        const start = util.timerStart();
 
-            const dir = path.resolve(testFolder, testcase);
-            // only look at directories
-            if (!fse.lstatSync(dir).isDirectory()) {
+        const dir = path.resolve(testFolder, testcase);
+        // only look at directories
+        if (!fse.lstatSync(dir).isDirectory()) {
+            return resolve();
+        }
+
+        util.log(" -", testcase);
+
+        const testcaseResult = {
+            name: testcase
+        };
+        testResults.tests.push(testcaseResult);
+
+        // find test files & prepare worker invocation
+        getFile(dir, "file**", "test input").then((res) => {
+            // console.log(res)
+            const file = res;
+
+            if (!file) {
+                util.log(yellow('   o Skipping: no test input file found'));
+                // util.logWarn(`no test input file found for testcase ${testcase}, skipping`);
                 return resolve();
             }
 
-            util.log(" -", testcase);
+            getFile(dir, "rendition.**", "expected rendition").then((res) => {
+                // console.log(typeof(res));
+                const expectedRendition = res;
+                getFile(dir, "validate", "validate script").then((res) => {
+                    const validate = res;
+                    getFile(dir, "mock-*.json", "mocks").then((res) => {
+                        setUpMocks(res, containerName).then((res) => {
+                            const mockAmounts = res;
+                            let params;
+                            getFile(dir, "params.json", "parameters").then((res) => {
+                                const paramsFile = res;
+                                if (fse.existsSync(paramsFile)) {
+                                    params = require(paramsFile);
+                                } else {
+                                    params = {};
+                                }
 
-            const testcaseResult = {
-                name: testcase
-            };
-            testResults.tests.push(testcaseResult);
+                                // If no expectedRendition we will expect no rendition either
+                                // However, in that case we need to have the name and format
+                                // in the params files because we can't get it from the
+                                // expected rendition
+                                if (!expectedRendition && !params.fmt) {
+                                    util.log(yellow('   o Skipping: no expected rendition file found and fmt not specified'));
+                                    return resolve();
+                                }
 
-                // find test files & prepare worker invocation
-                getFile(dir, "file**", "test input").then( (res) => {
-                    // console.log(res)
-                    const file = res;
+                                if (!params.fmt) {
+                                    params.fmt = util.extension(expectedRendition);
+                                }
 
-                    if (!file) {
-                        util.log(yellow('   o Skipping: no test input file found'));
-                        // util.logWarn(`no test input file found for testcase ${testcase}, skipping`);
-                        return resolve();
-                    }
+                                const json = {
+                                    source: path.basename(file),
+                                    renditions: [
+                                        params
+                                    ]
+                                };
 
-                    getFile(dir, "rendition.**", "expected rendition").then( (res) => {
-                        // console.log(typeof(res));
-                        const expectedRendition = res;
-                        getFile(dir, "validate", "validate script").then( (res) => {
-                            const validate = res;
-                            getFile(dir, "mock-*.json", "mocks").then( (res) => {
-                                setUpMocks(res, containerName).then( (res) => {
-                                    const mockAmounts = res;
-                                    let params;
-                                    getFile(dir, "params.json", "parameters").then( (res) => {
-                                        const paramsFile = res;
-                                        if (fse.existsSync(paramsFile)) {
-                                            params = require(paramsFile);
-                                        } else {
-                                            params = {};
-                                        }
+                                util.logToFile(`${new Date().toISOString()} Running test case: ${testcase} from ${dir}`);
+                                // redirect stdout + stderr to test.log during the test execution
+                                util.redirectOutputToLogFile();
 
-                                        // If no expectedRendition we will expect no rendition either
-                                        // However, in that case we need to have the name and format
-                                        // in the params files because we can't get it from the
-                                        // expected rendition
-                                        if (!expectedRendition && !params.fmt) {
-                                            util.log(yellow('   o Skipping: no expected rendition file found and fmt not specified'));
-                                            return resolve();
-                                        }
+                                // 4. copy contents of directory
+                                fse.copySync(dir, dirs.in, { dereference: true });
+                                const inFile = path.resolve(dirs.in, path.basename(file));
+                                fse.chmodSync(inFile, 0o644);
 
-                                        if (!params.fmt) {
-                                            params.fmt = util.extension(expectedRendition);
-                                        }
+                                // serverless changes the directory, go back to project dir every time
+                                process.chdir(baseDir);
 
-                                        const json = {
-                                            source: path.basename(file),
-                                            renditions: [
-                                                params
-                                            ]
-                                        };
+                                const procStart = util.timerStart();
 
-                                        util.logToFile(`${new Date().toISOString()} Running test case: ${testcase} from ${dir}`);
-                                        // redirect stdout + stderr to test.log during the test execution
-                                        util.redirectOutputToLogFile();
+                                // 5. run test, call serverless invoke local
+                                serverless.invokeLocal({
+                                    name: containerName,
+                                    params: json,
+                                    verbose: argv.verbose,
+                                    dockerArgs: `-e WORKER_TEST_MODE='true' `
+                                })
+                                    .then(result => {
+                                        const procTime = util.timerEnd(procStart);
+                                        testcaseResult.procTime = procTime.getSeconds();
 
-                                        // 4. copy contents of directory
-                                        fse.copySync(dir, dirs.in, { dereference:true });
-                                        const inFile = path.resolve(dirs.in, path.basename(file));
-                                        fse.chmodSync(inFile, 0o644);
+                                        util.logToFile('--------------------------------------------------------------------------------');
+                                        // 6. validate results
+                                        // If we reach here and we didn't expect a rendition then that is an error
+                                        const renditions = glob.sync(dirs.out + '/rendition**');
+                                        const actualRendition = renditions.length >= 1 ? renditions[0] : "";
 
-                                        // serverless changes the directory, go back to project dir every time
-                                        process.chdir(baseDir);
-
-                                        const procStart = util.timerStart();
-
-                                        // 5. run test, call serverless invoke local
-                                        serverless.invokeLocal({
-                                            name: containerName,
-                                            params: json,
-                                            verbose: argv.verbose,
-                                            dockerArgs:  `-e WORKER_TEST_MODE='true' `
-                                        })
-                                        .then(result => {
-                                            const procTime = util.timerEnd(procStart);
-                                            testcaseResult.procTime = procTime.getSeconds();
-
-                                            util.logToFile('--------------------------------------------------------------------------------');
-                                            // 6. validate results
-                                            // If we reach here and we didn't expect a rendition then that is an error
-                                            const renditions = glob.sync(dirs.out + '/rendition**');
-                                            const actualRendition = renditions.length >= 1 ? renditions[0] : "";
-
-                                            let failureMsg;
-                                            if (expectedRendition) {
-                                                if (!fse.existsSync(actualRendition)) {
-                                                    failureMsg = `No rendition '${path.basename(actualRendition)}' generated`;
-                                                    util.logToFile(`Validation failed: ${failureMsg}`);
-                                                } else {
-                                                    try {
-                                                        // execute validation script
-                                                        if (validate) {
-                                                            const cmd = `${validate} ${expectedRendition} ${actualRendition}`;
-                                                            util.logToFile(`Running validation: ${cmd}`);
-                                                            execSync(`bash -x ${cmd}`);
-                                                        } else {
-                                                            const cmd = `diff ${expectedRendition} ${actualRendition}`;
-                                                            util.logToFile(`Running validation: ${cmd}`);
-                                                            execSync(cmd);
-                                                        }
-                                                        util.logToFile('Validation successful.');
-                                                    } catch (e) {
-                                                        // The rendition is not as expected so save it for later inspection
-                                                        const renditionFile = path.basename(actualRendition);
-                                                        fse.ensureDirSync(`${dirs.failed}/${testcase}`);
-                                                        fse.copySync(actualRendition, `${dirs.failed}/${testcase}/${renditionFile}`);
-                                                        failureMsg = `Rendition '${path.basename(actualRendition)}' not as expected. Validate exit code was: ${e.status}`;
-                                                        if (e.stdout) {
-                                                            util.logToFile(e.stdout.toString().trim());
-                                                        }
-                                                        if (e.stderr) {
-                                                            util.logToFile(e.stderr.toString().trim());
-                                                        }
-                                                        util.logToFile(`!!! Validation failed: ${failureMsg}`);
-                                                        if (argv.updateRenditions) {
-                                                            console.log(`Updating exepected rendition ${expectedRendition}`);
-                                                            fse.copyFileSync(actualRendition, expectedRendition);
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            // 7. clean out in & out
-                                            util.emptyInOutDir(dirs);
-
-                                            // stop logging to test.log, restore stdout + stderr
-                                            util.restoreOutput();
-                                            util.logToFile('================================================================================');
-
-                                            const time = util.timerEnd(start);
-
-                                            if (!expectedRendition) {
-                                                if (result && Array.isArray(result.renditionErrors) && result.renditionErrors.length >= 1) {
-                                                    const reason = result.renditionErrors[0].reason;
-                                                    const name = result.renditionErrors[0].name;
-
-                                                    if (reason === params.errorReason) {
-                                                        console.log('      ' + green('✔  Expected error after ' + time.toString()));
-                                                        testResults.expectedErrors++;
-                                                    } else if (name === params.errorReason) {
-                                                        console.log('      ' + green('✔  Expected error after ' + time.toString()));
-                                                        testResults.expectedErrors++;
-                                                    } else {
-                                                        failureMsg = 'Expected error ' + params.errorReason + ' but got ' + reason;
-                                                        console.log('      ' + red('✖  ' + failureMsg + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE)));
-                                                        testResults.errors++;
-                                                    }
-                                                } else if (params.errorReason) {
-                                                    failureMsg = 'Expected error ' + params.errorReason + ', but none occurred';
-                                                    console.log('      ' + red('✖  ' + failureMsg + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE)));
-                                                    testResults.failures++;
-                                                } else {
-                                                    failureMsg = 'No expected rendition file found and no error expected';
-                                                    console.log('      ' + red('✖  ' + failureMsg + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE) + ' and test case files.'));
-                                                    testResults.failures++;
-                                                }
-                                            } else if (failureMsg) {
-                                                console.log('      ' + red('✖  Failed in ' + time.toString() + '. ' + failureMsg + '. Check ' + path.relative(baseDir, LOG_FILE)));
-                                                testResults.failures++;
+                                        let failureMsg;
+                                        if (expectedRendition) {
+                                            if (!fse.existsSync(actualRendition)) {
+                                                failureMsg = `No rendition '${path.basename(actualRendition)}' generated`;
+                                                util.logToFile(`Validation failed: ${failureMsg}`);
                                             } else {
-                                                console.log('      ' + green('✔︎  Succeeded in ' + time.toString()));
-                                                testResults.passes++;
-                                            }
-
-                                            testcaseResult.time = time.getSeconds();
-                                            testcaseResult.failureMsg = failureMsg;
-                                            // stop mocks:
-                                            stopMocks(mockAmounts, containerName).then( () => {
-                                                return resolve();
-                                            })
-                                        })
-                                        .catch(e => {
-                                            const errorMsg = e;
-                                            // 7. clean out in & out
-                                            util.emptyInOutDir(dirs);
-
-                                            // stop logging to test.log, restore stdout + stderr
-                                            util.restoreOutput();
-                                            util.logToFile('================================================================================');
-
-                                            const time = util.timerEnd(start);
-
-                                            if (expectedRendition) {
-                                                console.log('      ' + red('✖  Error after ' + time.toString() + '. ' + errorMsg + '. Check ' + path.relative(baseDir, LOG_FILE)));
-                                                testcaseResult.errorMsg = errorMsg;
-                                                testResults.errors++;
-                                            } else {
-                                                let reason;
                                                 try {
-                                                    const json = errorMsg.substring(errorMsg.indexOf('{'));
-                                                    const err = JSON.parse(json);
-                                                    reason = err.reason;
-                                                } catch (error) {
-                                                    reason = errorMsg;
+                                                    // execute validation script
+                                                    if (validate) {
+                                                        const cmd = `${validate} ${expectedRendition} ${actualRendition}`;
+                                                        util.logToFile(`Running validation: ${cmd}`);
+                                                        execSync(`bash -x ${cmd}`);
+                                                    } else {
+                                                        const cmd = `diff ${expectedRendition} ${actualRendition}`;
+                                                        util.logToFile(`Running validation: ${cmd}`);
+                                                        execSync(cmd);
+                                                    }
+                                                    util.logToFile('Validation successful.');
+                                                } catch (e) {
+                                                    // The rendition is not as expected so save it for later inspection
+                                                    const renditionFile = path.basename(actualRendition);
+                                                    fse.ensureDirSync(`${dirs.failed}/${testcase}`);
+                                                    fse.copySync(actualRendition, `${dirs.failed}/${testcase}/${renditionFile}`);
+                                                    failureMsg = `Rendition '${path.basename(actualRendition)}' not as expected. Validate exit code was: ${e.status}`;
+                                                    if (e.stdout) {
+                                                        util.logToFile(e.stdout.toString().trim());
+                                                    }
+                                                    if (e.stderr) {
+                                                        util.logToFile(e.stderr.toString().trim());
+                                                    }
+                                                    util.logToFile(`!!! Validation failed: ${failureMsg}`);
+                                                    if (argv.updateRenditions) {
+                                                        console.log(`Updating exepected rendition ${expectedRendition}`);
+                                                        fse.copyFileSync(actualRendition, expectedRendition);
+                                                    }
                                                 }
+                                            }
+                                        }
+
+                                        // 7. clean out in & out
+                                        util.emptyInOutDir(dirs);
+
+                                        // stop logging to test.log, restore stdout + stderr
+                                        util.restoreOutput();
+                                        util.logToFile('================================================================================');
+
+                                        const time = util.timerEnd(start);
+
+                                        if (!expectedRendition) {
+                                            if (result && Array.isArray(result.renditionErrors) && result.renditionErrors.length >= 1) {
+                                                const reason = result.renditionErrors[0].reason;
+                                                const name = result.renditionErrors[0].name;
+
                                                 if (reason === params.errorReason) {
                                                     console.log('      ' + green('✔  Expected error after ' + time.toString()));
                                                     testResults.expectedErrors++;
+                                                } else if (name === params.errorReason) {
+                                                    console.log('      ' + green('✔  Expected error after ' + time.toString()));
+                                                    testResults.expectedErrors++;
                                                 } else {
-                                                    console.log('      ' + red('✖  Expected error ' + params.errorReason +
-                                                    ' but got ' + reason + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE)));
+                                                    failureMsg = 'Expected error ' + params.errorReason + ' but got ' + reason;
+                                                    console.log('      ' + red('✖  ' + failureMsg + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE)));
                                                     testResults.errors++;
                                                 }
+                                            } else if (params.errorReason) {
+                                                failureMsg = 'Expected error ' + params.errorReason + ', but none occurred';
+                                                console.log('      ' + red('✖  ' + failureMsg + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE)));
+                                                testResults.failures++;
+                                            } else {
+                                                failureMsg = 'No expected rendition file found and no error expected';
+                                                console.log('      ' + red('✖  ' + failureMsg + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE) + ' and test case files.'));
+                                                testResults.failures++;
                                             }
-                                            testcaseResult.time = time.getSeconds();
+                                        } else if (failureMsg) {
+                                            console.log('      ' + red('✖  Failed in ' + time.toString() + '. ' + failureMsg + '. Check ' + path.relative(baseDir, LOG_FILE)));
+                                            testResults.failures++;
+                                        } else {
+                                            console.log('      ' + green('✔︎  Succeeded in ' + time.toString()));
+                                            testResults.passes++;
+                                        }
 
+                                        testcaseResult.time = time.getSeconds();
+                                        testcaseResult.failureMsg = failureMsg;
+                                        // stop mocks:
+                                        stopMocks(mockAmounts, containerName).then(() => {
                                             return resolve();
-                                });
+                                        })
+                                    })
+                                    .catch(e => {
+                                        const errorMsg = e;
+                                        // 7. clean out in & out
+                                        util.emptyInOutDir(dirs);
+
+                                        // stop logging to test.log, restore stdout + stderr
+                                        util.restoreOutput();
+                                        util.logToFile('================================================================================');
+
+                                        const time = util.timerEnd(start);
+
+                                        if (expectedRendition) {
+                                            console.log('      ' + red('✖  Error after ' + time.toString() + '. ' + errorMsg + '. Check ' + path.relative(baseDir, LOG_FILE)));
+                                            testcaseResult.errorMsg = errorMsg;
+                                            testResults.errors++;
+                                        } else {
+                                            let reason;
+                                            try {
+                                                const json = errorMsg.substring(errorMsg.indexOf('{'));
+                                                const err = JSON.parse(json);
+                                                reason = err.reason;
+                                            } catch (error) {
+                                                reason = errorMsg;
+                                            }
+                                            if (reason === params.errorReason) {
+                                                console.log('      ' + green('✔  Expected error after ' + time.toString()));
+                                                testResults.expectedErrors++;
+                                            } else {
+                                                console.log('      ' + red('✖  Expected error ' + params.errorReason +
+                                                    ' but got ' + reason + ' after ' + time.toString() + '. Check ' + path.relative(baseDir, LOG_FILE)));
+                                                testResults.errors++;
+                                            }
+                                        }
+                                        testcaseResult.time = time.getSeconds();
+
+                                        return resolve();
+                                    });
                             });
                         });
                     });
@@ -575,7 +575,7 @@ TestWorkerCommand.description = 'Run tests from local project';
 
 TestWorkerCommand.flags = {
     updateRenditions: flags.boolean({
-        char: 'u', 
+        char: 'u',
         description: 'Replace expected renditions of failing test cases with the generated rendition.'
     }),
     ...BaseCommand.flags

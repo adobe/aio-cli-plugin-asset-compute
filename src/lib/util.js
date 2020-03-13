@@ -37,7 +37,7 @@ function logError(...msg) {
 }
 
 module.exports = {
-    system: function(args, options) {
+    system: function (args, options) {
         options = options || {};
         if (!options.stdio) {
             options.stdio = this.getOutputStdio();
@@ -45,7 +45,7 @@ module.exports = {
         return execSync(args, options);
     },
 
-    systemStdout: function(args, options) {
+    systemStdout: function (args, options) {
         options = options || {};
         options.stdio = 'pipe';
         const buffer = this.system(args, options);
@@ -56,7 +56,7 @@ module.exports = {
         }
     },
 
-    packageJson: function(dir=`${process.cwd()}`) {
+    packageJson: function (dir = `${process.cwd()}`) {
         const pkgFile = `${dir}/package.json`;
 
         if (!fse.existsSync(pkgFile)) {
@@ -66,10 +66,10 @@ module.exports = {
 
         // require caches, so we need to clone the resulting object
         // to avoid unintentionally sharing objects
-        return JSON.parse(JSON.stringify( require(pkgFile) ));
+        return JSON.parse(JSON.stringify(require(pkgFile)));
     },
 
-    log: function(...msg) {
+    log: function (...msg) {
         if (msg.length === 0) {
             console.log();
         } else {
@@ -77,7 +77,7 @@ module.exports = {
         }
     },
 
-    logWarn: function(...msg) {
+    logWarn: function (...msg) {
         console.log("🚧", yellow("warning:"), yellow(...msg));
     },
 
@@ -92,12 +92,12 @@ module.exports = {
         return str.replace(/=/g, "⏸");  // serverless cli still parses escaped equal signs so we must use a symbol
     },
 
-    dotNui: function(...p) {
+    dotNui: function (...p) {
         return path.resolve('.nui', ...p);
     },
 
     // create temporary hidden folder for in & out dirs to mount
-    prepareInOutDir: function() {
+    prepareInOutDir: function () {
         const uniqueName = (process.env.BUILD_TAG || new Date().toISOString()).replace(/[^a-zA-Z0-9_]/g, '_');
         const dirs = {
             dotNui: this.dotNui(),
@@ -124,10 +124,10 @@ module.exports = {
     },
 
     // remove temporary .nui/in + out dirs and failed if empty
-    cleanupInOutDir: function(dirs) {
+    cleanupInOutDir: function (dirs) {
         fse.removeSync(dirs.in);
         fse.removeSync(dirs.out);
-        fse.removeSync(dirs.mock_crt);     
+        fse.removeSync(dirs.mock_crt);
         if (fse.readdirSync(dirs.failed).length === 0) {
             fse.removeSync(dirs.failed);
         }
@@ -141,7 +141,7 @@ module.exports = {
         }
     },
 
-    emptyInOutDir: function(dirs) {
+    emptyInOutDir: function (dirs) {
         rimraf.sync(`${dirs.in}/*`);
         rimraf.sync(`${dirs.out}/*`);
     },
@@ -149,7 +149,7 @@ module.exports = {
     // yargs extension, to use in a command visit function
     // automatically put all command options into their own "group"
     // separate from "Global Options:" like -v or -h
-    yargsGroupCommandOptions: function(cmd, group) {
+    yargsGroupCommandOptions: function (cmd, group) {
         if (cmd.builder) {
             const builder = cmd.builder;
             cmd.builder = yargs => {
@@ -178,11 +178,11 @@ module.exports = {
         return cmd;
     },
 
-    yargsFilePathOption: function(file) {
+    yargsFilePathOption: function (file) {
         return path.resolve(file);
     },
 
-    yargsExistingFileOption: function(file) {
+    yargsExistingFileOption: function (file) {
         file = path.resolve(file);
         if (!fse.existsSync(file)) {
             return undefined;
@@ -190,15 +190,15 @@ module.exports = {
         return file;
     },
 
-    extension: function(file) {
+    extension: function (file) {
         return path.extname(file).split('.').pop();
     },
 
-    timerStart: function() {
+    timerStart: function () {
         return process.hrtime();
     },
 
-    timerEnd: function(start) {
+    timerEnd: function (start) {
         const end = process.hrtime(start);
         const time = {
             seconds: end[0],
@@ -212,16 +212,16 @@ module.exports = {
         }
     },
 
-    setLogFile: function(logFile) {
+    setLogFile: function (logFile) {
         // can't change the log file when piping to it
         if (!originalStdOut) {
             fse.ensureDirSync(path.dirname(logFile));
             // append to log file
-            outFile = fse.createWriteStream(logFile, {flags: 'a'});
+            outFile = fse.createWriteStream(logFile, { flags: 'a' });
         }
     },
 
-    redirectOutputToLogFile: function() {
+    redirectOutputToLogFile: function () {
         if (outFile && !originalStdOut) {
             originalStdOut = process.stdout.write;
             originalStdErr = process.stderr.write;
@@ -229,7 +229,7 @@ module.exports = {
         }
     },
 
-    restoreOutput: function() {
+    restoreOutput: function () {
         if (originalStdOut) {
             process.stdout.write = originalStdOut;
             process.stderr.write = originalStdErr;
@@ -239,7 +239,7 @@ module.exports = {
         }
     },
 
-    getOutputStdio: function() {
+    getOutputStdio: function () {
         if (outFile && originalStdOut) {
             return [process.stdin, outFile, outFile];
         } else {
@@ -247,7 +247,7 @@ module.exports = {
         }
     },
 
-    logToFile: function(...msg) {
+    logToFile: function (...msg) {
         if (outFile) {
             const cons = new Console(outFile);
             if (msg.length === 0) {
@@ -258,16 +258,16 @@ module.exports = {
         }
     },
 
-    hasWarnings: function() {
+    hasWarnings: function () {
         return hasWarnings;
     },
 
-    logTrackedWarning: function(msg) {
+    logTrackedWarning: function (msg) {
         this.logWarn(msg);
         hasWarnings = true;
     },
 
-    resetWarnings: function() {
+    resetWarnings: function () {
         hasWarnings = false;
     },
 
@@ -280,12 +280,12 @@ module.exports = {
         if (latestModuleVersions[moduleName]) {
             return latestModuleVersions[moduleName];
         }
-        const version = execSync(`npm view ${moduleName} version`, {stdio: 'pipe'}).toString().trim();
+        const version = execSync(`npm view ${moduleName} version`, { stdio: 'pipe' }).toString().trim();
         latestModuleVersions[moduleName] = version;
         return version;
     },
 
-    packageVersion(name, dir=`${process.cwd()}`, oldName) {
+    packageVersion(name, dir = `${process.cwd()}`, oldName) {
         let pkgLock;
         try {
             // look at package-lock.json with the exact installed version number
@@ -308,20 +308,20 @@ module.exports = {
                 if (version.startsWith('^')) {
                     version = version.substring(1);
                 }
-                return { pkgLock : pkgLock, version: version};
+                return { pkgLock: pkgLock, version: version };
             } catch (ignore) {
             }
         }
     },
-    
-    checkLatestNuiLibraryVersion(dir=`${process.cwd()}`, name=NUI_LIBRARY,  oldName=NUI_LIBRARY_OLD) {
-        const versionInfo= this.packageVersion(name, dir, oldName); 
-   
+
+    checkLatestNuiLibraryVersion(dir = `${process.cwd()}`, name = NUI_LIBRARY, oldName = NUI_LIBRARY_OLD) {
+        const versionInfo = this.packageVersion(name, dir, oldName);
+
         try {
             const version = this.latestModuleVersion(name);
             if (semver.lt(versionInfo.version, version)) {
                 this.logWarn(`${versionInfo.pkgLock.name} ${versionInfo.pkgLock.version}: version of ${NUI_LIBRARY} ${versionInfo.version} is outdated. Latest is ${version}`);
-            } 
+            }
         } catch (ignore) {
         }
     },
@@ -338,12 +338,12 @@ module.exports = {
     },
 
     checkNpmModulesInstalled() {
-        if (! fse.existsSync('node_modules')) {
+        if (!fse.existsSync('node_modules')) {
             this.logError('Directory node_modules does not exist.  Did you forget to run "npm install"?');
             process.exit(3);
         }
 
-        if (! fse.existsSync('package-lock.json')) {
+        if (!fse.existsSync('package-lock.json')) {
             this.logWarn('File package-lock.json does not exist.  Did you forget to run "npm install"?');
             return;
         }
