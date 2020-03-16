@@ -11,7 +11,7 @@
     "url": "https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute.git"
   },
   "dependencies": {
-    "@nui/asset-compute-dev-tool": "^1.0.0",
+    "@nui/asset-compute-dev-tool": "^2.0.1",
     "@nui/serverless-nui": "^2.0.0",
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
@@ -20,6 +20,7 @@
     "amazon-s3-uri": "0.0.3",
     "envinfo": "^7.5.0",
     "fast-csv": "^4.1.1",
+    "get-port": "^5.1.1",
     "http-terminator": "^2.0.2",
     "js-yaml": "^3.13.1",
     "open": "^7.0.3",

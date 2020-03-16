@@ -19,6 +19,7 @@ const http = require('http');
 const { createHttpTerminator } = require('http-terminator');
 const util = require('../../lib/util');
 const open = require('open');
+const getPort = require('get-port');
 
 /**
  * Event listener for HTTP server "listening" event.
@@ -33,11 +34,19 @@ async function onListening(server) {
     await open(`http://localhost:${addr.port}`);
 }
 
+/**
+ * Normalize a port into a number, string, or false.
+ */
+async function findOpenPort(preferredPort) {
+    return getPort({port: [preferredPort, preferredPort + 1, preferredPort + 2]});
+    // Will use specified port if available, otherwise fall back to a random port
+}
+
 class DevToolCommand extends BaseCommand {
     async run() {
         const { flags } = this.parse(DevToolCommand);
+        const port = await findOpenPort(flags.port);
         return new Promise((resolve, reject) => {
-            const port = flags.port;
             app.set('port', port);
 
             // Create HTTP server.
@@ -51,11 +60,11 @@ class DevToolCommand extends BaseCommand {
                 if (error.syscall !== 'listen') {
                     return reject(error);
                 }
-            
+
                 // handle specific listen errors with friendly messages
                 const bind = typeof port === 'string'
                     ? 'Pipe ' + port
-                    : 'Port ' + port;                
+                    : 'Port ' + port;
                 switch (error.code) {
                 case 'EACCES':
                     util.logError(bind + ' requires elevated privileges');
