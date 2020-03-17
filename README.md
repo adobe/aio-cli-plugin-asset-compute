@@ -5,13 +5,10 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 <!--- when a new release happens, the VERSION and URL in the badge have to be manually updated because it's a private registry --->
-[![npm version](https://img.shields.io/badge/%40nui%2Faio--cli--plugin--nui-1.0.7-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/aio-cli-plugin-nui/-/@nui/aio-cli-plugin-nui-1.0.7.tgz)
+[![npm version](https://img.shields.io/badge/%40nui%2Faio--cli--plugin--nui-1.0.8-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/aio-cli-plugin-nui/-/@nui/aio-cli-plugin-nui-1.0.8.tgz)
 
 <!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-* [Contributing](#contributing)
-* [Licensing](#licensing)
+
 <!-- tocstop -->
 
 ## Usage
@@ -34,14 +31,10 @@ Runs the Asset Compute Developer Tool UI
 
 ## Commands
 <!-- commands -->
-- [@nui/aio-cli-plugin-asset-compute](#nuiaio-cli-plugin-asset-compute)
-  - [Usage](#usage)
-  - [Commands](#commands)
-  - [`@nui/aio-cli-plugin-asset-compute asset-compute:devtool`](#nuiaio-cli-plugin-asset-compute-asset-computedevtool)
-  - [`@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`](#nuiaio-cli-plugin-asset-compute-asset-computeenvinfo)
-  - [`@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`](#nuiaio-cli-plugin-asset-compute-asset-computetest-worker)
-  - [Contributing](#contributing)
-  - [Licensing](#licensing)
+* [`@nui/aio-cli-plugin-asset-compute asset-compute:devtool`](#nuiaio-cli-plugin-asset-compute-asset-computedevtool)
+* [`@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`](#nuiaio-cli-plugin-asset-compute-asset-computeenvinfo)
+* [`@nui/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`](#nuiaio-cli-plugin-asset-compute-asset-computerun-worker-file-rendition)
+* [`@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`](#nuiaio-cli-plugin-asset-compute-asset-computetest-worker)
 
 ## `@nui/aio-cli-plugin-asset-compute asset-compute:devtool`
 
@@ -73,6 +66,32 @@ OPTIONS
 ```
 
 _See code: [src/commands/asset-compute/envinfo.js](https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute/blob/1.0.7/src/commands/asset-compute/envinfo.js)_
+
+## `@nui/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`
+
+Run worker from local project using Docker
+
+```
+USAGE
+  $ @nui/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION
+
+ARGUMENTS
+  FILE       Path to input file for worker
+
+  RENDITION  Path where to create output rendition.
+             Single file for single rendition, or directory to create multiple renditions, in which case the full
+             parameter json including rendition names must be provided using --data.
+
+OPTIONS
+  -P, --paramFile=paramFile  Path to parameter json file.
+  -d, --data=data            Complete input parameters as JSON string. Allows multiple renditions.
+  -f, --fmt=fmt              Replace expected renditions of failing test cases with the generated rendition.
+  -p, --param=param          <key> <value> - Set parameters for rendition, can be used multiple times
+  -v, --verbose              Verbose output
+  --version                  Show version
+```
+
+_See code: [src/commands/asset-compute/run-worker.js](https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute/blob/1.0.7/src/commands/asset-compute/run-worker.js)_
 
 ## `@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`
 
