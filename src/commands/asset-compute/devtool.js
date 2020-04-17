@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
 
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
-const app = require('@nui/asset-compute-dev-tool/app');
+const app = require('@nui/asset-compute-devtool/app');
 const http = require('http');
 const { createHttpTerminator } = require('http-terminator');
 const util = require('../../lib/util');
