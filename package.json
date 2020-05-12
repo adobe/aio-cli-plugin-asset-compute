@@ -3,13 +3,11 @@
   "description": "Asset Compute Plugin for Adobe I/O Command Line Interface",
   "version": "1.0.8",
   "author": "Adobe Inc.",
+  "license": "Apache-2.0",
   "publishConfig": {
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-nui-release-local"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute.git"
-  },
+  "repository": "nui/aio-cli-plugin-asset-compute.git",
   "dependencies": {
     "@adobe/asset-compute-devtool": "^1.0.0",
     "@nui/serverless-nui": "^2.0.0",
@@ -45,12 +43,19 @@
     "node": ">=10.0.0"
   },
   "files": [
-    "/oclif.manifest.json",
-    "/src"
+    "oclif.manifest.json",
+    "src",
+    "COPYRIGHT",
+    "CODE_OF_CONDUCT.md"
   ],
-  "homepage": "https://git.corp.adobe.com/nui/aio-cli-plugin-asset-compute",
+  "homepage": "https://github.com/adobe/aio-cli-plugin-asset-compute",
   "keywords": [
-    "oclif-plugin"
+    "oclif-plugin",
+    "adobe-io",
+    "serverless",
+    "asset compute",
+    "adobe",
+    "openwhisk"
   ],
   "oclif": {
     "commands": "./src/commands",
