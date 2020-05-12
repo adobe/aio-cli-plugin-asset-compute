@@ -10,4 +10,7 @@ node_modules
 coverage
 .vscode/
 
+.env
+.aio
+
 oclif.manifest.json

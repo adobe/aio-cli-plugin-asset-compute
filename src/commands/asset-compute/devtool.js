@@ -14,24 +14,26 @@ governing permissions and limitations under the License.
 
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
-const app = require('@nui/asset-compute-devtool/app');
+const app = require('@adobe/asset-compute-devtool/app');
 const http = require('http');
 const { createHttpTerminator } = require('http-terminator');
 const util = require('../../lib/util');
 const open = require('open');
 const getPort = require('get-port');
+const crypto = require("crypto");
 
 /**
  * Event listener for HTTP server "listening" event.
  */
-async function onListening(server) {
+async function onListening(server, randomString) {
     const addr = server.address();
     const bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     util.log('Listening on ' + bind);
-    util.log(`Opening http://localhost:${addr.port}`);
-    await open(`http://localhost:${addr.port}`);
+    const assetComputeDevToolUrl = `http://localhost:${addr.port}/?devToolToken=${randomString}`;
+    console.log('Asset Compute Developer Tool Server started on url ', assetComputeDevToolUrl);
+    await open(assetComputeDevToolUrl);
 }
 
 /**
@@ -46,8 +48,18 @@ class DevToolCommand extends BaseCommand {
     async run() {
         const { flags } = this.parse(DevToolCommand);
         const port = await findOpenPort(flags.port);
+
+        // random string for developer tool authorization token
+        let randomString;
+        try {
+            randomString = crypto.randomBytes(32).toString("hex");
+        } catch(e) {
+            console.log(e);
+            throw new Error('Error: Not enough accumulated entropy to generate cryptographically strong data.');
+        }
         return new Promise((resolve, reject) => {
             app.set('port', port);
+            app.set('devToolToken', randomString);
 
             // Create HTTP server.
             util.log('Starting Asset Compute Developer Tool Server on port ', port);
@@ -75,7 +87,7 @@ class DevToolCommand extends BaseCommand {
                 }
                 return reject(error);
             });
-            server.on('listening', () => onListening(server));
+            server.on('listening', () => onListening(server, randomString));
             server.on('close', () => {
                 util.log("Asset Compute Developer Tool Server Stopped");
                 process.exit();
