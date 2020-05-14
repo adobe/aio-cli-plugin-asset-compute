@@ -1,14 +1,14 @@
 /*
- * Copyright 2019 Adobe Inc. All rights reserved.
- * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under
- * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
 'use strict';
 
@@ -168,8 +168,7 @@ class OpenwhiskActionRunner {
             }
         }
 
-        // for Jenkins CI, where we run inside a docker container, use the DOCKER_HOST_IP if available
-        // https://git.corp.adobe.com/nui/ci-sharedlib/issues/17
+        // for when we run inside a docker container, use the DOCKER_HOST_IP if available
         const port = process.env.DOCKER_HOST_IP ? `${process.env.DOCKER_HOST_IP.trim()}::${RUNTIME_PORT}` : RUNTIME_PORT;
 
         this.containerId = await this._docker(
@@ -308,7 +307,7 @@ class OpenwhiskActionRunner {
     async _removeContainer(nameOrId) {
         try {
             await this._docker(`rm -f ${nameOrId}`, {stdio: 'ignore'});
-        } catch (ignore) {
+        } catch (ignore) { // eslint-disable-line no-unused-vars
             // debug("ignored exception", ignore);
         }
     }
