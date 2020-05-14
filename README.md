@@ -17,8 +17,6 @@ This plugin has [aio-cli](https://github.com/adobe/aio-cli) as a prerequisite. O
 
 ```sh-session
 $ aio plugins:install @nui/aio-cli-plugin-asset-compute
-$ aio asset-compute:envinfo
-Environment information
 $ aio asset-compute:test-worker --help
 Usage information of the test-worker command
 $ aio asset-compute:test-worker -u
@@ -34,7 +32,7 @@ Runs the Asset Compute Developer Tool UI
 * [`@nui/aio-cli-plugin-asset-compute asset-compute:devtool`](#nuiaio-cli-plugin-asset-compute-asset-computedevtool)
 * [`@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`](#nuiaio-cli-plugin-asset-compute-asset-computeenvinfo)
 * [`@nui/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`](#nuiaio-cli-plugin-asset-compute-asset-computerun-worker-file-rendition)
-* [`@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`](#nuiaio-cli-plugin-asset-compute-asset-computetest-worker)
+* [`@nui/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`](#nuiaio-cli-plugin-asset-compute-asset-computetest-worker-testcase)
 
 ## `@nui/aio-cli-plugin-asset-compute asset-compute:devtool`
 
@@ -84,6 +82,7 @@ ARGUMENTS
 
 OPTIONS
   -P, --paramFile=paramFile  Path to parameter json file.
+  -a, --action=action        Worker to run. Use action name from manifest. Not required if there is only one.
   -d, --data=data            Complete input parameters as JSON string. Allows multiple renditions.
   -f, --fmt=fmt              Replace expected renditions of failing test cases with the generated rendition.
   -p, --param=param          <key> <value> - Set parameters for rendition, can be used multiple times
@@ -93,15 +92,19 @@ OPTIONS
 
 _See code: [src/commands/asset-compute/run-worker.js](https://github.com/nui/aio-cli-plugin-asset-compute/blob/1.0.8/src/commands/asset-compute/run-worker.js)_
 
-## `@nui/aio-cli-plugin-asset-compute asset-compute:test-worker`
+## `@nui/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`
 
 Run tests from local project
 
 ```
 USAGE
-  $ @nui/aio-cli-plugin-asset-compute asset-compute:test-worker
+  $ @nui/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]
+
+ARGUMENTS
+  TESTCASE  Test case(s) to run. Supports glob patterns. If not set, runs all tests.
 
 OPTIONS
+  -a, --action=action     Worker to test. Use action name from manifest. If not set, runs tests for all workers.
   -u, --updateRenditions  Replace expected renditions of failing test cases with the generated rendition.
   -v, --verbose           Verbose output
   --version               Show version

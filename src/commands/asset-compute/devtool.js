@@ -108,6 +108,6 @@ DevToolCommand.flags = {
         default: 9000
     }),
     ...BaseCommand.flags
-}
+};
 
-module.exports = DevToolCommand
+module.exports = DevToolCommand;

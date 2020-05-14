@@ -1,118 +1,167 @@
-/**
- *  ADOBE CONFIDENTIAL
- *  __________________
+/*
+ * Copyright 2019 Adobe Inc. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Copyright 2020 Adobe Systems Incorporated
- *  All Rights Reserved.
- *
- *  NOTICE:  All information contained herein is, and remains
- *  the property of Adobe Systems Incorporated and its suppliers,
- *  if any.  The intellectual and technical concepts contained
- *  herein are proprietary to Adobe Systems Incorporated and its
- *  suppliers and are protected by trade secret or copyright law.
- *  Dissemination of this information or reproduction of this material
- *  is strictly forbidden unless prior written permission is obtained
- *  from Adobe Systems Incorporated.
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 
 'use strict';
 
-const util = require('../../lib/util');
+const debug = require('debug')('aio-asset-compute.run-worker');
 const path = require('path');
 const fse = require('fs-extra');
-const serverless = require('../../lib/serverless');
-const testfiles = require('../../lib/testfiles');
+const AssetComputeWorkerRunner = require("../../lib/workerrunner");
+const getCloudFile = require('../../lib/cloudfiles');
+const util = require('../../lib/util');
 
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
 
-function runWorker(argv) {
-    let targetDir;
-    let json;
-    argv.args.rendition = util.yargsFilePathOption(argv.args.rendition);
+class RunWorkerCommand extends BaseCommand {
 
-    if (argv.flags.data) {
-        // take complete json from --data if present
-        json = util.JSON.parse(argv.flags.data);
-
-        if (fse.existsSync(argv.args.rendition)) {
-            if (!fse.lstatSync(argv.args.rendition).isDirectory()) {
-                util.logError(`Option --data {json} requires to pass a directory, but does not contain a valid directory: ${argv.args.rendition}`);
-                process.exit(1);
+    async run() {
+        this.onProcessExit(async () => {
+            if (this.workerRunner) {
+                this.workerRunner.stop();
             }
-        } else {
-            fse.ensureDirSync(argv.args.rendition);
+        });
+
+        const argv = this.parse(RunWorkerCommand);
+
+        try {
+            const actionName = await this.selectAction(argv);
+
+            return await this.runWorker(actionName, argv);
+
+        } catch (e) {
+            console.error("Error:", e.message);
+            debug(e);
+            process.exitCode = 1;
         }
-
-        targetDir = argv.args.rendition;
-
-        // ensure just filenames, no paths for all renditions
-        if (json.renditions) {
-            json.renditions.forEach(rendition => {
-                if (rendition.name) {
-                    rendition.name = path.basename(rendition.name);
-                }
-            });
-        }
-
-    } else {
-        const rendition = util.yargsFilePathOption(argv.flags.paramFile) ? require(argv.flags.paramFile) : {};
-
-        // build json with single rendition
-        rendition.fmt = argv.flags.fmt || rendition.fmt || util.extension(argv.args.rendition);
-        rendition.name = path.basename(argv.args.rendition);
-
-        targetDir = path.dirname(argv.args.rendition);
-
-        // set params if available
-        if (argv.flags.param) {
-            if(argv.flags.param.length % 2 !== 0) {
-                util.logError('Values were provided for the option --param, but were not specified as <key> <value>.\nPlease make sure the --param input is correct.');
-                process.exit(1);
-            }
-            for (let i = 0; i < argv.flags.param.length-1; i+=2) {
-                const key = argv.flags.param[i];
-                const value = argv.flags.param[i+1];
-                rendition[key] = value;
-            }
-        }
-
-        json = {
-            renditions: [
-                rendition
-            ]
-        };
     }
 
-    const dirs = util.prepareInOutDir();
+    async selectAction(argv) {
+        if (this.actionNames.length === 0) {
+            throw new Error("No action found in manifest.yml");
+        }
 
-    testfiles.getFile(argv.args.file)
-    .then(function(sourceFile) {
+        let name;
+        if (argv.flags.action) {
+            name = argv.flags.action;
+        } else if (this.actionNames.length === 1) {
+            name = this.actionNames[0];
+        } else {
+            throw new Error("Must specify worker to run using --action");
+        }
 
-        json.source = path.basename(sourceFile);
+        return name;
+    }
+
+    getParams(argv) {
+        let params;
+        let targetDir;
+
+        if (argv.flags.data) {
+            // take complete json from --data if present
+            params = JSON.parse(argv.flags.data);
+
+            // must point to a dir if --data is set
+            targetDir = argv.args.rendition;
+
+            if (fse.existsSync(targetDir)) {
+                if (!fse.lstatSync(targetDir).isDirectory()) {
+                    util.logError(`Option --data {json} requires to pass a directory, but does not contain a valid directory: ${argv.args.rendition}`);
+                    process.exit(1);
+                }
+            } else {
+                fse.ensureDirSync(targetDir);
+            }
+
+            // ensure just filenames, no paths for all renditions
+            if (params.renditions) {
+                params.renditions.forEach(rendition => {
+                    if (rendition.name) {
+                        rendition.name = path.basename(rendition.name);
+                    }
+                });
+            }
+
+        } else {
+            const rendition = argv.flags.paramFile ? require(argv.flags.paramFile) : {};
+
+            const renditionFile = argv.args.rendition;
+
+            // build json with single rendition
+            rendition.fmt = argv.flags.fmt || rendition.fmt || util.extension(renditionFile);
+            rendition.name = path.basename(renditionFile);
+
+            targetDir = path.dirname(renditionFile);
+
+            // set params if available
+            if (argv.flags.param) {
+                if(argv.flags.param.length % 2 !== 0) {
+                    util.logError('Values were provided for the option --param, but were not specified as <key> <value>.\nPlease make sure the --param input is correct.');
+                    process.exit(1);
+                }
+                for (let i = 0; i < argv.flags.param.length-1; i+=2) {
+                    const key = argv.flags.param[i];
+                    const value = argv.flags.param[i+1];
+                    rendition[key] = value;
+                }
+            }
+
+            params = {
+                renditions: [
+                    rendition
+                ]
+            };
+        }
+
+        return { params: params, targetDir };
+    }
+
+    async runWorker(actionName, argv) {
+        const action = await this.openwhiskAction(actionName);
+
+        const { params, targetDir } = this.getParams(argv);
+
+        const sourceFile = await getCloudFile(argv.args.file);
+        params.source = path.basename(sourceFile);
+
+        const dirs = util.prepareInOutDir();
 
         // copy input file
-        const inFile = path.resolve(dirs.in, path.basename(sourceFile));
+        const inFile = path.resolve(dirs.in, params.source);
         fse.copyFileSync(sourceFile, inFile);
         // ensure file is readable
         fse.chmodSync(inFile, 0o644);
 
-        serverless.invokeLocal({
-            inDir: dirs.in,
-            outDir: dirs.out,
-            params: json,
-            verbose: argv.flags.verbose,
-            dockerArgs:  ` -e WORKER_TEST_MODE='true' `
-        })
-        .then(() => {
-            if (json.renditions) {
-                json.renditions.forEach(rendition => {
+        this.workerRunner = new AssetComputeWorkerRunner({
+            action: action,
+            containerName: `aio-asset-compute-runworker-${action.name}`,
+            sourceDir: dirs.in,
+            targetDir: dirs.out
+        });
+
+        try {
+            await this.workerRunner.start();
+
+            const result = await this.workerRunner.run(params);
+
+            if (result.renditions) {
+                result.renditions.forEach(rendition => {
                     if (rendition.name) {
                         // copy rendition out of .nui/out if present
                         const filename = path.basename(rendition.name);
                         const outFile = path.resolve(dirs.out, filename);
                         const targetFile = path.resolve(targetDir, filename);
                         if (fse.existsSync(outFile)) {
+                            debug("created rendition:", targetFile);
                             fse.copyFileSync(outFile, targetFile);
                         } else {
                             util.logWarn(`no rendition named ${filename} found`);
@@ -120,35 +169,11 @@ function runWorker(argv) {
                     }
                 });
             }
-        })
-        .catch(e => {
-            util.logError(e.message || e);
-            process.exitCode = 2;
-        })
-        .finally(() => {
+
+        } finally {
+            await this.workerRunner.stop();
+
             util.cleanupInOutDir(dirs);
-        });
-    })
-    .catch(e => {
-        util.logError(e.message || e);
-        process.exitCode = 3;
-    });
-}
-
-
-class RunWorkerCommand extends BaseCommand {
-
-    async run() {
-        const argv = this.parse(RunWorkerCommand);
-        try {
-            argv.args.file = util.yargsExistingFileOption(argv.args.file);
-
-            if(argv.args.file) {
-                return runWorker(argv);
-            }
-            util.logError(`No such file : ${argv.args.file}`);
-        } catch (e) {
-            util.logError(e);
         }
     }
 }
@@ -159,17 +184,25 @@ RunWorkerCommand.args = [
     {
         name: 'file',
         required: true,
+        parse: p => path.resolve(p),
         description: 'Path to input file for worker'
     },
     {
         name: 'rendition',
         required: true,
+        parse: p => path.resolve(p),
         description: 'Path where to create output rendition.\nSingle file for single rendition, or directory to create multiple renditions, in which case the full parameter json including rendition names must be provided using --data.'
     },
 ];
 
 RunWorkerCommand.flags = {
     ...BaseCommand.flags,
+    action: flags.string(
+        {
+            char: 'a',
+            description: 'Worker to run. Use action name from manifest. Not required if there is only one.'
+        }
+    ),
     fmt: flags.string(
         {
             char: 'f',
@@ -186,6 +219,7 @@ RunWorkerCommand.flags = {
     paramFile: flags.string(
         {
             char: 'P',
+            parse: p => path.resolve(p),
             description: 'Path to parameter json file.'
         }
     ),

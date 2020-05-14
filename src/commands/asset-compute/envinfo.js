@@ -31,4 +31,4 @@ class EnvInfoCommand extends BaseCommand {
 
 EnvInfoCommand.description = 'Display dev environment version information';
 
-module.exports = EnvInfoCommand
+module.exports = EnvInfoCommand;
