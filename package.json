@@ -1,13 +1,10 @@
 {
-  "name": "@nui/aio-cli-plugin-asset-compute",
+  "name": "@adobe/aio-cli-plugin-asset-compute",
   "description": "Asset Compute Plugin for Adobe I/O Command Line Interface",
-  "version": "1.0.8",
+  "version": "1.0.0",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-nui-release-local"
-  },
-  "repository": "nui/aio-cli-plugin-asset-compute.git",
+  "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
     "@adobe/aio-cli-plugin-runtime": "^1.6.0",
     "@adobe/asset-compute-devtool": "^1.0.0",
@@ -28,7 +25,7 @@
     "xml": "^1.0.1"
   },
   "devDependencies": {
-    "@nui/eslint-config": "^1.0.4",
+    "@adobe/eslint-config-asset-compute": "^1.2.0",
     "@oclif/dev-cli": "^1.22.2",
     "@oclif/test": "^1.2.5",
     "globby": "^11.0.0"
