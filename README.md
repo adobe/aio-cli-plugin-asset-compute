@@ -30,7 +30,6 @@ Runs the Asset Compute Developer Tool UI
 ## Commands
 <!-- commands -->
 * [`@nui/aio-cli-plugin-asset-compute asset-compute:devtool`](#nuiaio-cli-plugin-asset-compute-asset-computedevtool)
-* [`@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`](#nuiaio-cli-plugin-asset-compute-asset-computeenvinfo)
 * [`@nui/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`](#nuiaio-cli-plugin-asset-compute-asset-computerun-worker-file-rendition)
 * [`@nui/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`](#nuiaio-cli-plugin-asset-compute-asset-computetest-worker-testcase)
 
@@ -49,21 +48,6 @@ OPTIONS
 ```
 
 _See code: [src/commands/asset-compute/devtool.js](https://github.com/nui/aio-cli-plugin-asset-compute/blob/1.0.8/src/commands/asset-compute/devtool.js)_
-
-## `@nui/aio-cli-plugin-asset-compute asset-compute:envinfo`
-
-Display dev environment version information
-
-```
-USAGE
-  $ @nui/aio-cli-plugin-asset-compute asset-compute:envinfo
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-```
-
-_See code: [src/commands/asset-compute/envinfo.js](https://github.com/nui/aio-cli-plugin-asset-compute/blob/1.0.8/src/commands/asset-compute/envinfo.js)_
 
 ## `@nui/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`
 
