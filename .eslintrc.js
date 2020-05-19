@@ -11,5 +11,5 @@
  */
 
 module.exports = {
-  "extends": "@nui/eslint-config",
+  "extends": "@adobe/eslint-config-asset-compute",
 };
