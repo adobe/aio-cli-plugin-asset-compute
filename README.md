@@ -46,7 +46,7 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/asset-compute/devtool.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/1.0.1/src/commands/asset-compute/devtool.js)_
+_See code: [src/commands/asset-compute/devtool.js](src/commands/asset-compute/devtool.js)_
 
 ## `@adobe/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`
 
@@ -73,7 +73,7 @@ OPTIONS
   --version                  Show version
 ```
 
-_See code: [src/commands/asset-compute/run-worker.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/1.0.1/src/commands/asset-compute/run-worker.js)_
+_See code: [src/commands/asset-compute/run-worker.js](src/commands/asset-compute/run-worker.js)_
 
 ## `@adobe/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`
 
@@ -96,7 +96,7 @@ ALIASES
   $ @adobe/aio-cli-plugin-asset-compute asset-compute:tw
 ```
 
-_See code: [src/commands/asset-compute/test-worker.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/1.0.1/src/commands/asset-compute/test-worker.js)_
+_See code: [src/commands/asset-compute/test-worker.js](src/commands/asset-compute/test-worker.js)_
 <!-- commandsstop -->
 
 ## Contributing
