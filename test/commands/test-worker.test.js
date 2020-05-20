@@ -19,6 +19,7 @@ const path = require("path");
 const { execSync } = require("child_process");
 const fs = require("fs");
 const glob = require("glob");
+const rimraf = require("rimraf");
 
 // tests are not running in a full oclif enviroment with the aio app plugin present,
 // so we have to include it as a dev dependency and manually load and run the commands
@@ -51,10 +52,10 @@ describe("test-worker command", function() {
                 process.chdir(path.join(baseDir, dir));
 
                 // make sure it builds a fresh action.zip
-                fs.rmdirSync("dist", { recursive: true });
+                rimraf.sync("dist");
                 // remove temp directories
-                fs.rmdirSync("build", { recursive: true });
-                fs.rmdirSync(".nui", { recursive: true });
+                rimraf.sync("build");
+                rimraf.sync(".nui");
 
                 // install dependencies for the project
                 execSync("npm install");
