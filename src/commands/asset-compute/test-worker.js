@@ -12,7 +12,6 @@
 
 'use strict';
 
-const debug = require('debug')('aio-asset-compute.run-worker');
 const { flags } = require('@oclif/command');
 const BaseCommand = require('../../base-command');
 const WorkerTestRunner = require("../../lib/testrunner");
@@ -49,8 +48,8 @@ class TestWorkerCommand extends BaseCommand {
                 }
             }
         } catch (e) {
-            console.error("Error:", e.message);
-            debug(e);
+            console.error(e);
+            process.exitCode = 3;
         }
     }
 

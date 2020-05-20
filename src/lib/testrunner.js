@@ -52,7 +52,7 @@ async function globCloudFile(dir, pattern, description) {
 
 function getTestsDirectory(baseDir) {
     const testDir = path.resolve(baseDir, TEST_FOLDER);
-    if (fse.existsSync(testDir) && fse.lstatSync(testDir).isDirectory()) {
+    if (fse.existsSync(testDir) && fse.statSync(testDir).isDirectory()) {
         return testDir;
     }
 }
@@ -596,7 +596,9 @@ class WorkerTestRunner {
         util.log('Timing results :', timingResultFile);
         util.log('Test log       :', this.testLogFile);
 
-        if (results.failures > 0 || results.errors > 0) {
+        if (results.errors > 0) {
+            process.exitCode = 2;
+        } else if (results.failures > 0) {
             process.exitCode = 1;
         }
     }
