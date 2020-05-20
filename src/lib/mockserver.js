@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Adobe Inc. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,7 +21,7 @@ const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.8.1';
 
 // "mock-upload.wikimedia.org.json" => "upload.wikimedia.org"
 function getHostName(file) {
-    file = path.basename(file, path.extname(file))
+    file = path.basename(file, path.extname(file));
     if (file.startsWith("mock-")) {
         file = file.substring("mock-".length);
     }
