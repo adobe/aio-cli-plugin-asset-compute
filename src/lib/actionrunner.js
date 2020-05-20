@@ -168,8 +168,7 @@ class OpenwhiskActionRunner {
             }
         }
 
-        // for Jenkins CI, where we run inside a docker container, use the DOCKER_HOST_IP if available
-        // https://git.corp.adobe.com/nui/ci-sharedlib/issues/17
+        // for when we run inside a docker container, use the DOCKER_HOST_IP if available
         const port = process.env.DOCKER_HOST_IP ? `${process.env.DOCKER_HOST_IP.trim()}::${RUNTIME_PORT}` : RUNTIME_PORT;
 
         this.containerId = await this._docker(
@@ -308,7 +307,7 @@ class OpenwhiskActionRunner {
     async _removeContainer(nameOrId) {
         try {
             await this._docker(`rm -f ${nameOrId}`, {stdio: 'ignore'});
-        } catch (ignore) {
+        } catch (ignore) { // eslint-disable-line no-unused-vars
             // debug("ignored exception", ignore);
         }
     }

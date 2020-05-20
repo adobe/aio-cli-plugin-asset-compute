@@ -102,7 +102,7 @@ class MockServer {
         // create network and connect worker and mock-server containers to network
         try {
             await exec(`docker network create ${this.network}`);
-        } catch (e) {
+        } catch (e) { // eslint-disable-line no-unused-vars
             // ignore if network is already created
         }
         await exec(`docker network connect ${this.network} ${this.container} --alias ${this.host}`);
