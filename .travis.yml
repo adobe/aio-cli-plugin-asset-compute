@@ -19,6 +19,8 @@ node_js:
   - "10.19"
   - "12"
   - "14"
+services:
+  - docker
 
 install:
   - npm version
