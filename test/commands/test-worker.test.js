@@ -13,7 +13,7 @@
 'use strict';
 
 const { test } = require("@oclif/test");
-const stdmock = require('stdout-stderr')
+const stdmock = require("stdout-stderr");
 const assert = require("assert");
 const path = require("path");
 const { execSync } = require("child_process");
@@ -25,7 +25,7 @@ const glob = require("glob");
 // the code is invoking dynamically, by overwriting our BaseCommand.runCommand() helper
 const COMMANDS = {
     "app:deploy": "@adobe/aio-cli-plugin-app/src/commands/app/deploy"
-}
+};
 const BaseCommand = require("../../src/base-command");
 BaseCommand.prototype.runCommand = async (command, argv) => {
     if (COMMANDS[command]) {
@@ -93,53 +93,53 @@ describe("test-worker command", function() {
     describe("success", function() {
 
         testWorker("test-projects/worker-test-success")
-        .it("runs successful tests", ctx => {
-            assertExitCode(undefined);
-            assert(ctx.stdout.includes(" - simple"));
-            assert(ctx.stdout.includes("✔  Succeeded."));
-            assert(ctx.stdout.includes("✔︎ All tests were successful."));
-            assert(ctx.stdout.includes("- Tests run      : 1"));
-            assert(ctx.stdout.includes("- Failures       : 0"));
-            assert(ctx.stdout.includes("- Errors         : 0"));
-            assert(!fs.existsSync(".nui"));
-        });
+            .it("runs successful tests", ctx => {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - simple"));
+                assert(ctx.stdout.includes("✔  Succeeded."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+                assert(!fs.existsSync(".nui"));
+            });
     });
 
     describe("failure", function() {
 
         testWorker("test-projects/worker-test-failure-rendition")
-        .it("fails with exit code 1 if test fails due to a different rendition result", ctx => {
-            assertExitCode(1);
-            assert(ctx.stdout.includes(" - fails"));
-            assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test.log."));
-            assert(ctx.stdout.includes("error: There were test failures."));
-            assert(ctx.stdout.includes("- Tests run      : 1"));
-            assert(ctx.stdout.includes("- Failures       : 1"));
-            assert(ctx.stdout.includes("- Errors         : 0"));
-            assert(glob.sync(".nui/*/failed/fails/rendition0.jpg").length, 1);
-        });
+            .it("fails with exit code 1 if test fails due to a different rendition result", ctx => {
+                assertExitCode(1);
+                assert(ctx.stdout.includes(" - fails"));
+                assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test.log."));
+                assert(ctx.stdout.includes("error: There were test failures."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 1"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+                assert(glob.sync(".nui/*/failed/fails/rendition0.jpg").length, 1);
+            });
 
         testWorker("test-projects/worker-test-failure-missing-rendition")
-        .it("fails with exit code 1 if test fails due to a missing rendition", ctx => {
-            assertExitCode(1);
-            assert(ctx.stdout.includes(" - fails"));
-            assert(ctx.stdout.includes("✖  Failure: No rendition generated. Check build/test.log."));
-            assert(ctx.stdout.includes("error: There were test failures."));
-            assert(ctx.stdout.includes("- Tests run      : 1"));
-            assert(ctx.stdout.includes("- Failures       : 1"));
-            assert(ctx.stdout.includes("- Errors         : 0"));
-        });
+            .it("fails with exit code 1 if test fails due to a missing rendition", ctx => {
+                assertExitCode(1);
+                assert(ctx.stdout.includes(" - fails"));
+                assert(ctx.stdout.includes("✖  Failure: No rendition generated. Check build/test.log."));
+                assert(ctx.stdout.includes("error: There were test failures."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 1"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+            });
 
         testWorker("test-projects/worker-invocation-error", [], true)
-        .it("fails with exit code 2 if the worker invocation errors", () => {
-            assertExitCode(2);
-        });
+            .it("fails with exit code 2 if the worker invocation errors", () => {
+                assertExitCode(2);
+            });
 
         testWorker("test-projects/worker-build-error")
-        .it("fails with exit code 3 if the worker does not build (has no manifest)", ctx => {
-            assertExitCode(3);
-            assert(ctx.stderr.match(/error.*manifest.yml/i));
-        });
+            .it("fails with exit code 3 if the worker does not build (has no manifest)", ctx => {
+                assertExitCode(3);
+                assert(ctx.stderr.match(/error.*manifest.yml/i));
+            });
 
     });
 });
