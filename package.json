@@ -1,7 +1,7 @@
 {
   "name": "@adobe/aio-cli-plugin-asset-compute",
   "description": "Asset Compute Plugin for Adobe I/O Command Line Interface",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
   "repository": "adobe/aio-cli-plugin-asset-compute",
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@adobe/aio-cli-plugin-app": "^2.0.7",
-    "@adobe/eslint-config-asset-compute": "^1.2.0",
+    "@adobe/eslint-config-asset-compute": "^1.3.0",
     "@oclif/dev-cli": "^1.22.2",
     "@oclif/test": "^1.2.5",
     "chai": "^4.2.0",
