@@ -29,8 +29,10 @@
     "@oclif/dev-cli": "^1.22.2",
     "@oclif/test": "^1.2.5",
     "chai": "^4.2.0",
+    "codecov": "^3.7.0",
     "globby": "^11.0.0",
     "mocha": "^7.1.2",
+    "nyc": "^15.0.1",
     "rimraf": "^2.7.1"
   },
   "engines": {
@@ -62,8 +64,9 @@
   "scripts": {
     "prepare": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
-    "test": "mocha test/*/*.test.js",
+    "test": "nyc mocha test/*/*.test.js",
     "posttest": "eslint .",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "clean": "for d in test-projects/*; do pushd $d; rm -rf package-lock.json node_modules dist build .nui .asset-compute; popd; done"
   }
 }
