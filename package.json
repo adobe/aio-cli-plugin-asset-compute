@@ -53,8 +53,7 @@
     "bin": "",
     "devPlugins": [
       "@oclif/plugin-help"
-    ],
-    "repositoryPrefix": "<%- repo %>/blob/<%- version %>/<%- commandPath %>"
+    ]
   },
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
