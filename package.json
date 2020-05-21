@@ -58,8 +58,7 @@
     "bin": "",
     "devPlugins": [
       "@oclif/plugin-help"
-    ],
-    "repositoryPrefix": "<%- repo %>/blob/<%- version %>/<%- commandPath %>"
+    ]
   },
   "scripts": {
     "prepare": "oclif-dev manifest && oclif-dev readme",
