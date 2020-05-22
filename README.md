@@ -4,7 +4,10 @@
 Asset Compute Plugin for Adobe I/O Command Line Interface
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/@adobe/aio-cli-plugin-asset-compute.svg)](https://npmjs.org/package/@adobe/aio-cli-plugin-asset-compute)
+[![Version](https://img.shields.io/npm/v/@adobe/<package-name>.svg)](https://npmjs.org/package/@adobe/aio-cli-plugin-asset-compute)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Travis](https://travis-ci.com/adobe/<package-name>.svg?branch=master)](https://travis-ci.com/adobe/aio-cli-plugin-asset-compute)
+
 
 <!-- toc -->
 
