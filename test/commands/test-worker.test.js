@@ -12,125 +12,54 @@
 
 'use strict';
 
-const MockServer = require("../../src/lib/mockserver");
-const WorkerTestRunner = require("../../src/lib/testrunner");
-const getCloudFile = require('../../src/lib/cloudfiles');
+const getCloudFile = require("../../src/lib/cloudfiles");
 
-const { test } = require("@oclif/test");
-const stdmock = require("stdout-stderr");
+const { testCommand, assertExitCode, assertOccurrences } = require("./testutil");
 const assert = require("assert");
 const path = require("path");
-const { execSync } = require("child_process");
 const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
-const Docker = require("dockerode");
 const nock = require("nock");
-
-// tests are not running in a full oclif enviroment with the aio app plugin present,
-// so we have to include it as a dev dependency and manually load and run the commands
-// the code is invoking dynamically, by overwriting our BaseCommand.runCommand() helper
-const COMMANDS = {
-    "app:deploy": "@adobe/aio-cli-plugin-app/src/commands/app/deploy"
-};
-const BaseCommand = require("../../src/base-command");
-BaseCommand.prototype.runCommand = async (command, argv) => {
-    if (COMMANDS[command]) {
-        await require(COMMANDS[command]).run(argv);
-    } else {
-        throw new Error(`Missing test implementation of aio command ${command}`);
-    }
-};
-
-function assertExitCode(expectedCode) {
-    assert.equal(process.exitCode, expectedCode, `unexpected exit code: ${process.exitCode}, expected: ${expectedCode}`);
-}
-
-async function assertDockerRemoved() {
-    const docker = new Docker();
-
-    for (const container of await docker.listContainers({all: true})) {
-        for (let name of container.Names) {
-            // all names here start with a /
-            name = name.substring(1);
-            if (name.startsWith(WorkerTestRunner.CONTAINER_PREFIX)
-                || name.startsWith(MockServer.CONTAINER_PREFIX)) {
-                assert.fail(`Docker container left behind (${container.State}): ${name} ` +
-                            `If unsure, remove using 'docker rm -f ${name}' and run tests again`);
-            }
-        }
-    }
-
-    for (const network of await docker.listNetworks()) {
-        if (network.Name.startsWith(MockServer.NETWORK_PREFIX)) {
-            assert.fail(`Docker network left behind: ${network.Name} ` +
-                        `If unsure, remove using 'docker network rm ${network.Name}' and run tests again`);
-        }
-    }
-}
-
-function occurrences(str, substr) {
-    return str.split(substr).length - 1;
-}
 
 // TODO test ctrl+c (might need a child process)
 // TODO test argument -u
 
 describe("test-worker command", function() {
 
-    const baseDir = process.cwd();
-
-    function testWorker(dir, args=[]) {
-        let prepareFn;
-        const chain = test
-            .stdout() // {print: true}
-            .stderr()
-            .do(() => {
-                process.chdir(path.join(baseDir, dir));
-
-                // make sure it builds a fresh action.zip
-                rimraf.sync("dist");
-                // remove temp directories
-                rimraf.sync("build");
-                rimraf.sync(".nui");
-
-                // install dependencies for the project
-                execSync("npm install");
-            })
-            .do(async ctx => {
-                if (prepareFn) {
-                    await prepareFn(ctx);
-                }
-            })
-            // run the command to test
-            .command(["asset-compute:test-worker", ...args])
-            // npm install can take some time
-            .timeout(30000)
-            .finally(ctx => {
-                // reset any exit code set by failing tests
-                delete process.exitCode;
-
-                // log stdout/stderr if test failed
-                if (ctx.error) {
-                    stdmock.stdout.stop();
-                    stdmock.stderr.stop();
-                    console.log(ctx.stdout);
-                    console.error(ctx.stderr);
-                }
-            });
-
-        chain.prepare = function(fn) {
-            prepareFn = fn;
-            return this;
-        };
-
-        return chain;
-    }
-
     describe("success", function() {
 
-        testWorker("test-projects/test-success")
-            .it("runs successful tests", async ctx => {
+        testCommand("test-projects/multiple-workers", "asset-compute:test-worker")
+            .it("runs tests for all workers", function(ctx) {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes("Actions:\n- workerA\n- workerB"));
+                assert(ctx.stdout.includes(" - testA"));
+                assert(ctx.stdout.includes(" - testB"));
+                assertOccurrences(ctx.stdout, "✔  Succeeded.", 2);
+                assertOccurrences(ctx.stdout, "✔  Succeeded.", 2);
+                assertOccurrences(ctx.stdout, "✔︎ All tests were successful.", 2);
+                assertOccurrences(ctx.stdout, "- Tests run      : 1", 2);
+                assertOccurrences(ctx.stdout, "- Failures       : 0", 2);
+                assertOccurrences(ctx.stdout, "- Errors         : 0", 2);
+                assert(!fs.existsSync(".nui"));
+            });
+
+        testCommand("test-projects/multiple-workers", "asset-compute:test-worker", ["-a", "workerA"])
+            .it("runs tests for the selected worker if -a is set", function(ctx) {
+                assertExitCode(undefined);
+                assert(!ctx.stdout.includes("workerB"));
+                assert(ctx.stdout.includes(" - testA"));
+                assert(!ctx.stdout.includes(" - testB"));
+                assertOccurrences(ctx.stdout, "✔  Succeeded.", 1);
+                assertOccurrences(ctx.stdout, "✔︎ All tests were successful.", 1);
+                assertOccurrences(ctx.stdout, "- Tests run      : 1", 1);
+                assertOccurrences(ctx.stdout, "- Failures       : 0", 1);
+                assertOccurrences(ctx.stdout, "- Errors         : 0", 1);
+                assert(!fs.existsSync(".nui"));
+            });
+
+        testCommand("test-projects/single-worker", "asset-compute:test-worker")
+            .it("runs tests for a single worker at the root", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
                 assert(ctx.stdout.includes("✔  Succeeded."));
@@ -139,44 +68,10 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(!fs.existsSync(".nui"));
-
-                await assertDockerRemoved();
             });
 
-        testWorker("test-projects/multiple-workers")
-            .it("runs tests for all actions/workers", async ctx => {
-                assertExitCode(undefined);
-                assert(ctx.stdout.includes("Actions:\n- workerA\n- workerB"));
-                assert(ctx.stdout.includes(" - testA"));
-                assert(ctx.stdout.includes(" - testB"));
-                assert.equal(occurrences(ctx.stdout, "✔  Succeeded."), 2);
-                assert.equal(occurrences(ctx.stdout, "✔︎ All tests were successful."), 2);
-                assert.equal(occurrences(ctx.stdout, "- Tests run      : 1"), 2);
-                assert.equal(occurrences(ctx.stdout, "- Failures       : 0"), 2);
-                assert.equal(occurrences(ctx.stdout, "- Errors         : 0"), 2);
-                assert(!fs.existsSync(".nui"));
-
-                await assertDockerRemoved();
-            });
-
-        testWorker("test-projects/multiple-workers", ["-a", "workerA"])
-            .it("runs tests for the selected worker only if -a is set", async ctx => {
-                assertExitCode(undefined);
-                assert(!ctx.stdout.includes("workerB"));
-                assert(ctx.stdout.includes(" - testA"));
-                assert(!ctx.stdout.includes(" - testB"));
-                assert.equal(occurrences(ctx.stdout, "✔  Succeeded."), 1);
-                assert.equal(occurrences(ctx.stdout, "✔︎ All tests were successful."), 1);
-                assert.equal(occurrences(ctx.stdout, "- Tests run      : 1"), 1);
-                assert.equal(occurrences(ctx.stdout, "- Failures       : 0"), 1);
-                assert.equal(occurrences(ctx.stdout, "- Errors         : 0"), 1);
-                assert(!fs.existsSync(".nui"));
-
-                await assertDockerRemoved();
-            });
-
-        testWorker("test-projects/mockserver")
-            .it("runs successful tests with a mocked domain", async ctx => {
+        testCommand("test-projects/mockserver", "asset-compute:test-worker")
+            .it("runs successful tests with a mocked domain", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - mock"));
                 assert(ctx.stdout.includes("✔  Succeeded."));
@@ -185,11 +80,9 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(!fs.existsSync(".nui"));
-
-                await assertDockerRemoved();
             });
 
-        testWorker("test-projects/cloudfiles")
+        testCommand("test-projects/cloudfiles", "asset-compute:test-worker")
             .prepare(() => {
                 process.env.AWS_ACCESS_KEY_ID = "key";
                 process.env.AWS_SECRET_ACCESS_KEY = "secret";
@@ -198,7 +91,7 @@ describe("test-worker command", function() {
                 nock("https://s3.amazonaws.com").get("/asset-compute-cli-test-bucket/source").reply(200, "correct file");
                 nock("https://s3.amazonaws.com").get("/asset-compute-cli-test-bucket/rendition").reply(200, "correct file");
             })
-            .it("runs successful tests with cloud files", async ctx => {
+            .it("runs successful tests with cloud files", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - cloudfile"));
                 assert(ctx.stdout.includes("✔  Succeeded."));
@@ -207,15 +100,13 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(!fs.existsSync(".nui"));
-
-                await assertDockerRemoved();
             });
     });
 
     describe("failure", function() {
 
-        testWorker("test-projects/test-failure-rendition")
-            .it("fails with exit code 1 if test fails due to a different rendition result", async ctx => {
+        testCommand("test-projects/test-failure-rendition", "asset-compute:test-worker")
+            .it("fails with exit code 1 if test fails due to a different rendition result", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
                 assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test.log."));
@@ -224,12 +115,10 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(glob.sync(".nui/*/failed/fails/rendition0.jpg").length, 1);
-
-                await assertDockerRemoved();
             });
 
-        testWorker("test-projects/test-failure-missing-rendition")
-            .it("fails with exit code 1 if test fails due to a missing rendition", async ctx => {
+        testCommand("test-projects/test-failure-missing-rendition", "asset-compute:test-worker")
+            .it("fails with exit code 1 if test fails due to a missing rendition", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
                 assert(ctx.stdout.includes("✖  Failure: No rendition generated. Check build/test.log."));
@@ -237,23 +126,17 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
-
-                await assertDockerRemoved();
             });
 
-        testWorker("test-projects/invocation-error")
-            .it("fails with exit code 2 if the worker invocation errors", async () => {
+        testCommand("test-projects/invocation-error", "asset-compute:test-worker")
+            .it("fails with exit code 2 if the worker invocation errors", function() {
                 assertExitCode(2);
-
-                await assertDockerRemoved();
             });
 
-        testWorker("test-projects/build-error")
-            .it("fails with exit code 3 if the worker does not build (has no manifest)", async ctx => {
+        testCommand("test-projects/build-error", "asset-compute:test-worker")
+            .it("fails with exit code 3 if the worker does not build (has no manifest)", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*manifest.yml/i));
-
-                await assertDockerRemoved();
             });
 
     });
