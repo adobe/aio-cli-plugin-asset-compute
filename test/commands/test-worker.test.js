@@ -26,7 +26,6 @@ const glob = require("glob");
 const rimraf = require("rimraf");
 const Docker = require("dockerode");
 const nock = require("nock");
-const os = require("os");
 
 // tests are not running in a full oclif enviroment with the aio app plugin present,
 // so we have to include it as a dev dependency and manually load and run the commands
@@ -92,7 +91,7 @@ describe("test-worker command", function() {
     function testWorker(dir, args=[]) {
         let prepareFn;
         const chain = test
-            .stdout({print: true}) // {print: true}
+            .stdout() // {print: true}
             .stderr()
             .do(() => {
                 process.chdir(path.join(baseDir, dir));
