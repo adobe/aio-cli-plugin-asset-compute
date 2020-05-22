@@ -14,6 +14,8 @@
 
 const MockServer = require("../../src/lib/mockserver");
 const WorkerTestRunner = require("../../src/lib/testrunner");
+const getCloudFile = require('../../src/lib/cloudfiles');
+
 const { test } = require("@oclif/test");
 const stdmock = require("stdout-stderr");
 const assert = require("assert");
@@ -23,6 +25,8 @@ const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
 const Docker = require("dockerode");
+const nock = require("nock");
+const os = require("os");
 
 // tests are not running in a full oclif enviroment with the aio app plugin present,
 // so we have to include it as a dev dependency and manually load and run the commands
@@ -66,9 +70,10 @@ async function assertDockerRemoved() {
     }
 }
 
-// TODO cloud files
 // TODO test ctrl+c (might need a child process)
+
 // TODO multi worker project - run all, run one action tests only
+// TODO test arguments -a
 /*
     tests/
         commands/
@@ -85,8 +90,9 @@ describe("test-worker command", function() {
     const baseDir = process.cwd();
 
     function testWorker(dir, args=[]) {
-        return test
-            .stdout() // {print: true}
+        let prepareFn;
+        const chain = test
+            .stdout({print: true}) // {print: true}
             .stderr()
             .do(() => {
                 process.chdir(path.join(baseDir, dir));
@@ -99,6 +105,11 @@ describe("test-worker command", function() {
 
                 // install dependencies for the project
                 execSync("npm install");
+            })
+            .do(async ctx => {
+                if (prepareFn) {
+                    await prepareFn(ctx);
+                }
             })
             // run the command to test
             .command(["asset-compute:test-worker", ...args])
@@ -116,6 +127,13 @@ describe("test-worker command", function() {
                     console.error(ctx.stderr);
                 }
             });
+
+        chain.prepare = function(fn) {
+            prepareFn = fn;
+            return this;
+        };
+
+        return chain;
     }
 
     describe("success", function() {
@@ -138,6 +156,28 @@ describe("test-worker command", function() {
             .it("runs successful tests with a mocked domain", async ctx => {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - mock"));
+                assert(ctx.stdout.includes("✔  Succeeded."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+                assert(!fs.existsSync(".nui"));
+
+                await assertDockerRemoved();
+            });
+
+        testWorker("test-projects/cloudfiles")
+            .prepare(() => {
+                process.env.AWS_ACCESS_KEY_ID = "key";
+                process.env.AWS_SECRET_ACCESS_KEY = "secret";
+                // ensure the cloudfiles cache is deleted
+                rimraf.sync(path.join(getCloudFile.CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket"));
+                nock("https://s3.amazonaws.com").get("/asset-compute-cli-test-bucket/source").reply(200, "correct file");
+                nock("https://s3.amazonaws.com").get("/asset-compute-cli-test-bucket/rendition").reply(200, "correct file");
+            })
+            .it("runs successful tests with cloud files", async ctx => {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - cloudfile"));
                 assert(ctx.stdout.includes("✔  Succeeded."));
                 assert(ctx.stdout.includes("✔︎ All tests were successful."));
                 assert(ctx.stdout.includes("- Tests run      : 1"));

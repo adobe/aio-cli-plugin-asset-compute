@@ -320,11 +320,17 @@ class WorkerTestRunner {
     }
 
     _copySource(dir, source) {
+        const inFile = path.join(this.dirs.in, path.basename(source));
+
         // copy all files in case of workers reading more than "source"
         fse.copySync(dir, this.dirs.in, { dereference: true });
 
+        // but source might be from the cloudfiles cache, so copy it if outside the test dir
+        if (!source.startsWith(dir)) {
+            fse.copySync(source, inFile);
+        }
+
         // ensure source file is readable for non-root users (might be the case on CI docker images)
-        const inFile = path.resolve(this.dirs.in, path.basename(source));
         fse.chmodSync(inFile, 0o644);
     }
 
