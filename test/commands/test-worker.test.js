@@ -86,7 +86,7 @@ describe("test-worker command", function() {
 
     function testWorker(dir, args=[]) {
         return test
-            .stdout({print: true})
+            .stdout() // {print: true}
             .stderr()
             .do(() => {
                 process.chdir(path.join(baseDir, dir));
@@ -120,7 +120,7 @@ describe("test-worker command", function() {
 
     describe("success", function() {
 
-        testWorker("test-projects/worker-test-success")
+        testWorker("test-projects/test-success")
             .it("runs successful tests", async ctx => {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
@@ -134,7 +134,7 @@ describe("test-worker command", function() {
                 await assertDockerRemoved();
             });
 
-        testWorker("test-projects/worker-mockserver")
+        testWorker("test-projects/mockserver")
             .it("runs successful tests with a mocked domain", async ctx => {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - mock"));
@@ -151,7 +151,7 @@ describe("test-worker command", function() {
 
     describe("failure", function() {
 
-        testWorker("test-projects/worker-test-failure-rendition")
+        testWorker("test-projects/test-failure-rendition")
             .it("fails with exit code 1 if test fails due to a different rendition result", async ctx => {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
@@ -165,7 +165,7 @@ describe("test-worker command", function() {
                 await assertDockerRemoved();
             });
 
-        testWorker("test-projects/worker-test-failure-missing-rendition")
+        testWorker("test-projects/test-failure-missing-rendition")
             .it("fails with exit code 1 if test fails due to a missing rendition", async ctx => {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
@@ -178,14 +178,14 @@ describe("test-worker command", function() {
                 await assertDockerRemoved();
             });
 
-        testWorker("test-projects/worker-invocation-error")
+        testWorker("test-projects/invocation-error")
             .it("fails with exit code 2 if the worker invocation errors", async () => {
                 assertExitCode(2);
 
                 await assertDockerRemoved();
             });
 
-        testWorker("test-projects/worker-build-error")
+        testWorker("test-projects/build-error")
             .it("fails with exit code 3 if the worker does not build (has no manifest)", async ctx => {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*manifest.yml/i));
