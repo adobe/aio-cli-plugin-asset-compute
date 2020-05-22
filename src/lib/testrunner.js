@@ -126,7 +126,7 @@ class WorkerTestRunner {
         // using the Jenkins BUILD_TAG env var if available, or the current
         const uniqueId = process.env.CIRCLE_WORKFLOW_JOB_ID || process.env.BUILD_TAG || new Date().toISOString();
         const projectName = path.basename(this.baseDir);
-        const containerNameHint = `asset-compute-testworker-${projectName}-${uniqueId}`;
+        const containerNameHint = `${WorkerTestRunner.CONTAINER_PREFIX}${projectName}-${uniqueId}`;
 
         this.testResults = new TestResults(`Worker unit tests for ${this.action.name}`);
 
@@ -603,5 +603,7 @@ class WorkerTestRunner {
         }
     }
 }
+
+WorkerTestRunner.CONTAINER_PREFIX = "asset-compute-testworker-";
 
 module.exports = WorkerTestRunner;

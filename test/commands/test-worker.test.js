@@ -12,6 +12,8 @@
 
 'use strict';
 
+const MockServer = require("../../src/lib/mockserver");
+const WorkerTestRunner = require("../../src/lib/testrunner");
 const { test } = require("@oclif/test");
 const stdmock = require("stdout-stderr");
 const assert = require("assert");
@@ -20,6 +22,7 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
+const Docker = require("dockerode");
 
 // tests are not running in a full oclif enviroment with the aio app plugin present,
 // so we have to include it as a dev dependency and manually load and run the commands
@@ -40,13 +43,50 @@ function assertExitCode(expectedCode) {
     assert.equal(process.exitCode, expectedCode, `unexpected exit code: ${process.exitCode}, expected: ${expectedCode}`);
 }
 
+async function assertDockerRemoved() {
+    const docker = new Docker();
+
+    for (const container of await docker.listContainers({all: true})) {
+        for (let name of container.Names) {
+            // all names here start with a /
+            name = name.substring(1);
+            if (name.startsWith(WorkerTestRunner.CONTAINER_PREFIX)
+                || name.startsWith(MockServer.CONTAINER_PREFIX)) {
+                assert.fail(`Docker container left behind (${container.State}): ${name} ` +
+                            `If unsure, remove using 'docker rm -f ${name}' and run tests again`);
+            }
+        }
+    }
+
+    for (const network of await docker.listNetworks()) {
+        if (network.Name.startsWith(MockServer.NETWORK_PREFIX)) {
+            assert.fail(`Docker network left behind: ${network.Name} ` +
+                        `If unsure, remove using 'docker network rm ${network.Name}' and run tests again`);
+        }
+    }
+}
+
+// TODO cloud files
+// TODO test ctrl+c (might need a child process)
+// TODO multi worker project - run all, run one action tests only
+/*
+    tests/
+        commands/
+            test-worker.test.js
+
+        projects/
+            example-worker-1/
+            exmaple-worker-2/
+
+*/
+
 describe("test-worker command", function() {
 
     const baseDir = process.cwd();
 
     function testWorker(dir, args=[]) {
         return test
-            .stdout()
+            .stdout({print: true})
             .stderr()
             .do(() => {
                 process.chdir(path.join(baseDir, dir));
@@ -78,23 +118,10 @@ describe("test-worker command", function() {
             });
     }
 
-    // TODO assert docker containers gone (all tests)
-    // TODO multi worker project - run all, run one action tests only
-    /*
-        tests/
-            commands/
-                test-worker.test.js
-
-            projects/
-                example-worker-1/
-                exmaple-worker-2/
-
-    */
-
     describe("success", function() {
 
         testWorker("test-projects/worker-test-success")
-            .it("runs successful tests", ctx => {
+            .it("runs successful tests", async ctx => {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
                 assert(ctx.stdout.includes("✔  Succeeded."));
@@ -103,13 +130,29 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(!fs.existsSync(".nui"));
+
+                await assertDockerRemoved();
+            });
+
+        testWorker("test-projects/worker-mockserver")
+            .it("runs successful tests with a mocked domain", async ctx => {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - mock"));
+                assert(ctx.stdout.includes("✔  Succeeded."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+                assert(!fs.existsSync(".nui"));
+
+                await assertDockerRemoved();
             });
     });
 
     describe("failure", function() {
 
         testWorker("test-projects/worker-test-failure-rendition")
-            .it("fails with exit code 1 if test fails due to a different rendition result", ctx => {
+            .it("fails with exit code 1 if test fails due to a different rendition result", async ctx => {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
                 assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test.log."));
@@ -118,10 +161,12 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(glob.sync(".nui/*/failed/fails/rendition0.jpg").length, 1);
+
+                await assertDockerRemoved();
             });
 
         testWorker("test-projects/worker-test-failure-missing-rendition")
-            .it("fails with exit code 1 if test fails due to a missing rendition", ctx => {
+            .it("fails with exit code 1 if test fails due to a missing rendition", async ctx => {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
                 assert(ctx.stdout.includes("✖  Failure: No rendition generated. Check build/test.log."));
@@ -129,17 +174,23 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
+
+                await assertDockerRemoved();
             });
 
-        testWorker("test-projects/worker-invocation-error", [], true)
-            .it("fails with exit code 2 if the worker invocation errors", () => {
+        testWorker("test-projects/worker-invocation-error")
+            .it("fails with exit code 2 if the worker invocation errors", async () => {
                 assertExitCode(2);
+
+                await assertDockerRemoved();
             });
 
         testWorker("test-projects/worker-build-error")
-            .it("fails with exit code 3 if the worker does not build (has no manifest)", ctx => {
+            .it("fails with exit code 3 if the worker does not build (has no manifest)", async ctx => {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*manifest.yml/i));
+
+                await assertDockerRemoved();
             });
 
     });
