@@ -69,20 +69,12 @@ async function assertDockerRemoved() {
     }
 }
 
+function occurrences(str, substr) {
+    return str.split(substr).length - 1;
+}
+
 // TODO test ctrl+c (might need a child process)
-
-// TODO multi worker project - run all, run one action tests only
-// TODO test arguments -a
-/*
-    tests/
-        commands/
-            test-worker.test.js
-
-        projects/
-            example-worker-1/
-            exmaple-worker-2/
-
-*/
+// TODO test argument -u
 
 describe("test-worker command", function() {
 
@@ -146,6 +138,38 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
+                assert(!fs.existsSync(".nui"));
+
+                await assertDockerRemoved();
+            });
+
+        testWorker("test-projects/multiple-workers")
+            .it("runs tests for all actions/workers", async ctx => {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes("Actions:\n- workerA\n- workerB"));
+                assert(ctx.stdout.includes(" - testA"));
+                assert(ctx.stdout.includes(" - testB"));
+                assert.equal(occurrences(ctx.stdout, "✔  Succeeded."), 2);
+                assert.equal(occurrences(ctx.stdout, "✔︎ All tests were successful."), 2);
+                assert.equal(occurrences(ctx.stdout, "- Tests run      : 1"), 2);
+                assert.equal(occurrences(ctx.stdout, "- Failures       : 0"), 2);
+                assert.equal(occurrences(ctx.stdout, "- Errors         : 0"), 2);
+                assert(!fs.existsSync(".nui"));
+
+                await assertDockerRemoved();
+            });
+
+        testWorker("test-projects/multiple-workers", ["-a", "workerA"])
+            .it("runs tests for the selected worker only if -a is set", async ctx => {
+                assertExitCode(undefined);
+                assert(!ctx.stdout.includes("workerB"));
+                assert(ctx.stdout.includes(" - testA"));
+                assert(!ctx.stdout.includes(" - testB"));
+                assert.equal(occurrences(ctx.stdout, "✔  Succeeded."), 1);
+                assert.equal(occurrences(ctx.stdout, "✔︎ All tests were successful."), 1);
+                assert.equal(occurrences(ctx.stdout, "- Tests run      : 1"), 1);
+                assert.equal(occurrences(ctx.stdout, "- Failures       : 0"), 1);
+                assert.equal(occurrences(ctx.stdout, "- Errors         : 0"), 1);
                 assert(!fs.existsSync(".nui"));
 
                 await assertDockerRemoved();
