@@ -41,11 +41,14 @@ BaseCommand.prototype.runCommand = async (command, argv) => {
     }
 };
 
+// to enable logging set this before the test:
+// process.env.TEST_OUTPUT = 1;
+
 function testCommand(dir, command, args=[]) {
     let prepareFn;
 
     const chain = oclifTest
-        .stdout() // {print: true}
+        .stdout()
         .stderr()
         .do(() => {
             process.chdir(path.join(baseDir, dir));
