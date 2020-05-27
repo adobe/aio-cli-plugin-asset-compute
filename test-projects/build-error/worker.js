@@ -11,6 +11,9 @@
  */
 'use strict'
 
+// NOTE: this worker will fail to build since a manifest.yml is missing from this project
+
 exports.main = function() {
-    throw new Error("broken worker");
+    // copy source to rendition to transfer 1:1
+    await fs.copyFile(source.path, rendition.path);
 }
