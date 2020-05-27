@@ -1,0 +1,10 @@
+[{
+    "httpRequest": {
+        "path": "/file",
+        "method": "GET"
+    },
+    "httpResponse": {
+        "statusCode": 200,
+        "body": "correct result"
+    }
+}]

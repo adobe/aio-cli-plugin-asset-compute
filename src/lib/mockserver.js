@@ -51,9 +51,9 @@ class MockServer {
         this.mockFile = mockFile;
         this.workerContainerName = workerContainerName;
 
-        this.host = getHostName(this.mockFile);
-        this.network = `mock-network-${this.host}`;
-        this.container = `mock-server-${this.host}`;
+        this.host      = getHostName(this.mockFile);
+        this.network   = `${MockServer.NETWORK_PREFIX}${this.host}`;
+        this.container = `${MockServer.CONTAINER_PREFIX}${this.host}`;
     }
 
     async start() {
@@ -133,5 +133,8 @@ class MockServer {
         }
     }
 }
+
+MockServer.NETWORK_PREFIX = "mock-network-";
+MockServer.CONTAINER_PREFIX = "mock-server-";
 
 module.exports = MockServer;

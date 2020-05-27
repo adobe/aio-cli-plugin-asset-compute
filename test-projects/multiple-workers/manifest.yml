@@ -1,0 +1,15 @@
+packages:
+  __APP_PACKAGE__:
+    actions:
+      workerA:
+        function: 'actions/workerA/workerA.js'
+        runtime: 'nodejs:10'
+        web: true
+        annotations:
+          require-adobe-auth: true
+      workerB:
+        function: 'actions/workerB/workerB.js'
+        runtime: 'nodejs:10'
+        web: true
+        annotations:
+          require-adobe-auth: true

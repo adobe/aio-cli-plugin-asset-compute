@@ -67,7 +67,6 @@ OPTIONS
   -P, --paramFile=paramFile  Path to parameter json file.
   -a, --action=action        Worker to run. Use action name from manifest. Not required if there is only one.
   -d, --data=data            Complete input parameters as JSON string. Allows multiple renditions.
-  -f, --fmt=fmt              Replace expected renditions of failing test cases with the generated rendition.
   -p, --param=param          <key> <value> - Set parameters for rendition, can be used multiple times
   -v, --verbose              Verbose output
   --version                  Show version

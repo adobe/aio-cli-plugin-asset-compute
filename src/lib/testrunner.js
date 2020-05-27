@@ -52,7 +52,7 @@ async function globCloudFile(dir, pattern, description) {
 
 function getTestsDirectory(baseDir) {
     const testDir = path.resolve(baseDir, TEST_FOLDER);
-    if (fse.existsSync(testDir) && fse.lstatSync(testDir).isDirectory()) {
+    if (fse.existsSync(testDir) && fse.statSync(testDir).isDirectory()) {
         return testDir;
     }
 }
@@ -126,7 +126,7 @@ class WorkerTestRunner {
         // using the Jenkins BUILD_TAG env var if available, or the current
         const uniqueId = process.env.CIRCLE_WORKFLOW_JOB_ID || process.env.BUILD_TAG || new Date().toISOString();
         const projectName = path.basename(this.baseDir);
-        const containerNameHint = `asset-compute-testworker-${projectName}-${uniqueId}`;
+        const containerNameHint = `${WorkerTestRunner.CONTAINER_PREFIX}${projectName}-${uniqueId}`;
 
         this.testResults = new TestResults(`Worker unit tests for ${this.action.name}`);
 
@@ -320,11 +320,17 @@ class WorkerTestRunner {
     }
 
     _copySource(dir, source) {
+        const inFile = path.join(this.dirs.in, path.basename(source));
+
         // copy all files in case of workers reading more than "source"
         fse.copySync(dir, this.dirs.in, { dereference: true });
 
+        // but source might be from the cloudfiles cache, so copy it if outside the test dir
+        if (!source.startsWith(dir)) {
+            fse.copySync(source, inFile);
+        }
+
         // ensure source file is readable for non-root users (might be the case on CI docker images)
-        const inFile = path.resolve(this.dirs.in, path.basename(source));
         fse.chmodSync(inFile, 0o644);
     }
 
@@ -596,10 +602,14 @@ class WorkerTestRunner {
         util.log('Timing results :', timingResultFile);
         util.log('Test log       :', this.testLogFile);
 
-        if (results.failures > 0 || results.errors > 0) {
+        if (results.errors > 0) {
+            process.exitCode = 2;
+        } else if (results.failures > 0) {
             process.exitCode = 1;
         }
     }
 }
+
+WorkerTestRunner.CONTAINER_PREFIX = "asset-compute-testworker-";
 
 module.exports = WorkerTestRunner;

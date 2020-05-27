@@ -31,6 +31,8 @@ async function getCloudFile(file) {
     }
 }
 
+getCloudFile.CACHE_DIR = path.join(homedir, ".nui", "cache");
+
 // Handles retrieving files residing in S3
 function loadCloudFile(sourceFile) {
     return new Promise(function (resolve, reject) {
@@ -41,8 +43,10 @@ function loadCloudFile(sourceFile) {
             reject(new Error('no s3 credentials found'));
 
         } else {
-            const s3Url= AmazonS3URI(fse.readFileSync(sourceFile,"utf8"));
-            const cachePath = `${homedir}/.nui/cache/${s3Url.uri.host}${s3Url.uri.pathname}`;
+            const s3Url = AmazonS3URI(fse.readFileSync(sourceFile, "utf8"));
+
+            // example: ~/.nui/cache/s3.amazonaws.com/bucket/path
+            const cachePath = path.join(getCloudFile.CACHE_DIR, s3Url.uri.host, s3Url.uri.pathname);
             if (fse.existsSync(cachePath)) { // if file is cached, do not download from s3
                 util.log(`File cached under ${cachePath}`);
                 resolve(cachePath);

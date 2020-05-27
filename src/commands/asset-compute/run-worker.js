@@ -97,7 +97,6 @@ class RunWorkerCommand extends BaseCommand {
             const renditionFile = argv.args.rendition;
 
             // build json with single rendition
-            rendition.fmt = argv.flags.fmt || rendition.fmt || util.extension(renditionFile);
             rendition.name = path.basename(renditionFile);
 
             targetDir = path.dirname(renditionFile);
@@ -126,12 +125,14 @@ class RunWorkerCommand extends BaseCommand {
     }
 
     async runWorker(actionName, argv) {
-        const action = await this.openwhiskAction(actionName);
-
         const { params, targetDir } = this.getParams(argv);
+
+        const action = await this.openwhiskAction(actionName);
 
         const sourceFile = await getCloudFile(argv.args.file);
         params.source = path.basename(sourceFile);
+
+        params.requestId = `run-worker in ${path.basename(process.cwd())}`;
 
         const dirs = util.prepareInOutDir();
 
@@ -154,20 +155,21 @@ class RunWorkerCommand extends BaseCommand {
             const result = await this.workerRunner.run(params);
 
             if (result.renditions) {
-                result.renditions.forEach(rendition => {
-                    if (rendition.name) {
-                        // copy rendition out of .nui/out if present
-                        const filename = path.basename(rendition.name);
-                        const outFile = path.resolve(dirs.out, filename);
-                        const targetFile = path.resolve(targetDir, filename);
-                        if (fse.existsSync(outFile)) {
-                            debug("created rendition:", targetFile);
-                            fse.copyFileSync(outFile, targetFile);
-                        } else {
-                            util.logWarn(`no rendition named ${filename} found`);
-                        }
+                for (let idx = 0; idx < result.renditions.length; idx++) {
+                    const rendition = result.renditions[idx];
+
+                    const filename = rendition.name ? path.basename(rendition.name) : `rendition${idx}`;
+
+                    // copy rendition out of .nui/out if present
+                    const outFile = path.resolve(dirs.out, filename);
+                    const targetFile = path.resolve(targetDir, filename);
+                    if (fse.existsSync(outFile)) {
+                        debug("created rendition:", targetFile);
+                        fse.copyFileSync(outFile, targetFile);
+                    } else {
+                        util.logWarn(`no rendition named ${filename} found`);
                     }
-                });
+                }
             }
 
         } finally {
@@ -203,12 +205,6 @@ RunWorkerCommand.flags = {
             description: 'Worker to run. Use action name from manifest. Not required if there is only one.'
         }
     ),
-    fmt: flags.string(
-        {
-            char: 'f',
-            description: 'Replace expected renditions of failing test cases with the generated rendition.'
-        }
-    ),
     param: flags.string(
         {
             char: 'p',
@@ -227,7 +223,7 @@ RunWorkerCommand.flags = {
         {
             char: 'd',
             description: 'Complete input parameters as JSON string. Allows multiple renditions.',
-            exclusive: ['fmt', 'paramFile', 'param']
+            exclusive: ['paramFile', 'param']
         }
     )
 };
