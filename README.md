@@ -28,25 +28,8 @@ Runs the Asset Compute Developer Tool UI
 
 ## Commands
 <!-- commands -->
-* [`@adobe/aio-cli-plugin-asset-compute asset-compute:devtool`](#adobeaio-cli-plugin-asset-compute-asset-computedevtool)
 * [`@adobe/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`](#adobeaio-cli-plugin-asset-compute-asset-computerun-worker-file-rendition)
 * [`@adobe/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`](#adobeaio-cli-plugin-asset-compute-asset-computetest-worker-testcase)
-
-## `@adobe/aio-cli-plugin-asset-compute asset-compute:devtool`
-
-Runs the Asset Compute Developer Tool UI
-
-```
-USAGE
-  $ @adobe/aio-cli-plugin-asset-compute asset-compute:devtool
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --port=port    [default: 9000] Http port of the Asset Compute Developer Tool Server
-  --version      Show version
-```
-
-<!-- _See code: [src/commands/asset-compute/devtool.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/v1.0.1/src/commands/asset-compute/devtool.js)_ -->
 
 ## `@adobe/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`
 
