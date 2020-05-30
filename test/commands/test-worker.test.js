@@ -126,6 +126,9 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
 
+                assert(fs.existsSync(path.join(getCloudFile.GLOBAL_CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket", "rendition")));
+                assert(fs.existsSync(path.join(getCloudFile.GLOBAL_CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket", "source")));
+
                 assert(!fs.existsSync(".nui"));
                 assert(!fs.existsSync(path.join("actions", "worker", "build")));
                 assertMissingOrEmptyDirectory("build", "test-worker");
