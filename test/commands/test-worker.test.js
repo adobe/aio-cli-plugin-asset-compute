@@ -134,6 +134,14 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
+
+        testCommand("test-projects/no-tests", "asset-compute:test-worker")
+            .it("succeeds with non-zero exit code if there are no tests", function() {
+                assertExitCode(undefined);
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertMissingOrEmptyDirectory("build", "test-results");
+            });
+
     });
 
     describe("failure", function() {
@@ -180,5 +188,20 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
 
+        testCommand("test-projects/test-name-mismatch", "asset-compute:test-worker")
+            .it("fails with exit code 3 if the test folder does not match an action name", function(ctx) {
+                assertExitCode(3);
+                assert(ctx.stderr.match(/error.*incorrect/i));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertMissingOrEmptyDirectory("build", "test-results");
+            });
+
+        testCommand("test-projects/multiple-workers", "asset-compute:test-worker", ["-a", "doesNotExist"])
+            .it("fails with exit code 3 if the action specified with -a does not exist", function(ctx) {
+                assertExitCode(3);
+                assert(ctx.stderr.match(/error.*doesNotExist/i));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertMissingOrEmptyDirectory("build", "test-results");
+            });
     });
 });

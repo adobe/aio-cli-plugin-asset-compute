@@ -27,7 +27,6 @@ const TestResults = require("./testresults");
 const util = require("./util");
 
 // constants
-const TEST_FOLDER = "tests";
 const LOG_FILE = "test.log";
 const TEST_RESULT_FILE = "test-results.xml";
 const TEST_TIMING_RESULT_FILE = "test-timing-results.csv";
@@ -49,32 +48,19 @@ async function globCloudFile(dir, pattern, description) {
     return getCloudFile(file);
 }
 
-function getTestsDirectory(actionDir) {
-    const testDir = path.resolve(actionDir, TEST_FOLDER);
-    if (fse.existsSync(testDir) && fse.statSync(testDir).isDirectory()) {
-        return testDir;
-    }
-}
-
 /**
  * Runs Asset Compute worker SDK unit tests, which run special source -> rendition tests.
- * These must be placed in a subfolder "tests/" next to the action.
  */
 class WorkerTestRunner {
 
-    static hasTests(actionDir) {
-        return getTestsDirectory(actionDir);
-    }
-
-    constructor(dir, action, options={}) {
-        this.actionDir = path.resolve(dir);
+    constructor(testDir, action, options={}) {
+        this.testDir = testDir;
         this.action = action;
         this.options = options;
         this.timers = {
             start: options.startTime || util.timerStart()
         };
 
-        this.testDir = getTestsDirectory(this.actionDir);
         this.tempDirectory = this.options.tempDirectory || path.join("build/test-runner");
         this.testResultDirectory = this.options.testResultDirectory || "build";
     }
@@ -127,7 +113,7 @@ class WorkerTestRunner {
         // get a unique container name for concurrent jobs on Jenkins,
         // using the Jenkins BUILD_TAG env var if available, or the current
         const uniqueId = process.env.CIRCLE_WORKFLOW_JOB_ID || process.env.BUILD_TAG || new Date().toISOString();
-        const projectName = path.basename(this.actionDir);
+        const projectName = path.basename(process.cwd());
         const containerNameHint = `${WorkerTestRunner.CONTAINER_PREFIX}${projectName}-${uniqueId}`;
 
         this.testResults = new TestResults(`Worker unit tests for ${this.action.name}`);
@@ -154,7 +140,7 @@ class WorkerTestRunner {
         };
 
         // go through test cases to see if there are any cases that use mocks
-        this.hasMocks = glob.sync(`${TEST_FOLDER}/**/mock-*.json`).length > 0;
+        this.hasMocks = glob.sync(`${this.testDir}/**/mock-*.json`).length > 0;
         if (this.hasMocks) {
             // pass CA certificate to action container so it can connect to mock containers via https
             fse.copySync(`${__dirname}/mock-crt`, this.dirs.mock_crt);

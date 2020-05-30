@@ -12,10 +12,15 @@
 
 'use strict';
 
+const debug = require('debug')('aio-asset-compute.test-worker');
 const { flags } = require('@oclif/command');
 const BaseCommand = require('../../base-command');
 const WorkerTestRunner = require("../../lib/testrunner");
 const util = require('../../lib/util');
+const path = require("path");
+const fs = require("fs");
+
+const TEST_DIR = path.join("test", "asset-compute");
 
 class TestWorkerCommand extends BaseCommand {
 
@@ -31,47 +36,60 @@ class TestWorkerCommand extends BaseCommand {
         try {
             if (argv.flags.action) {
                 // test only selected worker
-                await this.testWorker(argv.flags.action, argv);
+
+                const action = argv.flags.action;
+
+                const testDir = path.join(TEST_DIR, action);
+                if (!fs.existsSync(testDir)) {
+                    throw new Error(`No tests found for action ${action}, missing directory: ${testDir}`);
+                }
+
+                await this.testWorker(action, testDir, argv);
 
             } else {
                 // test all workers
+                const actions = this.getActionsWithTests();
+                if (actions.length === 0) {
+                    console.log("No worker tests found in 'test/asset-compute/*'");
+                    return;
+                }
+
                 console.log("Actions:");
-                for (const action of this.actionNames) {
+                for (const action of actions) {
                     console.log(`- ${action}`);
                 }
                 console.log();
 
-                for (const action of this.actionNames) {
-                    await this.testWorker(action, argv);
+                for (const action of actions) {
+                    await this.testWorker(action, path.join(TEST_DIR, action), argv);
 
                     console.log();
                 }
             }
         } catch (e) {
-            console.error(e);
+            console.error("Error:", e.message);
+            debug(e);
             process.exitCode = 3;
         }
     }
 
-    async testWorker(actionName, argv) {
+    getActionsWithTests() {
+        // test/
+        //   asset-compute/
+        //     workerA/
+        //     workerB/
+
+        return fs.existsSync(TEST_DIR) ? fs.readdirSync(TEST_DIR) : [];
+    }
+
+    async testWorker(actionName, testDir, argv) {
         const startTime = util.timerStart();
 
-        const a = this.actions[actionName];
-        if (!a) {
-            throw new Error(`Action not found in manifest: ${actionName}`);
-        }
-
-        const dir = this.getActionSourceDir(actionName);
-        if (!WorkerTestRunner.hasTests(dir)) {
-            util.log(`No test cases found for ${actionName} in ${dir}`);
-            return;
-        }
-
-        util.log(`Running tests for ${actionName} in ${dir}`);
+        util.log(`Running tests in ${testDir}`);
 
         const action = await this.openwhiskAction(actionName);
 
-        this.testRunner = new WorkerTestRunner(dir, action, {
+        this.testRunner = new WorkerTestRunner(testDir, action, {
             startTime: startTime,
             testCasePattern: argv.args.testCase,
             updateRenditions: argv.flags.updateRenditions,

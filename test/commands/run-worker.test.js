@@ -22,7 +22,7 @@ describe("run-worker command", function() {
 
     describe("success", function() {
 
-        testCommand("test-projects/single-worker", "asset-compute:run-worker", ["tests/simple/file.jpg", "rendition.jpg"])
+        testCommand("test-projects/single-worker", "asset-compute:run-worker", ["test/asset-compute/worker/simple/file.jpg", "rendition.jpg"])
             .finally(() => {
                 // cleanup afterwards
                 fs.unlinkSync("rendition.jpg");
@@ -32,14 +32,14 @@ describe("run-worker command", function() {
 
                 assert(fs.existsSync("rendition.jpg"));
                 // check files are identical (the worker just copies source -> rendition)
-                assert(fs.readFileSync("tests/simple/file.jpg").equals(fs.readFileSync("rendition.jpg")));
+                assert(fs.readFileSync("test/asset-compute/worker/simple/file.jpg").equals(fs.readFileSync("rendition.jpg")));
 
                 // legacy build folder, ensure it does not come back
                 assert(!fs.existsSync(".nui"));
                 assertMissingOrEmptyDirectory("build", "run-worker");
             });
 
-        testCommand("test-projects/multiple-workers", "asset-compute:run-worker", ["-a", "workerA", "actions/workerA/tests/testA/file.jpg", "rendition.jpg"])
+        testCommand("test-projects/multiple-workers", "asset-compute:run-worker", ["-a", "workerA", "test/asset-compute/workerA/testA/file.jpg", "rendition.jpg"])
             .finally(() => {
                 fs.unlinkSync("rendition.jpg");
             })
@@ -49,13 +49,13 @@ describe("run-worker command", function() {
 
                 assert(fs.existsSync("rendition.jpg"));
                 // check files are identical (the worker just copies source -> rendition)
-                assert(fs.readFileSync("actions/workerA/tests/testA/file.jpg").equals(fs.readFileSync("rendition.jpg")));
+                assert(fs.readFileSync("test/asset-compute/workerA/testA/file.jpg").equals(fs.readFileSync("rendition.jpg")));
 
                 assert(!fs.existsSync(".nui"));
                 assertMissingOrEmptyDirectory("build", "run-worker");
             });
 
-        testCommand("test-projects/multiple-workers", "asset-compute:run-worker", ["-a", "workerB", "actions/workerB/tests/testB/file.jpg", "rendition.jpg"])
+        testCommand("test-projects/multiple-workers", "asset-compute:run-worker", ["-a", "workerB", "test/asset-compute/workerB/testB/file.jpg", "rendition.jpg"])
             .finally(() => {
                 fs.unlinkSync("rendition.jpg");
             })
@@ -65,7 +65,7 @@ describe("run-worker command", function() {
 
                 assert(fs.existsSync("rendition.jpg"));
                 // check files are identical (the worker just copies source -> rendition)
-                assert(fs.readFileSync("actions/workerB/tests/testB/file.jpg").equals(fs.readFileSync("rendition.jpg")));
+                assert(fs.readFileSync("test/asset-compute/workerB/testB/file.jpg").equals(fs.readFileSync("rendition.jpg")));
 
                 assert(!fs.existsSync(".nui"));
                 assertMissingOrEmptyDirectory("build", "run-worker");
@@ -150,7 +150,7 @@ describe("run-worker command", function() {
 
     describe("failure", function() {
 
-        testCommand("test-projects/multiple-workers", "asset-compute:run-worker", ["tests/simple/file.jpg", "rendition.jpg"])
+        testCommand("test-projects/multiple-workers", "asset-compute:run-worker", ["test/asset-compute/worker/simple/file.jpg", "rendition.jpg"])
             .it("fails with exit code 1 if run on a project with multiple workers and no -a is set", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stderr.includes("Error: Must specify worker to run using --action"));
