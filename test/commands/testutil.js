@@ -58,7 +58,6 @@ function testCommand(dir, command, args=[]) {
             rimraf.sync("dist");
             // remove temp directories
             rimraf.sync("build");
-            rimraf.sync(".nui");
 
             // install dependencies for the project
             execSync("npm install");

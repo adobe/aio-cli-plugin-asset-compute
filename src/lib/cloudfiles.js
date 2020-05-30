@@ -31,7 +31,8 @@ async function getCloudFile(file) {
     }
 }
 
-getCloudFile.CACHE_DIR = path.join(homedir, ".nui", "cache");
+// TODO: global cache dir, use npm global-cache-dir or the like
+getCloudFile.GLOBAL_CACHE_DIR = path.join(homedir, ".nui", "cache");
 
 // Handles retrieving files residing in S3
 function loadCloudFile(sourceFile) {
@@ -46,7 +47,7 @@ function loadCloudFile(sourceFile) {
             const s3Url = AmazonS3URI(fse.readFileSync(sourceFile, "utf8"));
 
             // example: ~/.nui/cache/s3.amazonaws.com/bucket/path
-            const cachePath = path.join(getCloudFile.CACHE_DIR, s3Url.uri.host, s3Url.uri.pathname);
+            const cachePath = path.join(getCloudFile.GLOBAL_CACHE_DIR, s3Url.uri.host, s3Url.uri.pathname);
             if (fse.existsSync(cachePath)) { // if file is cached, do not download from s3
                 util.log(`File cached under ${cachePath}`);
                 resolve(cachePath);

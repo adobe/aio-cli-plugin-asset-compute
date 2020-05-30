@@ -43,19 +43,13 @@ module.exports = {
 
     // create temporary hidden folder for in & out dirs to mount
     prepareInOutDir: function (buildDir) {
-        // TODO: remove once all has been moved
-        // TODO: remove once all has been moved
-        // TODO: remove once all has been moved
-        // TODO: remove once all has been moved
-        buildDir = buildDir || '.nui';
-
         const uniqueName = (process.env.BUILD_TAG || new Date().toISOString()).replace(/[^a-zA-Z0-9_]/g, '_');
         const dirs = {
-            build: buildDir,
-            work: path.resolve(buildDir, uniqueName),
-            in: path.resolve(buildDir, uniqueName, 'in'),
-            out: path.resolve(buildDir, uniqueName, 'out'),
-            failed: path.resolve(buildDir, uniqueName, 'failed'),
+            build:    buildDir,
+            work:     path.resolve(buildDir, uniqueName),
+            in:       path.resolve(buildDir, uniqueName, 'in'),
+            out:      path.resolve(buildDir, uniqueName, 'out'),
+            failed:   path.resolve(buildDir, uniqueName, 'failed'),
             mock_crt: path.resolve(buildDir, uniqueName, 'mock-crt')
         };
         fse.ensureDirSync(dirs.in);
