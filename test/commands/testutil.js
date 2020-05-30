@@ -23,6 +23,7 @@ const { execSync } = require("child_process");
 const rimraf = require("rimraf");
 const assert = require("assert");
 const Docker = require("dockerode");
+const fs = require("fs");
 
 const baseDir = process.cwd();
 
@@ -128,8 +129,15 @@ function assertOccurrences(str, substr, expectedCount) {
     assert.equal(str.split(substr).length - 1, expectedCount);
 }
 
+function assertMissingOrEmptyDirectory(...pathElements) {
+    const fullPath = path.join(...pathElements);
+    return !fs.existsSync(fullPath) || fs.readdirSync(fullPath).length === 0;
+}
+
+
 module.exports = {
     testCommand,
     assertExitCode,
-    assertOccurrences
+    assertOccurrences,
+    assertMissingOrEmptyDirectory
 };

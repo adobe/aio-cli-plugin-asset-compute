@@ -117,6 +117,18 @@ class BaseCommand extends Command {
         return this.pjson.version;
     }
 
+    get buildDir() {
+        if (!this._buildDir) {
+            // TODO: use @adobe/aio-lib-core-config to read config once it's smaller
+            this._buildDir = process.env.AIO_BUILD_DIR || "build";
+        }
+        return this._buildDir;
+    }
+
+    getBuildDir(...subdirs) {
+        return path.resolve(this.buildDir, ...subdirs);
+    }
+
     onProcessExit(handler) {
         const SIGNALS = {
             SIGINT:  2, // ctrl+c
