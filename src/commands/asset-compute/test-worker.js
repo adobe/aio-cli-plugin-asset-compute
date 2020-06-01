@@ -74,7 +74,15 @@ class TestWorkerCommand extends BaseCommand {
         this.testRunner = new WorkerTestRunner(dir, action, {
             startTime: startTime,
             testCasePattern: argv.args.testCase,
-            updateRenditions: argv.flags.updateRenditions
+            updateRenditions: argv.flags.updateRenditions,
+            // build/
+            //   test-worker/
+            //     <action>/
+            tempDirectory: this.getBuildDir("test-worker", actionName),
+            // build/
+            //   test-results/
+            //     test-<action>/
+            testResultDirectory: this.getBuildDir("test-results", `test-${actionName}`)
         });
 
         await this.testRunner.run();

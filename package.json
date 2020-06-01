@@ -11,6 +11,7 @@
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2.2.3",
     "amazon-s3-uri": "0.0.3",
+    "cachedir": "^2.3.0",
     "fast-csv": "^4.1.1",
     "get-port": "^5.1.1",
     "glob": "^7.1.6",

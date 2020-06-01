@@ -17,10 +17,10 @@ module.exports = getCloudFile;
 const util = require('./util');
 const path = require('path');
 const fse = require('fs-extra');
-const homedir = require('os').homedir();
 const AmazonS3URI  = require('amazon-s3-uri');
 const request = require('request');
 const aws4  = require('aws4');
+const cachedir = require('cachedir');
 
 async function getCloudFile(file) {
     // If is .link file we assume the contents are the name of a cloud (S3) url
@@ -31,7 +31,7 @@ async function getCloudFile(file) {
     }
 }
 
-getCloudFile.CACHE_DIR = path.join(homedir, ".nui", "cache");
+getCloudFile.GLOBAL_CACHE_DIR = cachedir("adobe-asset-compute");
 
 // Handles retrieving files residing in S3
 function loadCloudFile(sourceFile) {
@@ -39,20 +39,21 @@ function loadCloudFile(sourceFile) {
     	// contents of the file should be an S3 url
         // We first see if it is already cached and if so just use that
         // Otherwise we attempt to retrieve it and put it in the cache
-        if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-            reject(new Error('no s3 credentials found'));
+        const url = fse.readFileSync(sourceFile, "utf8");
+        const s3Url = AmazonS3URI(url);
+
+        // example: ~/Library/Caches/adobe-asset-compute/s3.amazonaws.com/bucket/path
+        const cachePath = path.join(getCloudFile.GLOBAL_CACHE_DIR, s3Url.uri.host, s3Url.uri.pathname);
+        if (fse.existsSync(cachePath)) { // if file is cached, do not download from s3
+            util.logToFile(`Cloud file ${url} already cached under ${cachePath}`);
+            resolve(cachePath);
 
         } else {
-            const s3Url = AmazonS3URI(fse.readFileSync(sourceFile, "utf8"));
-
-            // example: ~/.nui/cache/s3.amazonaws.com/bucket/path
-            const cachePath = path.join(getCloudFile.CACHE_DIR, s3Url.uri.host, s3Url.uri.pathname);
-            if (fse.existsSync(cachePath)) { // if file is cached, do not download from s3
-                util.log(`File cached under ${cachePath}`);
-                resolve(cachePath);
+            util.logToFile(`File not cached under ${cachePath}`);
+            if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+                reject(new Error('no s3 credentials found'));
 
             } else {
-                util.log(`File not cached under ${cachePath}`);
                 const opts = {
                     service: 's3',
                     path: `/${s3Url.bucket}/${s3Url.key}`,

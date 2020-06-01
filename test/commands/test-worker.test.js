@@ -14,13 +14,19 @@
 
 const getCloudFile = require("../../src/lib/cloudfiles");
 
-const { testCommand, assertExitCode, assertOccurrences } = require("./testutil");
+const { testCommand, assertExitCode, assertOccurrences, assertMissingOrEmptyDirectory } = require("./testutil");
 const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
 const nock = require("nock");
+
+function assertTestResults(action) {
+    assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test.log")));
+    assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test-results.xml")));
+    assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test-timing-results.csv")));
+}
 
 // TODO test ctrl+c (might need a child process)
 // TODO test argument -u
@@ -41,7 +47,15 @@ describe("test-worker command", function() {
                 assertOccurrences(ctx.stdout, "- Tests run      : 1", 2);
                 assertOccurrences(ctx.stdout, "- Failures       : 0", 2);
                 assertOccurrences(ctx.stdout, "- Errors         : 0", 2);
+
+                // legacy build folder, ensure it does not come back
                 assert(!fs.existsSync(".nui"));
+                // build directory must be in root
+                assert(!fs.existsSync(path.join("actions", "workerA", "build")));
+                assert(!fs.existsSync(path.join("actions", "workerB", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("workerA");
+                assertTestResults("workerB");
             });
 
         testCommand("test-projects/multiple-workers", "asset-compute:test-worker", ["-a", "workerA"])
@@ -55,7 +69,11 @@ describe("test-worker command", function() {
                 assertOccurrences(ctx.stdout, "- Tests run      : 1", 1);
                 assertOccurrences(ctx.stdout, "- Failures       : 0", 1);
                 assertOccurrences(ctx.stdout, "- Errors         : 0", 1);
+
                 assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "workerA", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("workerA");
             });
 
         testCommand("test-projects/single-worker", "asset-compute:test-worker")
@@ -67,7 +85,11 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
+
                 assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
             });
 
         testCommand("test-projects/mockserver", "asset-compute:test-worker")
@@ -79,7 +101,11 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
+
                 assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
             });
 
         testCommand("test-projects/cloudfiles", "asset-compute:test-worker")
@@ -87,7 +113,7 @@ describe("test-worker command", function() {
                 process.env.AWS_ACCESS_KEY_ID = "key";
                 process.env.AWS_SECRET_ACCESS_KEY = "secret";
                 // ensure the cloudfiles cache is deleted
-                rimraf.sync(path.join(getCloudFile.CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket"));
+                rimraf.sync(path.join(getCloudFile.GLOBAL_CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket"));
                 nock("https://s3.amazonaws.com").get("/asset-compute-cli-test-bucket/source").reply(200, "correct file");
                 nock("https://s3.amazonaws.com").get("/asset-compute-cli-test-bucket/rendition").reply(200, "correct file");
             })
@@ -99,7 +125,14 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
+
+                assert(fs.existsSync(path.join(getCloudFile.GLOBAL_CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket", "rendition")));
+                assert(fs.existsSync(path.join(getCloudFile.GLOBAL_CACHE_DIR, "s3.amazonaws.com", "asset-compute-cli-test-bucket", "source")));
+
                 assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
             });
     });
 
@@ -109,34 +142,42 @@ describe("test-worker command", function() {
             .it("fails with exit code 1 if test fails due to a different rendition result", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
-                assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test.log."));
+                assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test-results/test-worker/test.log."));
                 assert(ctx.stdout.includes("error: There were test failures."));
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
-                assert(glob.sync(".nui/*/failed/fails/rendition0.jpg").length, 1);
+                assert(glob.sync("build/test-worker/**/failed/fails/rendition0.jpg").length, 1);
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
             });
 
         testCommand("test-projects/test-failure-missing-rendition", "asset-compute:test-worker")
             .it("fails with exit code 1 if test fails due to a missing rendition", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
-                assert(ctx.stdout.includes("✖  Failure: No rendition generated. Check build/test.log."));
+                assert(ctx.stdout.includes("✖  Failure: No rendition generated. Check build/test-results/test-worker/test.log."));
                 assert(ctx.stdout.includes("error: There were test failures."));
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
             });
 
         testCommand("test-projects/invocation-error", "asset-compute:test-worker")
             .it("fails with exit code 2 if the worker invocation errors", function() {
                 assertExitCode(2);
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
             });
 
         testCommand("test-projects/build-error", "asset-compute:test-worker")
             .it("fails with exit code 3 if the worker does not build (has no manifest)", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*manifest.yml/i));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertMissingOrEmptyDirectory("build", "test-results");
             });
 
     });

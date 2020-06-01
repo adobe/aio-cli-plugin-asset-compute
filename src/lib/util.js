@@ -41,20 +41,16 @@ module.exports = {
 
     logError: logError,
 
-    dotNui: function (...p) {
-        return path.resolve('.nui', ...p);
-    },
-
     // create temporary hidden folder for in & out dirs to mount
-    prepareInOutDir: function () {
+    prepareInOutDir: function (buildDir) {
         const uniqueName = (process.env.BUILD_TAG || new Date().toISOString()).replace(/[^a-zA-Z0-9_]/g, '_');
         const dirs = {
-            dotNui: this.dotNui(),
-            work: this.dotNui(uniqueName),
-            in: this.dotNui(uniqueName, 'in'),
-            out: this.dotNui(uniqueName, 'out'),
-            failed: this.dotNui(uniqueName, 'failed'),
-            mock_crt: this.dotNui(uniqueName, 'mock-crt')
+            build:    buildDir,
+            work:     path.resolve(buildDir, uniqueName),
+            in:       path.resolve(buildDir, uniqueName, 'in'),
+            out:      path.resolve(buildDir, uniqueName, 'out'),
+            failed:   path.resolve(buildDir, uniqueName, 'failed'),
+            mock_crt: path.resolve(buildDir, uniqueName, 'mock-crt')
         };
         fse.ensureDirSync(dirs.in);
         // ensure readable by mounted docker container by giving everyone read
@@ -72,7 +68,7 @@ module.exports = {
         return dirs;
     },
 
-    // remove temporary .nui/in + out dirs and failed if empty
+    // remove temporary in + out dirs and failed if empty
     cleanupInOutDir: function (dirs) {
         if (!dirs) {
             return;
@@ -87,9 +83,9 @@ module.exports = {
             fse.removeSync(dirs.work);
         }
 
-        // remove .nui if empty and unused otherwise
-        if (dirExistsAndEmpty(dirs.dotNui)) {
-            fse.removeSync(dirs.dotNui);
+        // remove build dir if empty and unused otherwise
+        if (dirExistsAndEmpty(dirs.build)) {
+            fse.removeSync(dirs.build);
         }
     },
 
