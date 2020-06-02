@@ -100,15 +100,6 @@ class BaseCommand extends Command {
         return aioManifestToOpenwhiskAction(manifestAction);
     }
 
-    getActionSourceDir(name) {
-        const action = this.actions[name];
-        if (action.function) {
-            return path.dirname(path.resolve(action.function));
-        } else {
-            throw new Error(`Action '${name}' has no field 'function' in manifest.yml pointing to its sources.`);
-        }
-    }
-
     get appName() {
         return this.pjson.name;
     }
