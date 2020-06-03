@@ -157,6 +157,7 @@ class MockServer {
             }
             count++;
         }
+        proc.kill();
         return Promise.reject('Error setting up container');
     }
 }
