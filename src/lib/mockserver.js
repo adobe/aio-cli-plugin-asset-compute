@@ -12,13 +12,16 @@
 
 'use strict';
 
-const { promisify } = require('util');
-const exec = promisify(require('child_process').exec);
-const sleep = promisify(setTimeout);
+const util = require('util');
+const sleep = require('util').promisify(setTimeout);
+const child_process = require('child_process');
+const exec = util.promisify(child_process.exec);
+const spawn = child_process.spawn;
 const path = require('path');
+const debug = require('debug')('aio-asset-compute.mockserver');
+
 
 const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.8.1';
-const MAX_BUFFER_SIZE = 1024 * 10000; // 10MB max buffer size for exec
 
 // "mock-upload.wikimedia.org.json" => "upload.wikimedia.org"
 function getHostName(file) {
@@ -27,30 +30,6 @@ function getHostName(file) {
         file = file.substring("mock-".length);
     }
     return file;
-}
-
-/**
- * Poll docker logs until expectations and ports are set up
- * @param {String} container name of container
- */
-async function waitUntilReady(container) {
-    let count = 1;
-    while (count <= 10) {
-        await sleep(100 * count); // to account for cold starts
-        let logs;
-        try {
-            logs = await exec(`docker logs ${container}`, { maxBuffer: MAX_BUFFER_SIZE});
-        // eslint-disable-next-line no-unused-vars
-        } catch (e) {
-            throw new Error(`Log output of ${container} too large`);
-        }
-        const portIsRunning = logs.stdout.includes('started on ports: [80, 443]');
-        if (portIsRunning) {
-            return true;
-        }
-        count++;
-    }
-    throw new Error(`error waiting for mock server container to be ready`);
 }
 
 class MockServer {
@@ -70,7 +49,7 @@ class MockServer {
 
         try {
             await this._startMockServer();
-            await waitUntilReady(this.container);
+            await this._dockerSpawnLogs();
         } catch (e) {
             await this.stop(true);
             throw new Error(`error starting mock container '${this.container}': ${e.message}`);
@@ -138,6 +117,47 @@ class MockServer {
                 console.error(`error removing mock network '${this.network}': ${e.message}`);
             }
         }
+    }
+
+    /**
+     * Spawn docker logs until mocks are set up
+     */
+    async _dockerSpawnLogs() {
+        debug(`> docker logs -f ${this.container}`);
+        const proc = spawn('docker', ['logs', '-f', this.container]);
+        let isRunning;
+
+        proc.stdout.on('data', function(data) {
+            const stdout = data.toString();
+            if (stdout && stdout.includes('started on ports: [80, 443]')) {
+                debug("Stdout", stdout);
+                isRunning = true;
+            }
+        });
+        proc.stderr.on('data', function(data) {
+            process.stderr.write(data.toString());
+        });
+
+        const kill = proc.kill;
+        proc.kill = function() {
+            // ensure logging stops immediately
+            proc.stdout.removeAllListeners("data");
+            proc.stderr.removeAllListeners("data");
+            kill.apply(proc);
+        };
+
+        let count = 1;
+        while (count <= 20) {
+            await sleep(500); // to account for cold starts
+            debug('count', count, isRunning);
+            if(isRunning) {
+                debug(`${this.container} is up and running`);
+                proc.kill();
+                return Promise.resolve(true);
+            }
+            count++;
+        }
+        return Promise.reject('Error setting up container');
     }
 }
 
