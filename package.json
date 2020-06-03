@@ -1,6 +1,6 @@
 {
   "name": "@adobe/aio-cli-plugin-asset-compute",
-  "description": "Asset Compute Plugin for Adobe I/O Command Line Interface",
+  "description": "Tool to develop and test Adobe Asset Compute workers",
   "version": "1.0.3",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
@@ -57,16 +57,23 @@
     "adobe",
     "openwhisk"
   ],
+  "main": "bin/run",
+  "bin": {
+    "adobe-asset-compute": "bin/run"
+  },
   "oclif": {
     "commands": "./src/commands",
-    "bin": "",
+    "bin": "adobe-asset-compute",
     "devPlugins": [
       "@oclif/plugin-help"
-    ]
+    ],
+    "hooks": {
+      "init": "./src/hooks/init.js"
+    }
   },
   "scripts": {
     "prepare": "oclif-dev manifest && oclif-dev readme",
-    "version": "oclif-dev manifest && oclif-dev readme && git add README.md",
+    "version": "npm run prepare && git add README.md",
     "postpack": "rm -f oclif.manifest.json",
     "test": "nyc mocha test/*/*.test.js",
     "posttest": "eslint .",
