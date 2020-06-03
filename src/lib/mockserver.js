@@ -18,6 +18,7 @@ const sleep = promisify(setTimeout);
 const path = require('path');
 
 const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.8.1';
+const MAX_BUFFER_SIZE = 1024 * 10000; // 10MB max buffer size for exec
 
 // "mock-upload.wikimedia.org.json" => "upload.wikimedia.org"
 function getHostName(file) {
@@ -36,13 +37,20 @@ async function waitUntilReady(container) {
     let count = 1;
     while (count <= 10) {
         await sleep(100 * count); // to account for cold starts
-        const logs = await exec(`docker logs ${container}`);
+        let logs;
+        try {
+            logs = await exec(`docker logs ${container}`, { maxBuffer: MAX_BUFFER_SIZE});
+        // eslint-disable-next-line no-unused-vars
+        } catch (e) {
+            throw new Error(`Log output of ${container} too large`);
+        }
         const portIsRunning = logs.stdout.includes('started on ports: [80, 443]');
         if (portIsRunning) {
             return true;
         }
         count++;
     }
+    throw new Error(`error waiting for mock server container to be ready`);
 }
 
 class MockServer {
@@ -62,13 +70,12 @@ class MockServer {
 
         try {
             await this._startMockServer();
+            await waitUntilReady(this.container);
         } catch (e) {
             await this.stop(true);
-
             throw new Error(`error starting mock container '${this.container}': ${e.message}`);
         }
 
-        await waitUntilReady(this.container);
 
         await this._setupNetwork();
     }
