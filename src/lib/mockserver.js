@@ -129,27 +129,15 @@ class MockServer {
 
         proc.stdout.on('data', function(data) {
             const stdout = data.toString();
+            debug(stdout);
             if (stdout && stdout.includes('started on ports: [80, 443]')) {
-                debug("Stdout", stdout);
                 isRunning = true;
             }
         });
-        proc.stderr.on('data', function(data) {
-            process.stderr.write(data.toString());
-        });
-
-        const kill = proc.kill;
-        proc.kill = function() {
-            // ensure logging stops immediately
-            proc.stdout.removeAllListeners("data");
-            proc.stderr.removeAllListeners("data");
-            kill.apply(proc);
-        };
 
         let count = 1;
         while (count <= 20) {
             await sleep(500); // to account for cold starts
-            debug('count', count, isRunning);
             if(isRunning) {
                 debug(`${this.container} is up and running`);
                 proc.kill();
