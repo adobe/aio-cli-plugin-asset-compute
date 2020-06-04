@@ -123,30 +123,27 @@ class MockServer {
      * Spawn docker logs until mocks are set up
      */
     async _dockerSpawnLogs() {
-        debug(`> docker logs -f ${this.container}`);
-        const proc = spawn('docker', ['logs', '-f', this.container]);
-        let isRunning;
+        return new Promise((resolve, reject) => {
 
-        proc.stdout.on('data', function(data) {
-            const stdout = data.toString();
-            debug(stdout);
-            if (stdout && stdout.includes('started on ports: [80, 443]')) {
-                isRunning = true;
-            }
-        });
+            debug(`> docker logs -f ${this.container}`);
+            const proc = spawn('docker', ['logs', '-f', this.container]);
 
-        let count = 1;
-        while (count <= 20) {
-            await sleep(500); // to account for cold starts
-            if(isRunning) {
-                debug(`${this.container} is up and running`);
+            proc.stdout.on('data', function(data) {
+                const stdout = data.toString();
+                debug(stdout);
+                if (stdout && stdout.includes('started on ports: [80, 443]')) {
+                    proc.kill();
+                    resolve(true);
+                }
+            });
+
+            // wait limited time
+            setTimeout(() => {
+                // end spawned process
                 proc.kill();
-                return Promise.resolve(true);
-            }
-            count++;
-        }
-        proc.kill();
-        return Promise.reject('Error setting up container');
+                reject("Error setting up container");
+            }, 10000);
+        });
     }
 }
 
