@@ -13,7 +13,6 @@
 'use strict';
 
 const util = require('util');
-const sleep = require('util').promisify(setTimeout);
 const child_process = require('child_process');
 const exec = util.promisify(child_process.exec);
 const spawn = child_process.spawn;
