@@ -1,6 +1,5 @@
-#!/usr/bin/env node
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,8 +12,16 @@
 
 'use strict';
 
-// support -h in addition to --help everywhere
-process.argv = process.argv.map(v => v === "-h" ? "--help" : v);
+const HHelp = require('@oclif/plugin-help').default;
+const BaseCommand = require('../../base-command');
 
-require('@oclif/command').run()
-    .catch(require('@oclif/errors/handle'));
+class IndexCommand extends BaseCommand {
+    async run() {
+        const help = new HHelp(this.config);
+        help.showHelp(['asset-compute', '--help']);
+    }
+}
+
+IndexCommand.description = 'Develop and test Adobe Asset Compute workers';
+
+module.exports = IndexCommand;

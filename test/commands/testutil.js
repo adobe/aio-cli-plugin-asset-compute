@@ -48,6 +48,10 @@ BaseCommand.prototype.runCommand = async (command, argv) => {
 function testCommand(dir, command, args=[]) {
     let prepareFn;
 
+    if (command.startsWith("asset-compute:")) {
+        command = command.substring("asset-compute:".length);
+    }
+
     const chain = oclifTest
         .stdout()
         .stderr()
