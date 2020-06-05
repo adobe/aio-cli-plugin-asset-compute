@@ -12,10 +12,13 @@
 
 'use strict';
 
-const { promisify } = require('util');
-const exec = promisify(require('child_process').exec);
-const sleep = promisify(setTimeout);
+const util = require('util');
+const child_process = require('child_process');
+const exec = util.promisify(child_process.exec);
+const spawn = child_process.spawn;
 const path = require('path');
+const debug = require('debug')('aio-asset-compute.mockserver');
+
 
 const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.8.1';
 
@@ -26,23 +29,6 @@ function getHostName(file) {
         file = file.substring("mock-".length);
     }
     return file;
-}
-
-/**
- * Poll docker logs until expectations and ports are set up
- * @param {String} container name of container
- */
-async function waitUntilReady(container) {
-    let count = 1;
-    while (count <= 10) {
-        await sleep(100 * count); // to account for cold starts
-        const logs = await exec(`docker logs ${container}`);
-        const portIsRunning = logs.stdout.includes('started on ports: [80, 443]');
-        if (portIsRunning) {
-            return true;
-        }
-        count++;
-    }
 }
 
 class MockServer {
@@ -62,13 +48,12 @@ class MockServer {
 
         try {
             await this._startMockServer();
+            await this._dockerSpawnLogs();
         } catch (e) {
             await this.stop(true);
-
             throw new Error(`error starting mock container '${this.container}': ${e.message}`);
         }
 
-        await waitUntilReady(this.container);
 
         await this._setupNetwork();
     }
@@ -131,6 +116,33 @@ class MockServer {
                 console.error(`error removing mock network '${this.network}': ${e.message}`);
             }
         }
+    }
+
+    /**
+     * Spawn docker logs until mocks are set up
+     */
+    async _dockerSpawnLogs() {
+        return new Promise((resolve, reject) => {
+
+            debug(`> docker logs -f ${this.container}`);
+            const proc = spawn('docker', ['logs', '-f', this.container]);
+
+            proc.stdout.on('data', function(data) {
+                const stdout = data.toString();
+                debug(stdout);
+                if (stdout && stdout.includes('started on ports: [80, 443]')) {
+                    proc.kill();
+                    resolve(true);
+                }
+            });
+
+            // wait limited time
+            setTimeout(() => {
+                // end spawned process
+                proc.kill();
+                reject("Error setting up container");
+            }, 10000);
+        });
     }
 }
 
