@@ -10,35 +10,95 @@ Asset Compute Plugin for Adobe I/O Command Line Interface
 
 <!-- tocstop -->
 
-## Usage
+## Installation and Usage
 
-This plugin has [aio-cli](https://github.com/adobe/aio-cli) as a prerequisite. Once `aio-cli` has been installed, the plugin can be installed and used as follows:
+This can be installed & used in three ways:
 
-```sh-session
-$ aio plugins:install @adobe/aio-cli-plugin-asset-compute
-$ aio asset-compute:test-worker --help
-Usage information of the test-worker command
-$ aio asset-compute:test-worker -u
-Update rendition output
-$ aio asset-compute:tw
-Alias for the test-worker command
-$ aio asset-compute:devtool
-Runs the Asset Compute Developer Tool UI
+1. [aio plugin](#install-as-aio-plugin)
+2. [local devDependency](#install-as-local-devdependency)
+3. [global standalone cli](#install-as-global-standalone-cli)
+
+### Install as aio plugin
+
+This requires [aio-cli](https://github.com/adobe/aio-cli).
+
+```
+aio plugins:install @adobe/aio-cli-plugin-asset-compute
+```
+
+It provides the `asset-compute` command topic. You can run e.g. the test command using:
+
+```
+aio asset-compute test-worker
+```
+
+Help and available commands can be seen with:
+
+```
+aio asset-compute
+```
+
+### Install as local devDependency
+
+Install into your `devDependencies`:
+
+```
+npm install --save-dev @adobe/aio-cli-plugin-asset-compute
+```
+
+Then use in `npm` scripts in your `package.json`, for example for tests:
+
+```json
+   "scripts": {
+       "test": "adobe-asset-compute test-worker"
+   }
+```
+
+Use `npx` if you want to manually run it. Inside your project run for example:
+
+```
+npx adobe-asset-compute run-worker
+```
+
+Help and available commands can be seen with:
+
+```
+npx adobe-asset-compute
+```
+
+### Install as global standalone cli
+
+Install globally using:
+
+```
+npm install -g @adobe/aio-cli-plugin-asset-compute
+```
+
+This will add the `adobe-asset-compute` cli to your system. Run using:
+
+```
+adobe-asset-compute test-worker
+```
+
+Help and available commands can be seen with:
+
+```
+adobe-asset-compute
 ```
 
 ## Commands
 <!-- commands -->
-* [`@adobe/aio-cli-plugin-asset-compute asset-compute:devtool`](#adobeaio-cli-plugin-asset-compute-asset-computedevtool)
-* [`@adobe/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`](#adobeaio-cli-plugin-asset-compute-asset-computerun-worker-file-rendition)
-* [`@adobe/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`](#adobeaio-cli-plugin-asset-compute-asset-computetest-worker-testcase)
+* [`adobe-asset-compute devtool`](#adobe-asset-compute-devtool)
+* [`adobe-asset-compute run-worker FILE RENDITION`](#adobe-asset-compute-run-worker-file-rendition)
+* [`adobe-asset-compute test-worker [TESTCASE]`](#adobe-asset-compute-test-worker-testcase)
 
-## `@adobe/aio-cli-plugin-asset-compute asset-compute:devtool`
+## `adobe-asset-compute devtool`
 
 Runs the Asset Compute Developer Tool UI
 
 ```
 USAGE
-  $ @adobe/aio-cli-plugin-asset-compute asset-compute:devtool
+  $ adobe-asset-compute devtool
 
 OPTIONS
   -v, --verbose  Verbose output
@@ -46,15 +106,13 @@ OPTIONS
   --version      Show version
 ```
 
-_See code: [src/commands/asset-compute/devtool.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/v1.0.1/src/commands/asset-compute/devtool.js)_
-
-## `@adobe/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION`
+## `adobe-asset-compute run-worker FILE RENDITION`
 
 Run worker from local project using Docker
 
 ```
 USAGE
-  $ @adobe/aio-cli-plugin-asset-compute asset-compute:run-worker FILE RENDITION
+  $ adobe-asset-compute run-worker FILE RENDITION
 
 ARGUMENTS
   FILE       Path to input file for worker
@@ -72,15 +130,13 @@ OPTIONS
   --version                  Show version
 ```
 
-_See code: [src/commands/asset-compute/run-worker.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/v1.0.1/src/commands/asset-compute/run-worker.js)_
-
-## `@adobe/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]`
+## `adobe-asset-compute test-worker [TESTCASE]`
 
 Run tests from local project
 
 ```
 USAGE
-  $ @adobe/aio-cli-plugin-asset-compute asset-compute:test-worker [TESTCASE]
+  $ adobe-asset-compute test-worker [TESTCASE]
 
 ARGUMENTS
   TESTCASE  Test case(s) to run. Supports glob patterns. If not set, runs all tests.
@@ -92,12 +148,9 @@ OPTIONS
   --version               Show version
 
 ALIASES
-  $ @adobe/aio-cli-plugin-asset-compute asset-compute:tw
+  $ adobe-asset-compute tw
 ```
-
-_See code: [src/commands/asset-compute/test-worker.js](https://github.com/adobe/aio-cli-plugin-asset-compute/blob/v1.0.1/src/commands/asset-compute/test-worker.js)_
 <!-- commandsstop -->
-
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.

@@ -100,21 +100,23 @@ class BaseCommand extends Command {
         return aioManifestToOpenwhiskAction(manifestAction);
     }
 
-    getActionSourceDir(name) {
-        const action = this.actions[name];
-        if (action.function) {
-            return path.dirname(path.resolve(action.function));
-        } else {
-            throw new Error(`Action '${name}' has no field 'function' in manifest.yml pointing to its sources.`);
-        }
-    }
-
     get appName() {
         return this.pjson.name;
     }
 
     get appVersion() {
         return this.pjson.version;
+    }
+
+    get buildDir() {
+        if (!this._buildDir) {
+            this._buildDir = process.env.AIO_BUILD_DIR || "build";
+        }
+        return this._buildDir;
+    }
+
+    getBuildDir(...subdirs) {
+        return path.join(this.buildDir, ...subdirs);
     }
 
     onProcessExit(handler) {

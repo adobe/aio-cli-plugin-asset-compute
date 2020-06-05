@@ -134,7 +134,10 @@ class RunWorkerCommand extends BaseCommand {
 
         params.requestId = `run-worker in ${path.basename(process.cwd())}`;
 
-        const dirs = util.prepareInOutDir();
+        // build/
+        //   run-worker/
+        //     <action>/
+        const dirs = util.prepareInOutDir(this.getBuildDir("run-worker", actionName));
 
         // copy input file
         const inFile = path.resolve(dirs.in, params.source);
@@ -160,7 +163,7 @@ class RunWorkerCommand extends BaseCommand {
 
                     const filename = rendition.name ? path.basename(rendition.name) : `rendition${idx}`;
 
-                    // copy rendition out of .nui/out if present
+                    // copy rendition if present
                     const outFile = path.resolve(dirs.out, filename);
                     const targetFile = path.resolve(targetDir, filename);
                     if (fse.existsSync(outFile)) {
