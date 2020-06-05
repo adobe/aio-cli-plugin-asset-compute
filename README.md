@@ -88,8 +88,23 @@ adobe-asset-compute
 
 ## Commands
 <!-- commands -->
+* [`adobe-asset-compute devtool`](#adobe-asset-compute-devtool)
 * [`adobe-asset-compute run-worker FILE RENDITION`](#adobe-asset-compute-run-worker-file-rendition)
 * [`adobe-asset-compute test-worker [TESTCASE]`](#adobe-asset-compute-test-worker-testcase)
+
+## `adobe-asset-compute devtool`
+
+Runs the Asset Compute Developer Tool UI
+
+```
+USAGE
+  $ adobe-asset-compute devtool
+
+OPTIONS
+  -v, --verbose  Verbose output
+  --port=port    [default: 9000] Http port of the Asset Compute Developer Tool Server
+  --version      Show version
+```
 
 ## `adobe-asset-compute run-worker FILE RENDITION`
 
@@ -136,7 +151,6 @@ ALIASES
   $ adobe-asset-compute tw
 ```
 <!-- commandsstop -->
-
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.

@@ -7,6 +7,7 @@
   "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
     "@adobe/aio-cli-plugin-runtime": "^1.6.0",
+    "@adobe/asset-compute-devtool": "^1.0.1",
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2.2.3",
