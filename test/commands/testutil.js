@@ -33,8 +33,8 @@ const COMMANDS = {
 
 // tests are not running in a full oclif enviroment with the aio app plugin present,
 // so we have to include it as a dev dependency and manually load and run the commands
-// the code is invoking dynamically, by overwriting our BaseCommand.runCommand() helper
-BaseCommand.prototype.runCommand = async (command, argv) => {
+// the code is invoking dynamically, by overwriting our BaseCommand.runAioCommand() helper
+BaseCommand.prototype.runAioCommand = async (command, argv) => {
     if (COMMANDS[command]) {
         await require(COMMANDS[command]).run(argv);
     } else {

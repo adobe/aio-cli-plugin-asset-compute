@@ -18,6 +18,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const ioruntime = require("@adobe/aio-cli-plugin-runtime");
 const debug = require('debug')('aio-asset-compute.base');
+const { spawnSync } = require("child_process");
 
 // converts action object from manifest.yml to openwhisk rest API json format
 function aioManifestToOpenwhiskAction(manifestAction) {
@@ -31,6 +32,18 @@ function aioManifestToOpenwhiskAction(manifestAction) {
     owAction.name = manifestAction.name;
 
     return owAction;
+}
+
+async function execute(command, args) {
+    const result = spawnSync(command, args, {stdio: "inherit"});
+
+    if (result.error) {
+        if (result.error.code === 'ENOENT') {
+            throw new Error(`Could not find command '${command}': ${result.error.message}`);
+        } else {
+            throw new Error(`Failed to execute '${command} ${args.join(" ")}': ${result.error.message}`);
+        }
+    }
 }
 
 class BaseCommand extends Command {
@@ -69,16 +82,26 @@ class BaseCommand extends Command {
         return action;
     }
 
-    async runCommand(command, args) {
+    async runAioCommand(command, args) {
         const CommandClass = this.config.findCommand(command);
         if (CommandClass) {
+            // if run as aio plugin
             const cmd = CommandClass.load();
             await cmd.run(args);
+
+        } else {
+            // if run as standalone cli
+            await execute("aio", [command, ...args]);
         }
     }
 
     async buildActionZip(actionName) {
-        await this.runCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+        try {
+            await this.runAioCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+        } catch (e) {
+            throw new Error(`Failed to build action: ${e.message}`);
+        }
+
         const zip = path.resolve("dist/actions", `${actionName}.zip`);
         if (!fs.existsSync(zip)) {
             throw new Error(`Building action failed, did not create ${zip}`);
