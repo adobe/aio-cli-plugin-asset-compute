@@ -79,7 +79,7 @@
     "prepare": "oclif-dev manifest && oclif-dev readme",
     "version": "npm run prepare && git add README.md",
     "postpack": "rm -f oclif.manifest.json",
-    "test": "nyc mocha test/*/*.test.js",
+    "test": "nyc -r=text -r=lcov mocha test/*/*.test.js",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "clean": "for d in test-projects/*; do pushd $d; rm -rf package-lock.json node_modules dist build .nui .asset-compute; popd; done",

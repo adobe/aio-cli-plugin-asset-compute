@@ -48,13 +48,6 @@ async function execute(command, args) {
 
 class BaseCommand extends Command {
 
-    get pjson() {
-        if (!this._pjson) {
-            this._pjson = fs.readJSONSync('package.json');
-        }
-        return this._pjson;
-    }
-
     get manifest() {
         if (!this._manifest) {
             this._manifest = yaml.safeLoad(fs.readFileSync('manifest.yml', 'utf8'));
@@ -121,14 +114,6 @@ class BaseCommand extends Command {
         debug("aio manifest action:", manifestAction);
 
         return aioManifestToOpenwhiskAction(manifestAction);
-    }
-
-    get appName() {
-        return this.pjson.name;
-    }
-
-    get appVersion() {
-        return this.pjson.version;
     }
 
     get buildDir() {
