@@ -18,6 +18,8 @@ const yaml = require('js-yaml');
 const path = require('path');
 const ioruntime = require("@adobe/aio-cli-plugin-runtime");
 const debug = require('debug')('aio-asset-compute.base');
+// imported like this so that we can overwrite child_process.spawnSync in unit tests
+const child_process = require("child_process");
 
 // converts action object from manifest.yml to openwhisk rest API json format
 function aioManifestToOpenwhiskAction(manifestAction) {
@@ -33,14 +35,19 @@ function aioManifestToOpenwhiskAction(manifestAction) {
     return owAction;
 }
 
-class BaseCommand extends Command {
+async function execute(command, args) {
+    const result = child_process.spawnSync(command, args, {stdio: "inherit"});
 
-    get pjson() {
-        if (!this._pjson) {
-            this._pjson = fs.readJSONSync('package.json');
+    if (result.error) {
+        if (result.error.code === 'ENOENT') {
+            throw new Error(`Could not find command '${command}': ${result.error.message}`);
+        } else {
+            throw new Error(`Failed to execute '${command} ${args.join(" ")}': ${result.error.message}`);
         }
-        return this._pjson;
     }
+}
+
+class BaseCommand extends Command {
 
     get manifest() {
         if (!this._manifest) {
@@ -69,16 +76,26 @@ class BaseCommand extends Command {
         return action;
     }
 
-    async runCommand(command, args) {
+    async runAioCommand(command, args) {
         const CommandClass = this.config.findCommand(command);
         if (CommandClass) {
+            // if run as aio plugin
             const cmd = CommandClass.load();
             await cmd.run(args);
+
+        } else {
+            // if run as standalone cli
+            await execute("aio", [command, ...args]);
         }
     }
 
     async buildActionZip(actionName) {
-        await this.runCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+        try {
+            await this.runAioCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+        } catch (e) {
+            throw new Error(`Failed to build action: ${e.message}`);
+        }
+
         const zip = path.resolve("dist/actions", `${actionName}.zip`);
         if (!fs.existsSync(zip)) {
             throw new Error(`Building action failed, did not create ${zip}`);
@@ -98,14 +115,6 @@ class BaseCommand extends Command {
         debug("aio manifest action:", manifestAction);
 
         return aioManifestToOpenwhiskAction(manifestAction);
-    }
-
-    get appName() {
-        return this.pjson.name;
-    }
-
-    get appVersion() {
-        return this.pjson.version;
     }
 
     get buildDir() {
