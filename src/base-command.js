@@ -18,7 +18,8 @@ const yaml = require('js-yaml');
 const path = require('path');
 const ioruntime = require("@adobe/aio-cli-plugin-runtime");
 const debug = require('debug')('aio-asset-compute.base');
-const { spawnSync } = require("child_process");
+// imported like this so that we can overwrite child_process.spawnSync in unit tests
+const child_process = require("child_process");
 
 // converts action object from manifest.yml to openwhisk rest API json format
 function aioManifestToOpenwhiskAction(manifestAction) {
@@ -35,7 +36,7 @@ function aioManifestToOpenwhiskAction(manifestAction) {
 }
 
 async function execute(command, args) {
-    const result = spawnSync(command, args, {stdio: "inherit"});
+    const result = child_process.spawnSync(command, args, {stdio: "inherit"});
 
     if (result.error) {
         if (result.error.code === 'ENOENT') {
