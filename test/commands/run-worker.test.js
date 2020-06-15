@@ -17,6 +17,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const rimraf = require("rimraf");
+const child_process = require("child_process");
 
 describe("run-worker command", function() {
 
@@ -154,6 +155,53 @@ describe("run-worker command", function() {
             .it("fails with exit code 1 if run on a project with multiple workers and no -a is set", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stderr.includes("Error: Must specify worker to run using --action"));
+
+                assert(!fs.existsSync("rendition.jpg"));
+                assert(!fs.existsSync(".nui"));
+                assertMissingOrEmptyDirectory("build", "run-worker");
+            });
+    });
+
+    describe("standalone mode", function() {
+        testCommand("test-projects/single-worker", "run-worker", ["test/asset-compute/worker/simple/file.jpg", "rendition.jpg"])
+            // ensure aio app deploy command is not available (empty object)
+            // so that it tries to do child process execution
+            .customCommands({
+                "app:deploy": false
+            })
+            .prepare((ctx) => {
+                // start with clean slate
+                if (fs.existsSync("rendition.jpg")) {
+                    fs.unlinkSync("rendition.jpg");
+                }
+
+                child_process._original_spawnSync = child_process.spawnSync;
+                child_process.spawnSync = function(cmd, args) {
+                    // track invocations for asserts below
+                    ctx.spawnSyncInvoked = ctx.spawnSyncInvoked || [];
+                    ctx.spawnSyncInvoked.push({
+                        cmd: cmd,
+                        args: args
+                    });
+
+                    // simulate failure
+                    return {
+                        error: {
+                            code: "ENOENT",
+                            message: "Did not find aio command"
+                        }
+                    };
+                };
+            })
+            .finally(() => {
+                child_process.spawnSync = child_process._original_spawnSync;
+            })
+            .it("invokes aio deploy as child process to build actions (and fail with exit code 1 if not found)", function(ctx) {
+                assertExitCode(1);
+
+                assert.equal(ctx.spawnSyncInvoked.length, 1);
+                assert.strictEqual(ctx.spawnSyncInvoked[0].cmd, "aio");
+                assert.deepEqual(ctx.spawnSyncInvoked[0].args, ["app:deploy", "--skip-deploy", "-a", "worker"]);
 
                 assert(!fs.existsSync("rendition.jpg"));
                 assert(!fs.existsSync(".nui"));

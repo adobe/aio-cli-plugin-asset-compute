@@ -67,7 +67,7 @@ class TestWorkerCommand extends BaseCommand {
                 }
             }
         } catch (e) {
-            console.error("Error:", e.message);
+            console.error("\nError:", e.message);
             debug(e);
             process.exitCode = 3;
         }

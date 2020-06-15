@@ -14,8 +14,8 @@
 
 const MockServer = require("../../src/lib/mockserver");
 const WorkerTestRunner = require("../../src/lib/testrunner");
-const BaseCommand = require("../../src/base-command");
 
+const Config = require("@oclif/config");
 const { test: oclifTest } = require("@oclif/test");
 const stdmock = require("stdout-stderr");
 const path = require("path");
@@ -25,28 +25,51 @@ const assert = require("assert");
 const Docker = require("dockerode");
 const fs = require("fs");
 
+// to enable logging set this before the test:
+// process.env.TEST_OUTPUT = 1;
+
 const baseDir = process.cwd();
 
 const COMMANDS = {
     "app:deploy": "@adobe/aio-cli-plugin-app/src/commands/app/deploy"
 };
 
-// tests are not running in a full oclif enviroment with the aio app plugin present,
-// so we have to include it as a dev dependency and manually load and run the commands
-// the code is invoking dynamically, by overwriting our BaseCommand.runCommand() helper
-BaseCommand.prototype.runCommand = async (command, argv) => {
-    if (COMMANDS[command]) {
-        await require(COMMANDS[command]).run(argv);
-    } else {
-        throw new Error(`Missing test implementation of aio command ${command}`);
-    }
-};
+let CUSTOM_COMMANDS = {};
 
-// to enable logging set this before the test:
-// process.env.TEST_OUTPUT = 1;
+function patchOclifFindCommand() {
+    // tests are not running in a full oclif enviroment with the aio app plugin present,
+    // so we have to include it as a dev dependency and manually load and run the commands
+    // the code is invoking dynamically, by patching oclif Config.findCommand() function
+    // which we use in our base-command.js
+    const originalLoad = Config.load;
+    Config.load = async function(opts) {
+        const config = await originalLoad.call(this, opts);
+        const originalFindCommand = config.findCommand;
+        config.findCommand = function(id, opts) {
+            if (CUSTOM_COMMANDS[id]) {
+                if (typeof CUSTOM_COMMANDS[id] !== "string") {
+                    return null;
+                }
+
+                const cmd = require(CUSTOM_COMMANDS[id]);
+                return {
+                    load: function() {
+                        cmd.id = id;
+                        return cmd;
+                    }
+                };
+            } else {
+                return originalFindCommand.call(this, id, opts);
+            }
+        };
+        return config;
+    };
+}
+
+patchOclifFindCommand();
 
 function testCommand(dir, command, args=[]) {
-    let prepareFn;
+    let prepareFn, customCommands = COMMANDS;
 
     if (command.startsWith("asset-compute:")) {
         command = command.substring("asset-compute:".length);
@@ -64,12 +87,16 @@ function testCommand(dir, command, args=[]) {
             rimraf.sync("build");
 
             // install dependencies for the project
-            execSync("npm install");
+            if (!fs.existsSync("node_modules")) {
+                execSync("npm install");
+            }
         })
         .do(async ctx => {
             if (prepareFn) {
                 await prepareFn(ctx);
             }
+
+            CUSTOM_COMMANDS = customCommands;
         })
         // run the command to test
         .command([command, ...args])
@@ -95,6 +122,11 @@ function testCommand(dir, command, args=[]) {
 
     chain.prepare = function(fn) {
         prepareFn = fn;
+        return this;
+    };
+
+    chain.customCommands = function(cmds) {
+        customCommands = cmds;
         return this;
     };
 
