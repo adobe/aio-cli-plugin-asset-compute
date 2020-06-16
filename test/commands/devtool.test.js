@@ -72,7 +72,8 @@ describe("devtool command", function() {
         });
 
         assert.strictEqual(resp.status, 200);
-        assert.deepStrictEqual(await resp.json(), { endpoint: 'https://asset-compute.adobe.io/' } );
+        const body = await resp.json();
+        assert.ok(body.endpoint.includes('https://asset-compute.adobe.io'));
         await devtool.stop();
     });
     it("server starts up and fails an api call without authorization", async function() {
