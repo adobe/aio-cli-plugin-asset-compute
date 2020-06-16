@@ -30,64 +30,82 @@ describe("devtool command", function() {
         mock.stopAll();
     });
     it("devtool starts and serves html", async function() {
+        // set up server
         const DevToolCommand = require("../../src/commands/asset-compute/devtool");
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run([]);
-        await sleep(200);
+        await sleep(50);
         const port = devtool.server.address().port;
         stdout.stop();
-        await devtool.stop();
 
-        console.log('stdout', stdout.output);
+        // check start up logs
         const stdoutList = stdout.output.split('\n');
         assert.strictEqual(stdoutList[0], `Starting Asset Compute Developer Tool Server on port ${port}`);
         assert.ok(stdoutList[1], `Listening on port ${port}`);
         assert(stdoutList[2].includes(`Asset Compute Developer Tool Server started on url http://localhost:${port}/?devToolToken=`));
+        const url = stdoutList[2].split(' ').pop();
+        assert.ok(url.includes(`http://localhost:${port}/?devToolToken=`));
 
+        // api call to get raw html
+        const resp = await fetch(url);
+        assert.strictEqual(resp.status, 200);
+        const html = await resp.text();
+        assert.ok(html.includes('/static/js'));
+        await devtool.stop();
     });
 
     it("server starts up and does an api call", async function() {
+        this.timeout(5000);
+        // set up server
         const DevToolCommand = require("../../src/commands/asset-compute/devtool");
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run([]);
-        await sleep(200);
-        // const port = devtool.server.address().port;
-        
-        console.log('stdout', stdout.output);
+        await sleep(50);
+
+        // check output
+        const port = devtool.server.address().port;
         const stdoutList = stdout.output.split('\n');
         const url = stdoutList[2].split(' ').pop();
+        const token = url.split('=')[1];
+        assert.strictEqual(token.length, 64);
+        assert.ok(url.includes(`http://localhost:${port}/?devToolToken=`));
         stdout.stop();
-        console.log(url);
-        const resp = await fetch(url);
-        console.log('resp', resp);
+
+        // api call to get raw html
+        const resp = await fetch(`http://localhost:${port}/api/asset-compute-endpoint`, {
+            headers: {
+                "authorization": token,
+            }
+        });
+
+        assert.strictEqual(resp.status, 200);
+        assert.deepStrictEqual(await resp.json(), { endpoint: 'https://asset-compute.adobe.io/' } );
         await devtool.stop();
     });
-    it("authorization fails", async function() {
+    it("server starts up and fails an api call without authorization", async function() {
+        this.timeout(5000);
+        // set up server
+        const DevToolCommand = require("../../src/commands/asset-compute/devtool");
+        stdout.start();
+        const devtool = new DevToolCommand([]);
+        devtool.run([]);
+        await sleep(50);
 
+        // check output
+        const port = devtool.server.address().port;
+        stdout.stop();
+
+        // api call to get raw html
+        const resp = await fetch(`http://localhost:${port}/api/asset-compute-endpoint`, {
+            headers: {
+                "authorization": "fake token",
+            }
+        });
+
+        assert.strictEqual(resp.status, 401);
+        assert.deepStrictEqual(await resp.json(), { message: 'Unauthorized' } );
+        await devtool.stop();
     });
-
-    /*
-    describe("success", function() {
-        process.env.TEST_OUTPUT = 1;
-        console.log('tesst');
-
-        oclifTest
-		    .stdout()
-            .stderr()
-            .do(async (ctx) => {
-                console.log('context', ctx);
-                
-            })
-            .command(['devtool'])
-            .timeout(50)
-            .catch(e => console.log(e))
-            .it("runs a single worker if there is only one (without -a)", function(ctx) {
-                console.log('output', ctx.stdout);
-                // process.exit(0);
-				
-            });
-    });
-    */
 });

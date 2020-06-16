@@ -15,7 +15,7 @@
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
 const app = require('@adobe/asset-compute-devtool/app');
-const https = require('https');
+const http = require('http');
 const { createHttpTerminator } = require('http-terminator');
 const util = require('../../lib/util');
 const open = require('open');
@@ -64,7 +64,7 @@ class DevToolCommand extends BaseCommand {
 
             // Create HTTP server.
             util.log('Starting Asset Compute Developer Tool Server on port', port);
-            this.server = https.createServer(app);
+            this.server = http.createServer(app);
             const httpTerminator = createHttpTerminator({ server: this.server });
 
             // Listen on provided port, on all network interfaces.
@@ -97,10 +97,6 @@ class DevToolCommand extends BaseCommand {
                 util.log("Stopping Asset Compute Developer Tool Server");
                 httpTerminator.terminate();
             });
-            // process.on('SIGINT', function() {
-            //     util.log("Stopping Asset Compute Developer Tool Server");
-            //     httpTerminator.terminate();
-            // });
         });
     }
 
