@@ -14,21 +14,12 @@
 
 // const { test: oclifTest } = require("@oclif/test");
 const {stdout} = require("stdout-stderr");
-const mock = require('mock-require');
 const assert = require("assert");
 const promisify = require('util').promisify;
 const sleep = promisify(setTimeout);
 const fetch = require('node-fetch');
 
 describe("devtool command", function() {
-    beforeEach(() => {
-        mock('open', async function() {
-            return Promise.resolve();
-        });
-    });
-    afterEach(() => {
-        mock.stopAll();
-    });
     it("devtool starts and serves html", async function() {
         // set up server
         const DevToolCommand = require("../../src/commands/asset-compute/devtool");
