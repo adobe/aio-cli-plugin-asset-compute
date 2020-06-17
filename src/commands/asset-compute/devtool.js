@@ -91,7 +91,6 @@ class DevToolCommand extends BaseCommand {
             this.server.on('listening', () => onListening(this.server, randomString));
             this.server.on('close', () => {
                 util.log("Asset Compute Developer Tool Server Stopped");
-                // process.exit();
             });
             this.onProcessExit(async () => {
                 util.log("Stopping Asset Compute Developer Tool Server");
