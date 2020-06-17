@@ -104,7 +104,7 @@ class DevToolCommand extends BaseCommand {
     }
 }
 
-DevToolCommand.description = 'Runs the Asset Compute Developer Tool UI';
+DevToolCommand.description = 'Starts the Asset Compute Developer Tool';
 
 DevToolCommand.flags = {
     port: flags.integer({

@@ -18,13 +18,13 @@ const assert = require("assert");
 const promisify = require('util').promisify;
 const sleep = promisify(setTimeout);
 const fetch = require('node-fetch');
+const DevToolCommand = require("../../src/commands/asset-compute/devtool");
 
 const SERVER_START_UP_WAIT_TIME = 500; // ms to wait while server starts up
 const TIMEOUT = 3000;
 describe("devtool command", function() {
     it("devtool starts and serves html", async function() {
         // set up server
-        const DevToolCommand = require("../../src/commands/asset-compute/devtool");
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run([]);
@@ -51,7 +51,6 @@ describe("devtool command", function() {
     it("server starts up and does an api call", async function() {
         this.timeout(TIMEOUT);
         // set up server
-        const DevToolCommand = require("../../src/commands/asset-compute/devtool");
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run([]);
@@ -81,7 +80,6 @@ describe("devtool command", function() {
     it("server starts up and fails an api call without authorization", async function() {
         this.timeout(TIMEOUT);
         // set up server
-        const DevToolCommand = require("../../src/commands/asset-compute/devtool");
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run([]);

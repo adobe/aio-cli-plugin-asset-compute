@@ -94,7 +94,7 @@ adobe-asset-compute
 
 ## `adobe-asset-compute devtool`
 
-Runs the Asset Compute Developer Tool UI
+Starts the Asset Compute Developer Tool
 
 ```
 USAGE

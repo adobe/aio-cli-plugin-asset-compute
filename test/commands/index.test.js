@@ -25,6 +25,6 @@ describe("index command", function() {
         assert(stdout.output.startsWith("Develop and test Adobe Asset Compute workers"));
         assert(stdout.output.includes("asset-compute:run-worker   Run worker from local project using Docker"));
         assert(stdout.output.includes("asset-compute:test-worker  Run tests from local project"));
-        assert(stdout.output.includes("asset-compute:devtool      Runs the Asset Compute Developer Tool UI"));
+        assert(stdout.output.includes("asset-compute:devtool      Starts the Asset Compute Developer Tool"));
     });
 });
