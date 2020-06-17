@@ -32,7 +32,7 @@ async function onListening(server, randomString) {
         : 'port ' + addr.port;
     util.log('Listening on ' + bind);
     const assetComputeDevToolUrl = `http://localhost:${addr.port}/?devToolToken=${randomString}`;
-    console.log('Asset Compute Developer Tool Server started on url ', assetComputeDevToolUrl);
+    console.log('Asset Compute Developer Tool Server started on url', assetComputeDevToolUrl);
     await open(assetComputeDevToolUrl);
 }
 
@@ -45,6 +45,7 @@ async function findOpenPort(preferredPort) {
 }
 
 class DevToolCommand extends BaseCommand {
+
     async run() {
         const { flags } = this.parse(DevToolCommand);
         const port = await findOpenPort(flags.port);
@@ -62,13 +63,13 @@ class DevToolCommand extends BaseCommand {
             app.set('devToolToken', randomString);
 
             // Create HTTP server.
-            util.log('Starting Asset Compute Developer Tool Server on port ', port);
-            const server = http.createServer(app);
-            const httpTerminator = createHttpTerminator({ server });
+            util.log('Starting Asset Compute Developer Tool Server on port', port);
+            this.server = http.createServer(app);
+            const httpTerminator = createHttpTerminator({ server: this.server });
 
             // Listen on provided port, on all network interfaces.
-            server.listen(port);
-            server.on('error', error => {
+            this.server.listen(port);
+            this.server.on('error', error => {
                 if (error.syscall !== 'listen') {
                     return reject(error);
                 }
@@ -87,20 +88,23 @@ class DevToolCommand extends BaseCommand {
                 }
                 return reject(error);
             });
-            server.on('listening', () => onListening(server, randomString));
-            server.on('close', () => {
+            this.server.on('listening', () => onListening(this.server, randomString));
+            this.server.on('close', () => {
                 util.log("Asset Compute Developer Tool Server Stopped");
-                process.exit();
             });
-            process.on('SIGINT', function() {
+            this.onProcessExit(async () => {
                 util.log("Stopping Asset Compute Developer Tool Server");
                 httpTerminator.terminate();
             });
         });
     }
+
+    async stop() {
+        return this.server.close();
+    }
 }
 
-DevToolCommand.description = 'Runs the Asset Compute Developer Tool UI';
+DevToolCommand.description = 'Starts the Asset Compute Developer Tool';
 
 DevToolCommand.flags = {
     port: flags.integer({
