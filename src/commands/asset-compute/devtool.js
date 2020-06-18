@@ -18,16 +18,17 @@ const { flags } = require('@oclif/command');
 require('dotenv').config;
 
 class DevToolCommand extends BaseCommand {
-    async run() {
+
+    async run(port) {
         const { flags } = this.parse(DevToolCommand);
 
         return new Promise((resolve, reject) => {
-            require('./index.js').start();
+            require('@adobe/asset-compute-devtool').start(port);
         });
     }
 }
 
-DevToolCommand.description = 'Runs the Asset Compute Developer Tool UI';
+DevToolCommand.description = 'Starts the Asset Compute Developer Tool';
 
 DevToolCommand.flags = {
     port: flags.integer({
