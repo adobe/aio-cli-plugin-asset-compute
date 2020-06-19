@@ -18,6 +18,8 @@ const assert = require("assert");
 const promisify = require('util').promisify;
 const sleep = promisify(setTimeout);
 const fetch = require('node-fetch');
+const mock = require('mock-require');
+mock('open', () => {});
 const DevToolCommand = require("../../src/commands/asset-compute/devtool");
 
 const SERVER_START_UP_WAIT_TIME = 500; // ms to wait while server starts up
