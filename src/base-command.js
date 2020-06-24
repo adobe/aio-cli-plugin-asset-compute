@@ -36,7 +36,8 @@ function aioManifestToOpenwhiskAction(manifestAction) {
 }
 
 async function execute(command, args) {
-    const result = child_process.spawnSync(command, args, {stdio: "inherit"});
+    // shell => required for Windows
+    const result = child_process.spawnSync(command, args, {shell: true, stdio: "inherit"});
 
     if (result.error) {
         if (result.error.code === 'ENOENT') {
