@@ -14,6 +14,8 @@
 
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
+const devtool = require('@adobe/asset-compute-devtool');
+
 
 require('dotenv').config;
 
@@ -23,7 +25,7 @@ class DevToolCommand extends BaseCommand {
         const { flags } = this.parse(DevToolCommand);
 
         return new Promise((resolve, reject) => {
-            require('@adobe/asset-compute-devtool').start(port);
+            devtool.start(port);
         });
     }
 }
