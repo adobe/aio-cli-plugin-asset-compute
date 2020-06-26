@@ -24,6 +24,8 @@ jobs:
   include:
     - stage: test
       script: npm test
+    - stage: integration-test
+      script: npm run integration-test
     - stage: release
       if: branch = master
       node_js: "12"
