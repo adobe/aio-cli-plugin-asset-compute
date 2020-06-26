@@ -12,13 +12,52 @@
 
 'use strict';
 
-// const {stdout} = require("stdout-stderr");
-// const assert = require("assert");
+const assert = require("assert");
+const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const rimraf = require("rimraf");
+
+function shell(command, dir) {
+    command = command
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .filter(line => !line.startsWith("#"))
+        .join(";");
+    execSync(command, {cwd: dir, stdio: 'inherit'});
+}
 
 describe("integration tests", function() {
 
-    it("should install tools and run developer experience", async function() {
-        // install aio
-        // aio app init
+    const DIR = path.resolve("build/integration-test");
+
+    beforeEach(function() {
+        // make npm global installations go into a specific directory
+        // to avoid messing with a user's actual global npm installations
+        process.env.NPM_CONFIG_PREFIX=`${DIR}/npm`;
+        process.env.PATH=`${process.env.NPM_CONFIG_PREFIX}/bin:${process.env.PATH}`;
+
+        rimraf.sync(DIR);
+        fs.mkdirSync(DIR, { recursive: true });
+        process.chdir(DIR);
     });
+
+    it("should install tools and run developer experience", async function() {
+        shell(`
+            npm install -g @adobe/aio-cli
+
+            mkdir project
+            cd project
+            aio app init --no-login -y --asset-compute
+        `);
+
+        assert(fs.existsSync(path.join("project", "actions", "generic", "index.js")));
+        // assert(fs.existsSync(path.join("project", "actions", "worker", "index.js")));
+
+        shell(`
+            cd project
+            aio app test
+        `);
+    }).timeout(300000);
 });
