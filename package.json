@@ -1,6 +1,6 @@
 {
   "name": "@adobe/aio-cli-plugin-asset-compute",
-  "description": "Tool to develop and test Adobe Asset Compute workers",
+  "description": "Tool to develop and test Adobe Asset Compute workers_cicd",
   "version": "1.3.2",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
