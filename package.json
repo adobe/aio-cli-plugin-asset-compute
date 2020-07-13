@@ -13,7 +13,6 @@
     "@oclif/plugin-help": "^2.2.3",
     "amazon-s3-uri": "0.0.3",
     "cachedir": "^2.3.0",
-    "dotenv": "^8.2.0",
     "fast-csv": "^4.1.1",
     "glob": "^7.1.6",
     "js-yaml": "^3.13.1",

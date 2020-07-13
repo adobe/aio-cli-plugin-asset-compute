@@ -17,9 +17,6 @@ const devtool = require('@adobe/asset-compute-devtool');
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
 
-
-require('dotenv').config;
-
 class DevToolCommand extends BaseCommand {
 
     async run(port) {
