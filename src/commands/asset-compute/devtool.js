@@ -12,9 +12,10 @@
 
 'use strict';
 
+const devtool = require('@adobe/asset-compute-devtool');
+
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
-const devtool = require('@adobe/asset-compute-devtool');
 
 
 require('dotenv').config;
@@ -22,9 +23,9 @@ require('dotenv').config;
 class DevToolCommand extends BaseCommand {
 
     async run(port) {
-        const { flags } = this.parse(DevToolCommand);
+        const { flags } = this.parse(DevToolCommand); // eslint-disable-line no-unused-vars
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
             devtool.start(port);
         });
     }

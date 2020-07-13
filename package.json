@@ -6,7 +6,6 @@
   "license": "Apache-2.0",
   "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
-    "@adobe/aio-cli": "^3.6.0",
     "@adobe/aio-cli-plugin-runtime": "^1.6.0",
     "@adobe/asset-compute-devtool": "^2.0.0",
     "@oclif/command": "^1.5.19",
@@ -79,7 +78,7 @@
     "prepare": "oclif-dev manifest && oclif-dev readme",
     "version": "npm run prepare && git add README.md",
     "postpack": "rm -f oclif.manifest.json",
-    "test": "nyc -r=text -r=lcov mocha test/*/*.test.js",
+    "test": "nyc -r=text -r=lcov mocha --recursive --exit",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "clean": "for d in test-projects/*; do pushd $d; rm -rf package-lock.json node_modules dist build .nui .asset-compute; popd; done",

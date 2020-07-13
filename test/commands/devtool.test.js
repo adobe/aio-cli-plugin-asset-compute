@@ -19,11 +19,14 @@ const promisify = require('util').promisify;
 const sleep = promisify(setTimeout);
 const fetch = require('node-fetch');
 const mock = require('mock-require');
+
 mock('open', () => {});
 const DevToolCommand = require("../../src/commands/asset-compute/devtool");
 
 const SERVER_START_UP_WAIT_TIME = 500; // ms to wait while server starts up
-const TIMEOUT = 3000;
+const TIMEOUT = 5000;
+const SLEEP = 2000;
+
 describe("devtool command", function() {
     it("devtool starts and serves html", async function() {
         // set up server
@@ -53,13 +56,13 @@ describe("devtool command", function() {
     });
 
     it("server starts up and does an api call", async function() {
-        this.timeout(3000);
+        this.timeout(TIMEOUT);
         // set up server
         const port = 7777;
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run(port);
-        await sleep(2000);
+        await sleep(SLEEP);
         stdout.stop();
 
         // check output
@@ -83,13 +86,13 @@ describe("devtool command", function() {
     });
 
     it("server starts up and does an api call with no port specified", async function () {
-        this.timeout(3000);
+        this.timeout(TIMEOUT);
         // set up server
         const port = 9000;
         stdout.start();
         const devtool = new DevToolCommand([]);
         devtool.run();
-        await sleep(2000);
+        await sleep(SLEEP);
         stdout.stop();
 
         // check output
