@@ -12,95 +12,19 @@
 
 'use strict';
 
+const devtool = require('@adobe/asset-compute-devtool');
+
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
-const app = require('@adobe/asset-compute-devtool/app');
-const http = require('http');
-const { createHttpTerminator } = require('http-terminator');
-const util = require('../../lib/util');
-const open = require('open');
-const getPort = require('get-port');
-const crypto = require("crypto");
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-async function onListening(server, randomString) {
-    const addr = server.address();
-    const bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-    util.log('Listening on ' + bind);
-    const assetComputeDevToolUrl = `http://localhost:${addr.port}/?devToolToken=${randomString}`;
-    console.log('Asset Compute Developer Tool Server started on url', assetComputeDevToolUrl);
-    await open(assetComputeDevToolUrl);
-}
-
-/**
- * Normalize a port into a number, string, or false.
- */
-async function findOpenPort(preferredPort) {
-    return getPort({port: [preferredPort, preferredPort + 1, preferredPort + 2]});
-    // Will use specified port if available, otherwise fall back to a random port
-}
 
 class DevToolCommand extends BaseCommand {
 
-    async run() {
-        const { flags } = this.parse(DevToolCommand);
-        const port = await findOpenPort(flags.port);
+    async run(port) {
+        const { flags } = this.parse(DevToolCommand); // eslint-disable-line no-unused-vars
 
-        // random string for developer tool authorization token
-        let randomString;
-        try {
-            randomString = crypto.randomBytes(32).toString("hex");
-        } catch(e) {
-            console.log(e);
-            throw new Error('Error: Not enough accumulated entropy to generate cryptographically strong data.');
-        }
-        return new Promise((resolve, reject) => {
-            app.set('port', port);
-            app.set('devToolToken', randomString);
-
-            // Create HTTP server.
-            util.log('Starting Asset Compute Developer Tool Server on port', port);
-            this.server = http.createServer(app);
-            const httpTerminator = createHttpTerminator({ server: this.server });
-
-            // Listen on provided port, on all network interfaces.
-            this.server.listen(port);
-            this.server.on('error', error => {
-                if (error.syscall !== 'listen') {
-                    return reject(error);
-                }
-
-                // handle specific listen errors with friendly messages
-                const bind = typeof port === 'string'
-                    ? 'Pipe ' + port
-                    : 'Port ' + port;
-                switch (error.code) {
-                case 'EACCES':
-                    util.logError(bind + ' requires elevated privileges');
-                    break;
-                case 'EADDRINUSE':
-                    util.logError(bind + ' is already in use');
-                    break;
-                }
-                return reject(error);
-            });
-            this.server.on('listening', () => onListening(this.server, randomString));
-            this.server.on('close', () => {
-                util.log("Asset Compute Developer Tool Server Stopped");
-            });
-            this.onProcessExit(async () => {
-                util.log("Stopping Asset Compute Developer Tool Server");
-                httpTerminator.terminate();
-            });
+        return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
+            devtool.start(port);
         });
-    }
-
-    async stop() {
-        return this.server.close();
     }
 }
 
