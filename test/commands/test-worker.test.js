@@ -142,6 +142,21 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
 
+        testCommand("test-projects/with space", "test-worker")
+            .it("runs tests in a project with a space in the path", function(ctx) {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - simple"));
+                assert(ctx.stdout.includes("✔  Succeeded."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 2"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+
+                assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
+            });
     });
 
     describe("failure", function() {

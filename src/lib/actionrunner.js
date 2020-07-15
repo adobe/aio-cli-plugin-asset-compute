@@ -164,7 +164,7 @@ class OpenwhiskActionRunner {
         let mounts = "";
         if (this.mounts) {
             for (const key of Object.keys(this.mounts)) {
-                mounts += `-v ${key}:${this.mounts[key]} `;
+                mounts += `-v '${key}:${this.mounts[key]}' `;
             }
         }
 
