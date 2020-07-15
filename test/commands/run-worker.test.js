@@ -147,6 +147,23 @@ describe("run-worker command", function() {
                 assert(!fs.existsSync(".nui"));
                 assertMissingOrEmptyDirectory("build", "run-worker");
             });
+
+        testCommand("test-projects/with space", "run-worker", ["test/asset-compute/worker/simple/file.jpg", "rendition.jpg"])
+            .finally(() => {
+                // cleanup afterwards
+                fs.unlinkSync("rendition.jpg");
+            })
+            .it("runs a single worker with a space in the path", function() {
+                assertExitCode(undefined);
+
+                assert(fs.existsSync("rendition.jpg"));
+                // check files are identical (the worker just copies source -> rendition)
+                assert(fs.readFileSync("test/asset-compute/worker/simple/file.jpg").equals(fs.readFileSync("rendition.jpg")));
+
+                // legacy build folder, ensure it does not come back
+                assert(!fs.existsSync(".nui"));
+                assertMissingOrEmptyDirectory("build", "run-worker");
+            });
     });
 
     describe("failure", function() {

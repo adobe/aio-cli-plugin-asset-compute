@@ -480,7 +480,7 @@ class WorkerTestRunner {
                 execSync(`bash -x ${cmd}`);
 
             } else {
-                const cmd = `diff ${expectedRendition} ${actualRendition}`;
+                const cmd = `diff '${expectedRendition}' '${actualRendition}'`;
                 util.logToFile(`Running validation: ${cmd}`);
                 execSync(cmd);
             }
