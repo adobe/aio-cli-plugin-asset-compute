@@ -475,7 +475,7 @@ class WorkerTestRunner {
             // execute validation script
             const validate = globFile(dir, "validate", "validate script");
             if (validate) {
-                const cmd = `${validate} ${expectedRendition} ${actualRendition}`;
+                const cmd = `'${validate}' '${expectedRendition}' '${actualRendition}'`;
                 util.logToFile(`Running validation: ${cmd}`);
                 execSync(`bash -x ${cmd}`);
 

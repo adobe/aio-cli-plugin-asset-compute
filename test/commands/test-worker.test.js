@@ -148,7 +148,7 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes(" - simple"));
                 assert(ctx.stdout.includes("✔  Succeeded."));
                 assert(ctx.stdout.includes("✔︎ All tests were successful."));
-                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Tests run      : 2"));
                 assert(ctx.stdout.includes("- Failures       : 0"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
 
