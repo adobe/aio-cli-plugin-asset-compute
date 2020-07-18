@@ -32,20 +32,21 @@ const OPENWHISK_DEFAULTS = {
     // note: openwhisk deployments might have their own versions
     kinds: {
         // "nodejs"     : "openwhisk/nodejsaction:latest", // deprecated, image no longer available
-        "nodejs:6"   : "openwhisk/nodejs6action:latest",
-        "nodejs:8"   : "openwhisk/action-nodejs-v8:latest",
-        "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.21", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
-        "python"     : "openwhisk/python2action:latest",
-        "python:2"   : "openwhisk/python2action:latest",
-        "python:3"   : "openwhisk/python3action:latest",
+        // "nodejs:6"   : "openwhisk/nodejs6action:latest",
+        // "nodejs:8"   : "openwhisk/action-nodejs-v8:latest",
+        "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.22", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
+        "nodejs:12"  : "adobeapiplatform/adobe-action-nodejs-v12:3.0.22", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v12/tags
+        // "python"     : "openwhisk/python2action:latest",
+        // "python:2"   : "openwhisk/python2action:latest",
+        // "python:3"   : "openwhisk/python3action:latest",
         // "swift"      : "openwhisk/swiftaction:latest", // deprecated, image no longer available
-        "swift:3"    : "openwhisk/swift3action:latest",   // deprecated, but still available
-        "swift:3.1.1": "openwhisk/action-swift-v3.1.1:latest",
-        "swift:4.1"  : "openwhisk/action-swift-v4.1:latest",
-        "java"       : "openwhisk/java8action:latest",
-        "php:7.1"    : "openwhisk/action-php-v7.1:latest",
-        "php:7.2"    : "openwhisk/action-php-v7.2:latest",
-        "native"     : "openwhisk/dockerskeleton:latest",
+        // "swift:3"    : "openwhisk/swift3action:latest",   // deprecated, but still available
+        // "swift:3.1.1": "openwhisk/action-swift-v3.1.1:latest",
+        // "swift:4.1"  : "openwhisk/action-swift-v4.1:latest",
+        // "java"       : "openwhisk/java8action:latest",
+        // "php:7.1"    : "openwhisk/action-php-v7.1:latest",
+        // "php:7.2"    : "openwhisk/action-php-v7.2:latest",
+        // "native"     : "openwhisk/dockerskeleton:latest",
     }
 };
 
