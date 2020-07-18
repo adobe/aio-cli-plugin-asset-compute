@@ -299,7 +299,7 @@ class OpenwhiskActionRunner {
         const image = OPENWHISK_DEFAULTS.kinds[kind2];
 
         if (!image) {
-            throw `Unsupported kind: ${kind}`;
+            throw new Error(`Unsupported kind: ${kind}`);
         }
 
         return image;
