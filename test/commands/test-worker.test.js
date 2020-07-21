@@ -234,5 +234,13 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
+
+        testCommand("test-projects/unsupportedkind", "test-worker")
+            .it("fails with exit code 3 if the worker has an unexpected kind (runtime)", function(ctx) {
+                assertExitCode(3);
+                assert(ctx.stderr.includes("Unsupported kind: does-not-exist"));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertMissingOrEmptyDirectory("build", "test-results");
+            });
     });
 });
