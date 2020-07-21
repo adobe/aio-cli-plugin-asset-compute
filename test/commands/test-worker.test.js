@@ -157,6 +157,22 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
+
+        testCommand("test-projects/node12", "test-worker")
+            .it("runs tests in a project using kind nodejs:12", function(ctx) {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - simple"));
+                assert(ctx.stdout.includes("✔  Succeeded."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+
+                assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
+            });
     });
 
     describe("failure", function() {
@@ -215,6 +231,14 @@ describe("test-worker command", function() {
             .it("fails with exit code 3 if the action specified with -a does not exist", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*doesNotExist/i));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertMissingOrEmptyDirectory("build", "test-results");
+            });
+
+        testCommand("test-projects/unsupportedkind", "test-worker")
+            .it("fails with exit code 3 if the worker has an unexpected kind (runtime)", function(ctx) {
+                assertExitCode(3);
+                assert(ctx.stderr.includes("Unsupported kind: does-not-exist"));
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
