@@ -173,6 +173,22 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
+
+        testCommand("test-projects/test-hidden-file", "test-worker")
+            .it("runs tests for a single worker with a hidden file in the test cases", function(ctx) {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - simple"));
+                assert(ctx.stdout.includes("✔  Succeeded."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+
+                assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
+            });
     });
 
     describe("failure", function() {

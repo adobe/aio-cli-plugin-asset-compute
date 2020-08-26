@@ -78,8 +78,21 @@ class TestWorkerCommand extends BaseCommand {
         //   asset-compute/
         //     workerA/
         //     workerB/
-
-        return fs.existsSync(TEST_DIR) ? fs.readdirSync(TEST_DIR) : [];
+        if (fs.existsSync(TEST_DIR)) {
+            const tests = fs.readdirSync(TEST_DIR);
+            // eslint-disable-next-line array-callback-return
+            return tests.filter(test => {
+                const testPath = path.resolve(TEST_DIR, test);
+                try {
+                    fs.readdirSync(testPath);
+                    return test;
+                // eslint-disable-next-line no-unused-vars
+                } catch (e) {
+                    console.error(`${testPath} is not a test case directory`);
+                }
+            });
+        }
+        return [];
     }
 
     async testWorker(actionName, testDir, argv) {
