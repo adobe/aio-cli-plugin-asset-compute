@@ -79,18 +79,9 @@ class TestWorkerCommand extends BaseCommand {
         //     workerA/
         //     workerB/
         if (fs.existsSync(TEST_DIR)) {
-            const tests = fs.readdirSync(TEST_DIR);
-            // eslint-disable-next-line array-callback-return
-            return tests.filter(test => {
-                const testPath = path.resolve(TEST_DIR, test);
-                try {
-                    fs.readdirSync(testPath);
-                    return test;
-                // eslint-disable-next-line no-unused-vars
-                } catch (e) {
-                    console.error(`${testPath} is not a test case directory`);
-                }
-            });
+            return fs.readdirSync(TEST_DIR, { withFileTypes: true })
+                .filter(actionTestDir => actionTestDir.isDirectory())
+                .map(actionTestDir => actionTestDir.name);
         }
         return [];
     }
