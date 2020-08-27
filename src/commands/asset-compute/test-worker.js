@@ -78,8 +78,12 @@ class TestWorkerCommand extends BaseCommand {
         //   asset-compute/
         //     workerA/
         //     workerB/
-
-        return fs.existsSync(TEST_DIR) ? fs.readdirSync(TEST_DIR) : [];
+        if (fs.existsSync(TEST_DIR)) {
+            return fs.readdirSync(TEST_DIR, { withFileTypes: true })
+                .filter(actionTestDir => actionTestDir.isDirectory())
+                .map(actionTestDir => actionTestDir.name);
+        }
+        return [];
     }
 
     async testWorker(actionName, testDir, argv) {
