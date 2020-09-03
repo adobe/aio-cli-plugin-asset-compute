@@ -67,8 +67,6 @@ module.exports = async function( {config} ) {
         const pjson = await loadOclifPlugin(config, moduleName, `node_modules/${moduleName}`);
         if (pjson) {
             console.log(`Using local project's ${moduleName} version ${pjson.version}\n`);
-        } else {
-            console.log(`Warning: local project does not have a devDependency ${moduleName}\n`);
         }
     }
 
