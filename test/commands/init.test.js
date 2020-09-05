@@ -18,7 +18,7 @@ const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
 
-describe("plugin init", function() {
+describe("init - plugin devDependency", function() {
 
     const GLOBAL_INSTALLED_PLUGIN_ROOT = "/usr/local/lib/node_modules/@adobe/aio-cli-plugin-asset-compute";
     const TEST_PROJECT_WITH_DEVDEPENDENCY = path.resolve("test-projects/use-devDependency");
@@ -165,6 +165,106 @@ describe("plugin init", function() {
         assert.strictEqual(1, config.plugins.reduce((count, plugin) => plugin.options.name === "@adobe/aio-cli-plugin-asset-compute" ? count + 1 : count, 0));
 
     }).timeout(30000); // because of the npm install
-
-    // TODO: command tests
 });
+
+describe("init - plugin command prefixes", function() {
+
+    it("standalone cli: removes asset-compute prefix", async function() {
+        const config = {
+            pjson: {
+                name: "@adobe/aio-cli-plugin-asset-compute" // standalone
+            },
+            commands: [{
+                id: 'plugins:update',
+                pluginName: '@oclif/plugin-plugins',
+                pluginType: 'core',
+                aliases: []
+            },{
+                id: 'asset-compute',
+                description: 'Develop and test Adobe Asset Compute workers',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: []
+            },
+            {
+                id: 'asset-compute:devtool',
+                description: 'Starts the Asset Compute Developer Tool',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: []
+            },
+            {
+                id: 'asset-compute:run-worker',
+                description: 'Run worker from local project using Docker',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: []
+            },
+            {
+                id: 'asset-compute:test-worker',
+                description: 'Run tests from local project',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: [ 'asset-compute:tw' ]
+            }]
+        };
+
+        await init({ config });
+
+        // assert no more `asset-compute:` prefixes
+        assert.ok(config.commands.every(command => !command.id.startsWith("asset-compute:")), "still has commands with asset-compute: prefix");
+
+        // assert index command is hidden
+        assert.ok(config.commands.every(command => command.id !== "asset-compute" || command.hidden), "asset-compute index command is not hidden");
+    });
+
+    it("aio cli: keep asset-compute prefix", async function() {
+        const config = {
+            pjson: {
+                name: "@adobe/aio-cli" // not standalone
+            },
+            commands: [{
+                id: 'plugins:update',
+                pluginName: '@oclif/plugin-plugins',
+                pluginType: 'core',
+                aliases: []
+            },{
+                id: 'asset-compute',
+                description: 'Develop and test Adobe Asset Compute workers',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: []
+            },
+            {
+                id: 'asset-compute:devtool',
+                description: 'Starts the Asset Compute Developer Tool',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: []
+            },
+            {
+                id: 'asset-compute:run-worker',
+                description: 'Run worker from local project using Docker',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: []
+            },
+            {
+                id: 'asset-compute:test-worker',
+                description: 'Run tests from local project',
+                pluginName: '@adobe/aio-cli-plugin-asset-compute',
+                pluginType: 'core',
+                aliases: [ 'asset-compute:tw' ]
+            }]
+        };
+
+        await init({ config });
+
+        // assert no more `asset-compute:` prefixes
+        assert.ok(config.commands.every(command =>
+            command.id === "plugins:update"
+            || command.id.startsWith("asset-compute")), "lost asset-compute: prefix");
+
+        // assert index command is hidden
+        assert.ok(config.commands.every(command => command.id !== "asset-compute" || !command.hidden), "asset-compute index command must not be hidden");
+    });});
