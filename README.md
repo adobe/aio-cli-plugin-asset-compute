@@ -19,7 +19,7 @@ Further documentation:
 
 ## Installation and Usage
 
-For interactive use as developer, install this as [aio-cli](https://github.com/adobe/aio-cli) using:
+For interactive use as developer, install this as [aio-cli](https://github.com/adobe/aio-cli) plugin using:
 
 ```
 aio plugins:install @adobe/aio-cli-plugin-asset-compute
@@ -33,7 +33,7 @@ aio asset-compute
 
 See [commands](#commands) for a description of all commands.
 
-When `aio asset-compute` is run inside a project directory with a `package.json` with the plugin installed as devDependency (see below), then it will use exactly that dependency version (available since `1.4.0`). This ensures test execution is the same as in `aio app run` or CI builds. Otherwise it will use its own command implementations.
+When `aio asset-compute` is run inside a project directory with a `package.json` with the plugin installed as devDependency (see below), then it will use exactly that dependency version (available since `1.4.0`). This ensures test execution behaves the same as with `aio app test` in e.g. CI builds, even if the plugin version installed by the developer in `aio` is different. In other directories it will simply use its own command implementations.
 
 ### Use as project Dependency
 
