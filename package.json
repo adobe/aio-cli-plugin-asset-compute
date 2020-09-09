@@ -66,7 +66,7 @@
   },
   "oclif": {
     "commands": "./src/commands",
-    "bin": "adobe-asset-compute",
+    "bin": "aio asset-compute",
     "devPlugins": [
       "@oclif/plugin-help"
     ],
