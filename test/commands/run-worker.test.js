@@ -311,6 +311,8 @@ describe("run-worker command", function() {
                 assert(!fs.existsSync(".nui"));
                 assertMissingOrEmptyDirectory("build", "run-worker");
             });
+
+        delete process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX;
     });
 
     describe("failure", function() {
