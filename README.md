@@ -15,7 +15,7 @@ Asset Compute Plugin for the [Adobe I/O CLI](https://github.com/adobe/aio-cli). 
 Further documentation:
 
 - [Developing with `devtool`](https://docs.adobe.com/content/help/en/asset-compute/using/extend/develop-custom-application.html)
-- [Test framework `test-worker`](https://docs.adobe.com/content/help/en/asset-compute/using/extend/test-custom-application.html)
+- [Adding custom tests with `test-worker` framework](https://docs.adobe.com/content/help/en/asset-compute/using/extend/test-custom-application.html)
 
 ## Installation and Usage
 
