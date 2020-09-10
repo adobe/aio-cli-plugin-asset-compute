@@ -19,6 +19,7 @@ const exec = util.promisify(child_process.exec);
 const spawn = child_process.spawn;
 const debug = require('debug')('aio-asset-compute.actionrunner');
 const request = require('requestretry');
+const validUrl = require('valid-url');
 
 const OPENWHISK_DEFAULTS = {
 
@@ -287,7 +288,8 @@ class OpenwhiskActionRunner {
     _getImage() {
         // blackbox -> image is specified directly
         if (this.action.exec.image) {
-            if(process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX){
+            if(process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX 
+                && validUrl.isHttpsUri(process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX)){
                 // for blackbox containers that may grab images from repositories depending on region
                 return process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX + this.action.exec.image;
             }

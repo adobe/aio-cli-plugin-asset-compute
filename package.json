@@ -20,6 +20,7 @@
     "request": "^2.88.2",
     "requestretry": "^4.1.0",
     "rimraf": "^2.7.1",
+    "valid-url": "^1.0.9",
     "xml": "^1.0.1"
   },
   "devDependencies": {
