@@ -287,6 +287,10 @@ class OpenwhiskActionRunner {
     _getImage() {
         // blackbox -> image is specified directly
         if (this.action.exec.image) {
+            if(process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX){
+                // for blackbox containers that may grab images from repositories depending on region
+                return process.env.ASSET_COMPUTE_DOCKER_IMAGE_PREFIX + this.action.exec.image;
+            }
             return this.action.exec.image;
         }
 
