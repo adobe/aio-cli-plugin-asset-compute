@@ -1,0 +1,3 @@
+rendition*
+!test/**/rendition*
+!adobe-aio-cli-plugin-asset-compute*.tgz
