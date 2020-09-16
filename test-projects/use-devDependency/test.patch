@@ -1,0 +1,48 @@
+diff --git a/package.json b/package.json
+index 1f0c5cc..5f88cde 100644
+--- a/package.json
++++ b/package.json
+@@ -1,10 +1,9 @@
+ {
+   "name": "@adobe/aio-cli-plugin-asset-compute",
+   "description": "Tool to develop and test Adobe Asset Compute workers",
+-  "version": "1.3.9",
++  "version": "0.0.1",
+   "author": "Adobe Inc.",
+   "license": "Apache-2.0",
+-  "repository": "adobe/aio-cli-plugin-asset-compute",
+   "dependencies": {
+     "@adobe/aio-cli-plugin-runtime": "^1.6.0",
+     "@adobe/asset-compute-devtool": "^2.1.1",
+diff --git a/src/commands/asset-compute/run-worker.js b/src/commands/asset-compute/run-worker.js
+index b4e679d..254d204 100644
+--- a/src/commands/asset-compute/run-worker.js
++++ b/src/commands/asset-compute/run-worker.js
+@@ -25,24 +25,9 @@ const { flags } = require('@oclif/command');
+ class RunWorkerCommand extends BaseCommand {
+ 
+     async run() {
+-        this.onProcessExit(async () => {
+-            if (this.workerRunner) {
+-                this.workerRunner.stop();
+-            }
+-        });
+-
+-        const argv = this.parse(RunWorkerCommand);
+-
+-        try {
+-            const actionName = await this.selectAction(argv);
+-
+-            return await this.runWorker(actionName, argv);
+-
+-        } catch (e) {
+-            console.error("Error:", e.message);
+-            debug(e);
+-            process.exitCode = 1;
+-        }
++        // BEGIN MODIFICATION
++        console.log("DEVDEPENDENCY TEST");
++        // END MODIFICATION
+     }
+ 
+     async selectAction(argv) {
