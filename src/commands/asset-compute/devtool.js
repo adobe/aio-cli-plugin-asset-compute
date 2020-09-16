@@ -29,6 +29,7 @@ class DevToolCommand extends BaseCommand {
         this.onProcessExit(async () => {
             util.log("Stopping Asset Compute Developer Tool Server");
             httpTerminator.terminate();
+            process.exit(0); // to avoid exiting with a code that will make post-app-run think it failed
         });
     }
 
