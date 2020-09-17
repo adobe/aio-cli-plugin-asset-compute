@@ -16,7 +16,6 @@ const { DevtoolServer } = require('@adobe/asset-compute-devtool');
 const { createHttpTerminator } = require('http-terminator');
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
-const util = require('../../lib/util');
 
 class DevToolCommand extends BaseCommand {
 
@@ -27,7 +26,7 @@ class DevToolCommand extends BaseCommand {
         const httpTerminator = createHttpTerminator({ server: this.devtool.server });
 
         this.onProcessExit(async () => {
-            util.log("Stopping Asset Compute Developer Tool Server");
+            console.log("Stopping Asset Compute Developer Tool Server");
             httpTerminator.terminate();
             process.exit(0); // to avoid exiting with a code that will make post-app-run think it failed
         });
