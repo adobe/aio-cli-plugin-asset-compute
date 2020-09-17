@@ -12,19 +12,28 @@
 
 'use strict';
 
-const devtool = require('@adobe/asset-compute-devtool');
-
+const { DevtoolServer } = require('@adobe/asset-compute-devtool');
+const { createHttpTerminator } = require('http-terminator');
 const BaseCommand = require('../../base-command');
 const { flags } = require('@oclif/command');
 
 class DevToolCommand extends BaseCommand {
 
-    async run(port) {
+    async run() {
         const { flags } = this.parse(DevToolCommand); // eslint-disable-line no-unused-vars
+        this.devtool = new DevtoolServer();
+        await this.devtool.run(flags.port);
+        const httpTerminator = createHttpTerminator({ server: this.devtool.server });
 
-        return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
-            devtool.start(port);
+        this.onProcessExit(async () => {
+            console.log("Stopping Asset Compute Developer Tool Server");
+            httpTerminator.terminate();
+            process.exit(0); // to avoid exiting with a code that will make post-app-run think it failed
         });
+    }
+
+    async stop() {
+        return this.devtool.stop();
     }
 }
 

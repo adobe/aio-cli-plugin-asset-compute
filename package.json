@@ -7,7 +7,7 @@
   "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
     "@adobe/aio-cli-plugin-runtime": "^1.6.0",
-    "@adobe/asset-compute-devtool": "^2.1.1",
+    "@adobe/asset-compute-devtool": "^2.2.0",
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2.2.3",
@@ -15,6 +15,7 @@
     "cachedir": "^2.3.0",
     "fast-csv": "^4.1.1",
     "glob": "^7.1.6",
+    "http-terminator": "^2.0.3",
     "js-yaml": "^3.13.1",
     "minimatch": "^3.0.4",
     "request": "^2.88.2",
