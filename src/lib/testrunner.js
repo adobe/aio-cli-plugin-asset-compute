@@ -302,7 +302,8 @@ class WorkerTestRunner {
 
         const result = await this.workerRunner.run(params);
 
-        this._currentResult().procTime = util.timerEnd(procStart).getSeconds();
+        this._currentProcessingTime = util.timerEnd(procStart);
+        this._currentResult().procTime = this._currentProcessingTime.getSeconds();
 
         return result;
     }
@@ -422,7 +423,7 @@ class WorkerTestRunner {
         this._currentResult().time = time.getSeconds();
         this.testResults.passes++;
 
-        console.log(green(`      ✔  Succeeded.`), yellow(time.toString()));
+        console.log(green(`      ✔  Succeeded.`), yellow(time.toString()), yellow(`(processing: ${this._currentProcessingTime.toString()})`));
     }
 
     _logExpectedError() {
@@ -431,7 +432,7 @@ class WorkerTestRunner {
         this._currentResult().time = time.getSeconds();
         this.testResults.expectedErrors++;
 
-        console.log(green(`      ✔  Succeeded (expected error).`), yellow(time.toString()));
+        console.log(green(`      ✔  Succeeded (expected error).`), yellow(time.toString()), yellow(`(processing: ${this._currentProcessingTime.toString()})`));
     }
 
     _logFailure(message) {
