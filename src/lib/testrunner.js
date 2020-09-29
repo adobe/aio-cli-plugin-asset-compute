@@ -423,7 +423,7 @@ class WorkerTestRunner {
         this._currentResult().time = time.getSeconds();
         this.testResults.passes++;
 
-        console.log(green(`      ✔  Succeeded.`), yellow(time.toString()), yellow(`(processing: ${this._currentProcessingTime.toString()})`));
+        console.log(green(`      ✔  Succeeded.`), yellow(time.toString()), `(worker ${yellow(this._currentProcessingTime.toString())})`);
     }
 
     _logExpectedError() {
@@ -432,7 +432,7 @@ class WorkerTestRunner {
         this._currentResult().time = time.getSeconds();
         this.testResults.expectedErrors++;
 
-        console.log(green(`      ✔  Succeeded (expected error).`), yellow(time.toString()), yellow(`(processing: ${this._currentProcessingTime.toString()})`));
+        console.log(green(`      ✔  Succeeded (expected error).`), yellow(time.toString()), `(worker ${yellow(this._currentProcessingTime.toString())})`);
     }
 
     _logFailure(message) {
