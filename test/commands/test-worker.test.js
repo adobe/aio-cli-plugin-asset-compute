@@ -92,6 +92,23 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
+        testCommand("test-projects/test-expected-error", "test-worker")
+            .it("runs tests with an expected error", function(ctx) {
+                assertExitCode(undefined);
+                assert(ctx.stdout.includes(" - testcase"));
+                assert(ctx.stdout.includes("✔  Succeeded (expected error)."));
+                assert(ctx.stdout.includes("✔︎ All tests were successful."));
+                assert(ctx.stdout.includes("- Tests run      : 1"));
+                assert(ctx.stdout.includes("- Failures       : 0"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+                assert(ctx.stdout.includes("- Expected errors: 1"));
+
+                assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertMissingOrEmptyDirectory("build", "test-worker");
+                assertTestResults("worker");
+            });
+
         testCommand("test-projects/mockserver", "test-worker")
             .it("runs successful tests with a mocked domain", function(ctx) {
                 assertExitCode(undefined);
