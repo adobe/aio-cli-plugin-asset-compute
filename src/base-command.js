@@ -16,20 +16,20 @@ const { Command, flags } = require('@oclif/command');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
 const path = require('path');
-const ioruntime = require("@adobe/aio-cli-plugin-runtime");
+const libRuntime = require("@adobe/aio-lib-runtime");
 const debug = require('debug')('aio-asset-compute.base');
 // imported like this so that we can overwrite child_process.spawnSync in unit tests
 const child_process = require("child_process");
 
 // converts action object from manifest.yml to openwhisk rest API json format
 function aioManifestToOpenwhiskAction(manifestAction) {
-    const owAction = ioruntime.createActionObject(manifestAction, {});
+    const owAction = libRuntime.utils.createActionObject(manifestAction.name, manifestAction);
     if (owAction.action) {
         owAction.exec.binary = true;
         owAction.exec.code = owAction.action.toString("base64");
         delete owAction.action;
     }
-    owAction.params = ioruntime.processInputs(manifestAction.inputs, {});
+    owAction.params = libRuntime.utils.processInputs(manifestAction.inputs, {});
     owAction.name = manifestAction.name;
 
     return owAction;
