@@ -8,16 +8,16 @@
           "release": false
         },
         {
-          "subject": "FEATURE-RELEASE:*",
+          "subject": "BREAKING-RELEASE:**",
+          "release": "major"
+        },
+        {
+          "subject": "FEATURE-RELEASE:**",
           "release": "minor"
         },
         {
-          "subject": "BUGFIX-RELEASE:*",
+          "subject": "BUGFIX-RELEASE:**",
           "release": "patch"
-        },
-        {
-          "subject": "BREAKING-RELEASE:*",
-          "release": "major"
         }
         ]
       }],
