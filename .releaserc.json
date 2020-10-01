@@ -8,15 +8,15 @@
           "release": false
         },
         {
-          "subject": "BREAKING-RELEASE:**",
+          "subject": "BREAKING-RELEASE:*",
           "release": "major"
         },
         {
-          "subject": "FEATURE-RELEASE:**",
+          "subject": "FEATURE-RELEASE:*",
           "release": "minor"
         },
         {
-          "subject": "BUGFIX-RELEASE:**",
+          "subject": "BUGFIX-RELEASE:*",
           "release": "patch"
         }
         ]
