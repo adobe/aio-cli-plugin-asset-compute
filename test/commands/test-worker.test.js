@@ -206,6 +206,29 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
+
+        testCommand("test-projects/deadlines", "test-worker")
+            .it("gives each test/activation different deadline and activation id", function(ctx) {
+                assertExitCode(1);
+                assert(ctx.stdout.includes(" - one"));
+                assert(ctx.stdout.includes(" - two"));
+                assert(ctx.stdout.includes("error: There were test failures."));
+                assert(ctx.stdout.includes("- Tests run      : 2"));
+                assert(ctx.stdout.includes("- Failures       : 2"));
+                assert(ctx.stdout.includes("- Errors         : 0"));
+
+                assert(!fs.existsSync(".nui"));
+                assert(!fs.existsSync(path.join("actions", "worker", "build")));
+                assertTestResults("worker");
+
+                const activationOne = require(path.resolve(glob.sync("build/test-worker/**/failed/one/rendition0.json")[0]));
+                console.log("activation one:", JSON.stringify(activationOne));
+                const activationTwo = require(path.resolve(glob.sync("build/test-worker/**/failed/two/rendition0.json")[0]));
+                console.log("activation two:", JSON.stringify(activationTwo));
+
+                assert.notStrictEqual(activationOne.__OW_DEADLINE, activationTwo.__OW_DEADLINE, "activation timeout/deadlines are the same for multiple test cases");
+                assert.notStrictEqual(activationOne.__OW_ACTIVATION_ID, activationTwo.__OW_ACTIVATION_ID, "activation ids are the same for multiple test cases");
+            });
     });
 
     describe("failure", function() {
@@ -220,7 +243,6 @@ describe("test-worker command", function() {
                 assert(ctx.stdout.includes("- Failures       : 1"));
                 assert(ctx.stdout.includes("- Errors         : 0"));
                 assert(glob.sync("build/test-worker/**/failed/fails/rendition0.jpg").length, 1);
-                assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
 
@@ -273,7 +295,6 @@ describe("test-worker command", function() {
                 assertExitCode(3);
                 assert(ctx.stderr.includes("Unsupported kind: does-not-exist"));
                 assertMissingOrEmptyDirectory("build", "test-worker");
-                assertMissingOrEmptyDirectory("build", "test-results");
             });
     });
 });

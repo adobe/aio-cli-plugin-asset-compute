@@ -142,19 +142,6 @@ class OpenwhiskActionRunner {
 
         const memoryBytes = this.action.limits.memory * 1024 * 1024;
 
-        // setting a few openwhisk environment variables
-        const envVars =
-            `-e __OW_ACTION_NAME='${this.action.name}' `+
-            `-e __OW_DEADLINE='${Date.now() + this.action.limits.timeout}' ` +
-            `-e __OW_ACTIVATION_ID='${(new Date()).getTime().toString(36)}' ` +
-
-            // providing dummy values below - even if it does not work - makes the openwhisk() library
-            // load without an exception and only fail later upon actual invocations, which are not supported anyway
-            // this approach supports more cases where actions in a test mode might not invoke other actions
-            `-e __OW_NAMESPACE='local' `+
-            `-e __OW_API_KEY='local' `+
-            `-e __OW_API_HOST='local'`;
-
         let customEnvVars = "";
         if (this.env) {
             for (const key of Object.keys(this.env)) {
@@ -178,7 +165,6 @@ class OpenwhiskActionRunner {
                 --name "${this.containerName}"
                 -p ${port}
                 -m ${memoryBytes}
-                ${envVars}
                 ${customEnvVars}
                 ${mounts}
                 ${this._getImage()}`
@@ -245,7 +231,19 @@ class OpenwhiskActionRunner {
                 maxAttempts: 1,
                 timeout: this.action.limits.timeout,
                 json: {
-                    value: params
+                    value: params,
+
+                    action_name     : this.action.name,
+                    activation_id   : (new Date()).getTime().toString(36),
+                    deadline        : `${Date.now() + this.action.limits.timeout}`,
+
+                    // providing dummy values below - even if it does not work - makes the openwhisk() library
+                    // load without an exception and only fail later upon actual invocations, which are not supported anyway
+                    // this approach supports more cases where actions in a test mode might not invoke other actions
+                    api_host        : "local",
+                    api_key         : "local",
+                    namespace       : "local",
+                    allow_concurrent: "true"
                 }
             });
 
