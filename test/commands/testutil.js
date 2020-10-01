@@ -166,7 +166,7 @@ function assertOccurrences(str, substr, expectedCount) {
 
 function assertMissingOrEmptyDirectory(...pathElements) {
     const fullPath = path.join(...pathElements);
-    return !fs.existsSync(fullPath) || fs.readdirSync(fullPath).length === 0;
+    assert.ok(!fs.existsSync(fullPath) || fs.readdirSync(fullPath).length === 0, `directory ${fullPath} is not empty`);
 }
 
 
