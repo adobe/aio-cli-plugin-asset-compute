@@ -358,7 +358,7 @@ class WorkerTestRunner {
                     this._logExpectedError();
 
                 } else {
-                    this._logFailure(`Expected error '${expectedErrorReason}' but got '${renditionError.reason}'`);
+                    this._logFailure(`Expected error '${expectedErrorReason}' but got '${renditionError.reason || renditionError.name}'`);
                 }
 
             } else if (expectedErrorReason) {
@@ -378,7 +378,7 @@ class WorkerTestRunner {
 
         if (expectedErrorReason) {
             if (errorMsg === expectedErrorReason) {
-                // good, error messgae as expected
+                // good, error message as expected
                 this._logExpectedError();
 
             } else {
