@@ -146,7 +146,7 @@ class MockServer {
             setTimeout(() => {
                 // end spawned process
                 proc.kill();
-                reject(`Error setting up container (removed after ${waitLimit}ms)`);
+                reject(`Error setting up container (stopped after waiting for ${waitLimit}ms)`);
             }, waitLimit);
         });
     }
