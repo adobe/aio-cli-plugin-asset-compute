@@ -51,7 +51,12 @@ class MockServer {
             await this._dockerSpawnLogs();
         } catch (e) {
             await this.stop(true);
-            throw new Error(`error starting mock container '${this.container}': ${e.message}`);
+            if(e.message){
+                throw new Error(`error starting mock container '${this.container}': ${e.message}`);
+            } 
+            // else
+            console.log(e);
+            throw new Error(`error starting mock container '${this.container}': ${e}`);
         }
 
 
@@ -139,7 +144,7 @@ class MockServer {
             });
 
             // wait limited time
-            const waitLimit = 10000;
+            const waitLimit = 15000;
             setTimeout(() => {
                 // end spawned process
                 proc.kill();
