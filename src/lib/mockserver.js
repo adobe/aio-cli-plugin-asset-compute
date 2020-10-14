@@ -20,7 +20,7 @@ const path = require('path');
 const debug = require('debug')('aio-asset-compute.mockserver');
 
 
-const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.8.1';
+const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.11.1';
 
 // "mock-upload.wikimedia.org.json" => "upload.wikimedia.org"
 function getHostName(file) {
