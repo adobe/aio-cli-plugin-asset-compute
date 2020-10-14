@@ -94,25 +94,25 @@ class MockServer {
         await exec(`docker network connect ${this.network} ${this.workerContainerName}`);
     }
 
-    async stop(ignorErrors) {
+    async stop(ignoreErrors) {
         try {
-            await exec(`docker stop ${this.container}`);
+            await exec(`docker stop --time 15 ${this.container}`);
         } catch (e) {
-            if (!ignorErrors) {
+            if (!ignoreErrors) {
                 console.error(`error shutting down mock container '${this.container}': ${e.message}`);
             }
         }
         try {
-            await exec(`docker network disconnect ${this.network} ${this.workerContainerName}`);
+            await exec(`docker network disconnect --force ${this.network} ${this.workerContainerName}`);
         } catch (e) {
-            if (!ignorErrors) {
+            if (!ignoreErrors) {
                 console.error(`error disconnecting mock network '${this.network}' from '${this.workerContainerName}': ${e.message}`);
             }
         }
         try {
             await exec(`docker network rm ${this.network}`);
         } catch (e) {
-            if (!ignorErrors) {
+            if (!ignoreErrors) {
                 console.error(`error removing mock network '${this.network}': ${e.message}`);
             }
         }
@@ -131,17 +131,20 @@ class MockServer {
                 const stdout = data.toString();
                 debug(stdout);
                 if (stdout && stdout.includes('started on ports: [80, 443]')) {
+                    console.log('>>>>> Started on ports: [80, 443]');
                     proc.kill();
+                    console.log('>>>>> Removed process');
                     resolve(true);
                 }
             });
 
             // wait limited time
+            const waitLimit = 10000;
             setTimeout(() => {
                 // end spawned process
                 proc.kill();
-                reject("Error setting up container");
-            }, 10000);
+                reject(`Error setting up container (removed after ${waitLimit}ms)`);
+            }, waitLimit);
         });
     }
 }
