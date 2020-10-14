@@ -136,9 +136,7 @@ class MockServer {
                 const stdout = data.toString();
                 debug(stdout);
                 if (stdout && stdout.includes('started on ports: [80, 443]')) {
-                    console.log('>>>>> Started on ports: [80, 443]');
                     proc.kill();
-                    console.log('>>>>> Removed process');
                     resolve(true);
                 }
             });
