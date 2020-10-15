@@ -215,10 +215,10 @@ class WorkerTestRunner {
         // redirect stdout + stderr to test.log during the test execution
         util.redirectOutputToLogFile();
 
-        // start mock containers if defined
-        await this._startMocks(dir);
-
         try {
+            // start mock containers if defined
+            await this._startMocks(dir);
+
             // 4. copy contents of directory
             this._copySource(dir, source);
 
@@ -236,14 +236,12 @@ class WorkerTestRunner {
             // 6. validate results
             await this._validateResult(testCase, dir, result, expectedRendition, expectedErrorReason);
 
+            await this._stopMocks();
         } catch (e) {
             this._validateErrorResult(e);
-
         } finally {
             // 7. clean out in & out
             util.emptyInOutDir(this.dirs);
-
-            await this._stopMocks();
         }
     }
 
