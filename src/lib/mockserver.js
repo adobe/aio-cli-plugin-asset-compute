@@ -51,11 +51,11 @@ class MockServer {
             await this._dockerSpawnLogs();
         } catch (e) {
             await this.stop(true);
+            console.log(e);
             if(e.message){
                 throw new Error(`error starting mock container '${this.container}': ${e.message}`);
             } 
             // else
-            console.log(e);
             throw new Error(`error starting mock container '${this.container}': ${e}`);
         }
 
