@@ -20,7 +20,7 @@ const path = require('path');
 const debug = require('debug')('aio-asset-compute.mockserver');
 
 
-const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.8.1';
+const MOCK_SERVER_IMAGE = 'mockserver/mockserver:mockserver-5.11.1';
 
 // "mock-upload.wikimedia.org.json" => "upload.wikimedia.org"
 function getHostName(file) {
@@ -51,7 +51,12 @@ class MockServer {
             await this._dockerSpawnLogs();
         } catch (e) {
             await this.stop(true);
-            throw new Error(`error starting mock container '${this.container}': ${e.message}`);
+            console.log(e);
+            if(e.message){
+                throw new Error(`error starting mock container '${this.container}': ${e.message}`);
+            } 
+            // else
+            throw new Error(`error starting mock container '${this.container}': ${e}`);
         }
 
 
@@ -94,25 +99,25 @@ class MockServer {
         await exec(`docker network connect ${this.network} ${this.workerContainerName}`);
     }
 
-    async stop(ignorErrors) {
+    async stop(ignoreErrors) {
         try {
-            await exec(`docker stop ${this.container}`);
+            await exec(`docker rm -f ${this.container}`);
         } catch (e) {
-            if (!ignorErrors) {
+            if (!ignoreErrors) {
                 console.error(`error shutting down mock container '${this.container}': ${e.message}`);
             }
         }
         try {
-            await exec(`docker network disconnect ${this.network} ${this.workerContainerName}`);
+            await exec(`docker network disconnect --force ${this.network} ${this.workerContainerName}`);
         } catch (e) {
-            if (!ignorErrors) {
+            if (!ignoreErrors) {
                 console.error(`error disconnecting mock network '${this.network}' from '${this.workerContainerName}': ${e.message}`);
             }
         }
         try {
             await exec(`docker network rm ${this.network}`);
         } catch (e) {
-            if (!ignorErrors) {
+            if (!ignoreErrors) {
                 console.error(`error removing mock network '${this.network}': ${e.message}`);
             }
         }
@@ -137,11 +142,12 @@ class MockServer {
             });
 
             // wait limited time
+            const waitLimit = 15000;
             setTimeout(() => {
                 // end spawned process
                 proc.kill();
-                reject("Error setting up container");
-            }, 10000);
+                reject(`Error setting up container (stopped after waiting for ${waitLimit}ms)`);
+            }, waitLimit);
         });
     }
 }
