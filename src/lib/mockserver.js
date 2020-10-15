@@ -101,7 +101,7 @@ class MockServer {
 
     async stop(ignoreErrors) {
         try {
-            await exec(`docker stop --time 15 ${this.container}`);
+            await exec(`docker rm -f ${this.container}`);
         } catch (e) {
             if (!ignoreErrors) {
                 console.error(`error shutting down mock container '${this.container}': ${e.message}`);
