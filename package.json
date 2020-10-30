@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
-    "@adobe/aio-lib-runtime": "^1.0.0",
+    "@adobe/aio-lib-runtime": "^1.1.0",
     "@adobe/asset-compute-devtool": "^2.2.0",
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
@@ -24,7 +24,7 @@
     "xml": "^1.0.1"
   },
   "devDependencies": {
-    "@adobe/aio-cli-plugin-app": "^4.1.0",
+    "@adobe/aio-cli-plugin-app": "^5.1.0",
     "@adobe/eslint-config-asset-compute": "^1.3.0",
     "@oclif/dev-cli": "^1.22.2",
     "@oclif/test": "^1.2.7",
@@ -33,14 +33,14 @@
     "codecov": "^3.8.0",
     "conventional-changelog-eslint": "3.0.8",
     "dockerode": "^3.2.1",
-    "eslint": "^7.11.0",
+    "eslint": "^7.12.1",
     "globby": "^11.0.1",
     "license-checker": "^25.0.1",
-    "mocha": "^8.1.3",
+    "mocha": "^8.2.0",
     "mock-require": "^3.0.3",
     "nock": "^13.0.4",
     "nyc": "^15.1.0",
-    "semantic-release": "^17.2.1",
+    "semantic-release": "^17.2.2",
     "stdout-stderr": "^0.1.13"
   },
   "engines": {
@@ -82,7 +82,7 @@
     "test": "nyc -r=text -r=lcov mocha --recursive --exit",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "clean": "for d in test-projects/*; do pushd $d; rm -rf package-lock.json node_modules dist build .nui .asset-compute; popd; done",
+    "clean": "for d in test-projects/*; do pushd \"$d\"; rm -rf package-lock.json node_modules dist build .nui .asset-compute; popd; done",
     "semantic-release": "semantic-release"
   }
 }
