@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
-    "@adobe/aio-lib-runtime": "^1.1.0",
+    "@adobe/aio-lib-runtime": "1.1.0",
     "@adobe/asset-compute-devtool": "^2.2.0",
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
