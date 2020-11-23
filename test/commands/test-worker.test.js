@@ -235,14 +235,10 @@ describe("test-worker command", function() {
 
         testCommand("test-projects/test-failure-rendition", "test-worker")
             .it("fails with exit code 1 if test fails due to a different rendition result", function(ctx) {
-                console.log('~~~~~~~~~~~~~~~~~~~~~~~~')
-                console.log('~~~~~~~~~~~~~~~~~~~~~~~~')
-                console.log(ctx.stdout)
-                console.log('~~~~~~~~~~~~~~~~~~~~~~~~')
-                console.log('~~~~~~~~~~~~~~~~~~~~~~~~')
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
-                assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected. Validate exit code was: 2. Check build/test-results/test-worker/test.log."));
+                assert(ctx.stdout.includes("✖  Failure: Rendition 'rendition0.jpg' not as expected."));
+                assert(ctx.stdout.includes("Check build/test-results/test-worker/test.log."));
                 assert(ctx.stdout.includes("error: There were test failures."));
                 assert(ctx.stdout.includes("- Tests run      : 1"));
                 assert(ctx.stdout.includes("- Failures       : 1"));
