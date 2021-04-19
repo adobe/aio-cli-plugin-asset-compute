@@ -1,0 +1,37 @@
+{
+    "project": {
+        "id": "12345",
+        "name": "MyProject",
+        "title": "My Project",
+        "org": {
+            "id": "1223445",
+            "name": "My Org",
+            "ims_org_id": "124356@AdobeOrg"
+        },
+        "workspace": {
+            "details": {
+                "credentials": [
+                    {
+                        "jwt": {
+                            "client_id": "clientId",
+                            "client_secret": "clientSecret",
+                            "technical_account_email": "email@techacct.adobe.com",
+                            "technical_account_id": "id@techacct.adobe.com",
+                            "meta_scopes": [
+                                "metascopes"
+                            ]
+                        }
+                    }
+                ],
+                "runtime": {
+                    "namespaces": [
+                        {
+                            "name": "namespace",
+                            "auth": "auth"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

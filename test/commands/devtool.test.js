@@ -19,6 +19,7 @@ const promisify = require('util').promisify;
 const sleep = promisify(setTimeout);
 const fetch = require('node-fetch');
 const mock = require('mock-require');
+const fs = require('fs');
 
 mock('open', () => {});
 const DevToolCommand = require("../../src/commands/asset-compute/devtool");
@@ -26,8 +27,27 @@ const DevToolCommand = require("../../src/commands/asset-compute/devtool");
 const SERVER_START_UP_WAIT_TIME = 500; // ms to wait while server starts up
 const TIMEOUT = 5000;
 const PORT_MAX_VALUE = 9999;
+const privateKeyFilePath = 'private.key';
 
 describe("devtool command", function() {
+    before(() => {
+        fs.writeFileSync(privateKeyFilePath, 'privateKey');
+        process.env.AZURE_STORAGE_ACCOUNT='account';
+        process.env.AZURE_STORAGE_KEY='key';
+        process.env.AZURE_STORAGE_CONTAINER_NAME='container';
+        process.env.ASSET_COMPUTE_INTEGRATION_FILE_PATH = './test/commands/files/console.json';
+        process.env.ASSET_COMPUTE_PRIVATE_KEY_FILE_PATH = privateKeyFilePath;
+    });
+    after(() => {
+        delete process.env.ASSET_COMPUTE_DEV_TOOL_ENV;
+        delete process.env.ASSET_COMPUTE_DEV_PORT;
+        delete process.env.AZURE_STORAGE_ACCOUNT;
+        delete process.env.AZURE_STORAGE_KEY;
+        delete process.env.AZURE_STORAGE_CONTAINER_NAME;
+        delete process.env.ASSET_COMPUTE_INTEGRATION_FILE_PATH;
+        delete process.env.ASSET_COMPUTE_PRIVATE_KEY_FILE_PATH;
+        fs.unlinkSync(privateKeyFilePath);
+    });
     it("devtool starts and serves html", async function() {
         // set up server
         const preferredPort = 8888;
