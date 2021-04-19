@@ -65,8 +65,6 @@ Then it can be used with `aio app test` or `npm test` by adding a test script to
 
 ## `aio asset-compute devtool`
 
-Starts the Asset Compute Developer Tool
-
 ```
 USAGE
   $ aio asset-compute devtool
@@ -78,8 +76,6 @@ OPTIONS
 ```
 
 ## `aio asset-compute run-worker FILE RENDITION`
-
-Run worker from local project using Docker
 
 ```
 USAGE
@@ -102,8 +98,6 @@ OPTIONS
 ```
 
 ## `aio asset-compute test-worker [TESTCASE]`
-
-Run tests from local project
 
 ```
 USAGE
