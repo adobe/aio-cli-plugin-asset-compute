@@ -202,6 +202,7 @@ class OpenwhiskActionRunner {
 
             const body = response.body;
             if (!body || body.OK !== true) {
+                await this._docker(`logs -t ${this.containerId}`);
                 if (!body) {
                   throw new Error(`responded with error: ${response.statusCode}`);
                 }
