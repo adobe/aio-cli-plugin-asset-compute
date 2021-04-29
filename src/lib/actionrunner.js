@@ -202,6 +202,9 @@ class OpenwhiskActionRunner {
 
             const body = response.body;
             if (!body || body.OK !== true) {
+                if (!body) {
+                  throw new Error(`responded with error: ${response.statusCode}`);
+                }
                 throw new Error(`responded with error: ${body.error || prettyJson(body)}`);
             }
 
