@@ -185,6 +185,8 @@ class OpenwhiskActionRunner {
 
         try {
             const response = await request.post({
+                // url: `http://${this.containerHost}/init`,
+                url: `http://localhost${this.containerHost.substring(7)}`
                 url: `http://${this.containerHost}/init`,
                 json: {
                     value: {
