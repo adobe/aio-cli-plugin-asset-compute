@@ -158,7 +158,6 @@ class OpenwhiskActionRunner {
 
         // for when we run inside a docker container, use the DOCKER_HOST_IP if available
         const port = process.env.DOCKER_HOST_IP ? `${process.env.DOCKER_HOST_IP.trim()}::${RUNTIME_PORT}` : RUNTIME_PORT;
-        // const port = process.env.DOCKER_HOST_IP ? `localhost::${RUNTIME_PORT}` : RUNTIME_PORT;
 
         this.containerId = await this._docker(
             `run -d
@@ -174,20 +173,16 @@ class OpenwhiskActionRunner {
         this.containerHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
         
         this.containerHost = `0.0.0.0:${this.containerHost.slice(-5)}`;
-        debug(`ran docker port command: port ${this.containerId} ${RUNTIME_PORT}`);
-        debug(`container host ${this.containerHost}`);
 
-        debug(`started container ${this.containerId}`);
+        debug(`started container, id: ${this.containerId} host: ${this.containerHost}`);
     }
 
     async _initAction() {
-        const url = `http://0.0.0.0:${this.containerHost.slice(-5)}/init`;
+        const url = `http://${this.containerHost}/init`;
         debug(`initializing action: POST ${url}`);
-        debug(`docker ip ${process.env.DOCKER_HOST_IP}`);
 
         try {
             const response = await request.post({
-                // url: `http://${this.containerHost}/init`,
                 url: url,
                 json: {
                     value: {
@@ -210,11 +205,7 @@ class OpenwhiskActionRunner {
 
             const body = response.body;
             if (!body || body.OK !== true) {
-                await this._docker(`logs -t ${this.containerId}`);
-                if (!body) {
-                    throw new Error(`responded with error: ${response.statusCode}`);
-                }
-                throw new Error(`responded with error: ${body.error || prettyJson(body)}`);
+                throw new Error(`responded with error: ${body && (body.error || prettyJson(body)) || response.statusCode}`);
             }
 
             debug('action ready');
@@ -228,7 +219,6 @@ class OpenwhiskActionRunner {
     }
 
     async _runAction(params) {
-        debug(`container host ${this.containerHost}`);
         const procDockerLogs = this._dockerSpawn(`logs -t -f --since 0m ${this.containerId}`);
 
         // wait a bit to get docker logs to attach - otherwise we typically loose log output
