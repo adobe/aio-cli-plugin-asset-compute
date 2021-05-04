@@ -177,7 +177,7 @@ class OpenwhiskActionRunner {
     }
 
     async _initAction() {
-        debug(`initializing action: POST http://${this.containerHost}/init`);
+        debug(`initializing action: POST http://localhost${this.containerHost.substring(7)}/init`);
         debug('parameters for init/ request:');
         debug('binary',  this.action.exec.binary);
         debug('main',  this.action.exec.main);
@@ -221,7 +221,7 @@ class OpenwhiskActionRunner {
         } catch (e) {
             await this._docker(`logs -t ${this.containerId}`);
 
-            throw new Error(`Could not init action on container (POST http://${this.containerHost}/init): ${e.message}`);
+            throw new Error(`Could not init action on container (POST http://localhost${this.containerHost.substring(7)}/init): ${e.message}`);
         }
     }
 
