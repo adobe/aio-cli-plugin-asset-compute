@@ -451,7 +451,7 @@ class WorkerTestRunner {
         if(!this.testResults.errors){
             this.testResults.errors = 0;
         }
-        this.testResults.errors++;
+        ++this.testResults.errors;
 
         console.log(red(`      ✖  Error: ${message}. Check ${this.testLogFile}.`), yellow(time.toString()));
     }
