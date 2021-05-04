@@ -228,6 +228,7 @@ class OpenwhiskActionRunner {
     }
 
     async _runAction(params) {
+        debug(`container host ${this.containerHost}`);
         const procDockerLogs = this._dockerSpawn(`logs -t -f --since 0m ${this.containerId}`);
 
         // wait a bit to get docker logs to attach - otherwise we typically loose log output

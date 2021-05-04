@@ -38,6 +38,7 @@ describe("test-worker command", function() {
 
         testCommand("test-projects/multiple-workers", "test-worker")
             .it("runs tests for all workers", function(ctx) {
+                console.log('log file', fs.readFileSync('./build/test-results/test-workerA/test.log'));
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes("Actions:\n- workerA\n- workerB"));
                 assert(ctx.stdout.includes(" - testA"));
