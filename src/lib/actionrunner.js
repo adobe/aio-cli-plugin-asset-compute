@@ -177,7 +177,7 @@ class OpenwhiskActionRunner {
     }
 
     async _initAction() {
-        debug(`initializing action: POST http://localhost${this.containerHost.substring(7)}/init`);
+        debug(`initializing action: POST http://localhost${this.containerHost.slice(-5)}/init`);
         debug(`parameters for init/ request: ${this.action.exec}`);
         debug(`docker ip ${process.env.DOCKER_HOST_IP}`);
 
