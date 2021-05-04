@@ -204,8 +204,11 @@ class OpenwhiskActionRunner {
             });
 
             const body = response.body;
-            if (!body || body.OK !== true) {
-                throw new Error(`responded with error: ${body && (body.error || prettyJson(body)) || response.statusCode}`);
+            if (!body) {
+                throw new Error(`responded with error: ${response.statusCode}`);
+            }
+            if (body.OK !== true) {
+                throw new Error(`responded with error: ${body.error || prettyJson(body)}`);
             }
 
             debug('action ready');
