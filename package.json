@@ -37,7 +37,7 @@
     "@semantic-release/git": "9.0.0",
     "chai": "^4.3.4",
     "codecov": "^3.8.2",
-    "conventional-changelog-eslint": "3.0.8",
+    "conventional-changelog-eslint": "3.0.9",
     "dockerode": "^3.2.1",
     "eslint": "^7.25.0",
     "globby": "^11.0.3",
