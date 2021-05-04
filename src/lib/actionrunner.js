@@ -179,13 +179,14 @@ class OpenwhiskActionRunner {
     }
 
     async _initAction() {
-        debug(`initializing action: POST http://localhost:${this.containerHost.slice(-5)}/init`);
+        const url = `http://0.0.0.0:${this.containerHost.slice(-5)}/init`;
+        debug(`initializing action: POST ${url}`);
         debug(`docker ip ${process.env.DOCKER_HOST_IP}`);
 
         try {
             const response = await request.post({
                 // url: `http://${this.containerHost}/init`,
-                url: `http://localhost:${this.containerHost.slice(-5)}/init`,
+                url: url,
                 json: {
                     value: {
                         binary: this.action.exec.binary,
@@ -220,7 +221,7 @@ class OpenwhiskActionRunner {
         } catch (e) {
             await this._docker(`logs -t ${this.containerId}`);
 
-            throw new Error(`Could not init action on container (POST http://localhost:${this.containerHost.slice(-5)}/init: ${e.message}`);
+            throw new Error(`Could not init action on container (POST ${url}: ${e.message}`);
         }
     }
 
