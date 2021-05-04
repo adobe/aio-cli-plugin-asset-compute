@@ -170,15 +170,16 @@ class OpenwhiskActionRunner {
                 ${mounts}
                 ${this._getImage()}`
         );
-
+        
         this.containerHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
+        debug(`ran docker port command: port ${this.containerId} ${RUNTIME_PORT}`);
+        debug(`container host ${this.containerHost}`);
 
-        debug("started container", this.containerId);
+        debug(`started container ${this.containerId}`);
     }
 
     async _initAction() {
         debug(`initializing action: POST http://localhost:${this.containerHost.slice(-5)}/init`);
-        debug(`parameters for init/ request: ${this.action.exec}`);
         debug(`docker ip ${process.env.DOCKER_HOST_IP}`);
 
         try {
