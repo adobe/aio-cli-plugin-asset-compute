@@ -39,6 +39,9 @@ async function execute(command, args) {
     // shell => required for Windows
     const result = child_process.spawnSync(command, args, {shell: true, stdio: "inherit"});
 
+    if(!result){
+        throw new Error(`Could not get a result for command command '${command}'`);
+    }
     if (result.error) {
         if (result.error.code === 'ENOENT') {
             throw new Error(`Could not find command '${command}': ${result.error.message}`);
@@ -80,12 +83,14 @@ class BaseCommand extends Command {
     async runAioCommand(command, args) {
         const CommandClass = this.config.findCommand(command);
         if (CommandClass) {
+            console.log("Running as plug-in...");
             // if run as aio plugin
             const cmd = CommandClass.load();
             await cmd.run(args);
 
         } else {
             // if run as standalone cli
+            console.log("Running as stand-alone cli...");
             await execute("aio", [command, ...args]);
         }
     }

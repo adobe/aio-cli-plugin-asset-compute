@@ -448,6 +448,9 @@ class WorkerTestRunner {
 
         this._currentResult().time = time.getSeconds();
         this._currentResult().errorMsg = message;
+        if(!this.testResults.errors){
+            this.testResults.errors = 0;
+        }
         this.testResults.errors++;
 
         console.log(red(`      ✖  Error: ${message}. Check ${this.testLogFile}.`), yellow(time.toString()));

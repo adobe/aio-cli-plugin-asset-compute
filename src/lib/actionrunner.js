@@ -201,7 +201,10 @@ class OpenwhiskActionRunner {
             });
 
             const body = response.body;
-            if (!body || body.OK !== true) {
+            if (!body) {
+                throw new Error(`responded with an empty body`);
+            }
+            if (body.OK !== true) {
                 throw new Error(`responded with error: ${body.error || prettyJson(body)}`);
             }
 
