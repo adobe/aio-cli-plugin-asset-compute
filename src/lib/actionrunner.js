@@ -179,7 +179,7 @@ class OpenwhiskActionRunner {
     }
 
     async _initAction() {
-        const url = `http://0.0.0.0:${this.containerHost.slice(-5)}:${this.containerHost.slice(-5)}/init`;
+        const url = `http://0.0.0.0:${this.containerHost.slice(-5)}/init`;
         debug(`initializing action: POST ${url}`);
         debug(`docker ip ${process.env.DOCKER_HOST_IP}`);
 
