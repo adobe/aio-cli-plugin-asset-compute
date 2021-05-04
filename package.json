@@ -19,7 +19,7 @@
     "cachedir": "^2.3.0",
     "fast-csv": "^4.3.6",
     "glob": "^7.1.6",
-    "http-terminator": "^2.0.3",
+    "http-terminator": "^3.0.0",
     "js-yaml": "^3.14.1",
     "minimatch": "^3.0.4",
     "request": "^2.88.2",
