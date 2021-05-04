@@ -1,28 +1,4 @@
 {
-  "_from": "@adobe/aio-cli-plugin-asset-compute@^1.4.8",
-  "_id": "@adobe/aio-cli-plugin-asset-compute@1.4.8",
-  "_inBundle": false,
-  "_integrity": "sha512-PYINUo4bTlISVxpFWhXhJkOUDdhMNHJkQD61XlX+bSzDMx6C0qztDVVQdzs/Fp464MiEadr+fCmVCU7TPkINKQ==",
-  "_location": "/@adobe/aio-cli-plugin-asset-compute",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "range",
-    "registry": true,
-    "raw": "@adobe/aio-cli-plugin-asset-compute@^1.4.8",
-    "name": "@adobe/aio-cli-plugin-asset-compute",
-    "escapedName": "@adobe%2faio-cli-plugin-asset-compute",
-    "scope": "@adobe",
-    "rawSpec": "^1.4.8",
-    "saveSpec": null,
-    "fetchSpec": "^1.4.8"
-  },
-  "_requiredBy": [
-    "#DEV:/"
-  ],
-  "_resolved": "https://registry.npmjs.org/@adobe/aio-cli-plugin-asset-compute/-/aio-cli-plugin-asset-compute-1.4.8.tgz",
-  "_shasum": "f1980843fdeca6e82a843cc89d59b79ced181a45",
-  "_spec": "@adobe/aio-cli-plugin-asset-compute@^1.4.8",
-  "_where": "/Users/mathern/Desktop/git/_adobe/asset-compute-sdk",
   "author": {
     "name": "Adobe Inc."
   },
