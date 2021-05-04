@@ -157,7 +157,8 @@ class OpenwhiskActionRunner {
         }
 
         // for when we run inside a docker container, use the DOCKER_HOST_IP if available
-        const port = process.env.DOCKER_HOST_IP ? `${process.env.DOCKER_HOST_IP.trim()}::${RUNTIME_PORT}` : RUNTIME_PORT;
+        // const port = process.env.DOCKER_HOST_IP ? `${process.env.DOCKER_HOST_IP.trim()}::${RUNTIME_PORT}` : RUNTIME_PORT;
+        const port = process.env.DOCKER_HOST_IP ? `localhost::${RUNTIME_PORT}` : RUNTIME_PORT;
 
         this.containerId = await this._docker(
             `run -d
@@ -204,7 +205,7 @@ class OpenwhiskActionRunner {
             if (!body || body.OK !== true) {
                 await this._docker(`logs -t ${this.containerId}`);
                 if (!body) {
-                  throw new Error(`responded with error: ${response.statusCode}`);
+                    throw new Error(`responded with error: ${response.statusCode}`);
                 }
                 throw new Error(`responded with error: ${body.error || prettyJson(body)}`);
             }

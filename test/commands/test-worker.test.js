@@ -21,6 +21,7 @@ const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
 const nock = require("nock");
+process.env.DEBUG = "aio-asset-compute*";
 
 function assertTestResults(action) {
     assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test.log")));
@@ -33,7 +34,7 @@ function assertTestResults(action) {
 
 describe("test-worker command", function() {
 
-    describe("success", function() {
+    describe.only("success", function() {
 
         testCommand("test-projects/multiple-workers", "test-worker")
             .it("runs tests for all workers", function(ctx) {
