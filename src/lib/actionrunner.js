@@ -171,7 +171,7 @@ class OpenwhiskActionRunner {
         );
         
         this.containerHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
-        debug(`host: ${this.containerHost.replace(/(\r\n|\n|\r)/gm, "")}`);
+        this.containerHost = this.containerHost.replace(/(\r\n|\n|\r)/gm, "");
         
         // this.containerHost = `0.0.0.0:${this.containerHost.slice(-5)}`;
 
