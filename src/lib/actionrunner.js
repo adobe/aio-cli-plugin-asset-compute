@@ -170,10 +170,9 @@ class OpenwhiskActionRunner {
                 ${this._getImage()}`
         );
         
-        this.containerHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
-        this.containerHost = this.containerHost.replace(/(\r\n|\n|\r)/gm, "");
+        const rawHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
+        this.containerHost = `0.0.0.0:${rawHost.slice(-5)}`;
         
-        // this.containerHost = `0.0.0.0:${this.containerHost.slice(-5)}`;
 
         debug(`started container, id: ${this.containerId} host: ${this.containerHost}`);
     }
