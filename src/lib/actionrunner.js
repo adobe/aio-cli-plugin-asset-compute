@@ -171,7 +171,7 @@ class OpenwhiskActionRunner {
         );
         
         const rawHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
-        this.containerHost = `0.0.0.0:${rawHost.slice(-5)}`;
+        this.containerHost = `0.0.0.0:${rawHost.str.split(':')[-1]}`;
         
 
         debug(`started container, id: ${this.containerId} host: ${this.containerHost}`);
