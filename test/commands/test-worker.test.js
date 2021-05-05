@@ -34,7 +34,7 @@ function assertTestResults(action) {
 
 describe("test-worker command", function() {
 
-    describe("success", function() {
+    describe.only("success", function() {
 
         testCommand("test-projects/multiple-workers", "test-worker")
             .it("runs tests for all workers", function(ctx) {
