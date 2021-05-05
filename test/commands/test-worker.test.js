@@ -21,6 +21,7 @@ const fs = require("fs");
 const glob = require("glob");
 const rimraf = require("rimraf");
 const nock = require("nock");
+process.env.DEBUG = "aio-asset-compute*";
 
 function assertTestResults(action) {
     assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test.log")));

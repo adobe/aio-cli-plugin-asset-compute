@@ -169,18 +169,21 @@ class OpenwhiskActionRunner {
                 ${mounts}
                 ${this._getImage()}`
         );
+        
+        const rawHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
+        this.containerHost = `0.0.0.0:${rawHost.split(':').pop()}`;
+        
 
-        this.containerHost = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
-
-        debug("started container", this.containerId);
+        debug(`started container, id: ${this.containerId} host: ${this.containerHost}`);
     }
 
     async _initAction() {
-        debug(`initializing action: POST http://${this.containerHost}/init`);
+        const url = `http://${this.containerHost}/init`;
+        debug(`initializing action: POST ${url}`);
 
         try {
             const response = await request.post({
-                url: `http://${this.containerHost}/init`,
+                url: url,
                 json: {
                     value: {
                         binary: this.action.exec.binary,
@@ -201,7 +204,10 @@ class OpenwhiskActionRunner {
             });
 
             const body = response.body;
-            if (!body || body.OK !== true) {
+            if (!body) {
+                throw new Error(`responded with error: ${response.statusCode}`);
+            }
+            if (body.OK !== true) {
                 throw new Error(`responded with error: ${body.error || prettyJson(body)}`);
             }
 
@@ -211,7 +217,7 @@ class OpenwhiskActionRunner {
         } catch (e) {
             await this._docker(`logs -t ${this.containerId}`);
 
-            throw new Error(`Could not init action on container (POST http://${this.containerHost}/init): ${e.message}`);
+            throw new Error(`Could not init action on container (POST ${url}: ${e.message}`);
         }
     }
 
