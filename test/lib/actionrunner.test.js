@@ -39,7 +39,7 @@ describe("actionrunner tests", function() {
                 }
             }
         });
-        const containerHost = '0.0.0.0:2435::::2345';
+        const containerHost = '0.0.0.0:2435\n::::2345';
         nock(`http://${containerHost}`).post("/init").reply(400);
 
         // mock docker to avoid errors with trying to get logs
@@ -49,7 +49,7 @@ describe("actionrunner tests", function() {
         try {
             await actionRunner._initAction();
         } catch (error) {
-            assert.strictEqual(error.message, 'Could not init action on container (POST http://0.0.0.0:2435::::2345/init: responded with error: 400');
+            assert.strictEqual(error.message, 'Could not init action on container (POST http://0.0.0.0:2435\n::::2345/init: responded with error: 400');
         }
     });
 
