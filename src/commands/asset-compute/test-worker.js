@@ -93,7 +93,7 @@ class TestWorkerCommand extends BaseCommand {
 
         const action = await this.openwhiskAction(actionName);
 
-        this.testRunner = new WorkerTestRunner(testDir, action, {
+        const options = {
             startTime: startTime,
             testCasePattern: argv.args.testCase,
             updateRenditions: argv.flags.updateRenditions,
@@ -105,7 +105,15 @@ class TestWorkerCommand extends BaseCommand {
             //   test-results/
             //     test-<action>/
             testResultDirectory: this.getBuildDir("test-results", `test-${actionName}`)
-        });
+        };
+
+        if (argv.flags.verbose) {
+            options.env = {
+                DEBUG:"*"
+            };
+        }
+
+        this.testRunner = new WorkerTestRunner(testDir, action, options);
 
         await this.testRunner.run();
 
