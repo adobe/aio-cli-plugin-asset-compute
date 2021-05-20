@@ -56,6 +56,14 @@ Then it can be used with `aio app test` or `npm test` by adding a test script to
     }
 ```
 
+### Debugging workers
+
+If you use the [debug](https://www.npmjs.com/package/debug) library inside your worker code, you can enable it in `test-worker` and `run-worker` commands by setting the `WORKER_DEBUG` environment variable just like the standard `DEBUG` variable:
+
+```
+WORKER_DEBUG=mystuff aio asset-compute test-worker
+```
+
 ## Commands
 
 <!-- commands -->
