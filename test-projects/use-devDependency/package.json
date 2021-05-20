@@ -2,7 +2,7 @@
     "name": "worker",
     "version": "1.0.0",
     "dependencies": {
-        "@adobe/asset-compute-sdk": "^1.0.2"
+        "@adobe/asset-compute-sdk": "^2.10.6"
     },
     "devDependencies": {
         "@adobe/aio-cli-plugin-asset-compute": "file:adobe-aio-cli-plugin-asset-compute.tgz"
