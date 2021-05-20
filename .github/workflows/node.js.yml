@@ -34,6 +34,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: npx @adobe/sizewatcher
+      env:
+        GITHUB_TOKEN: ${{ secrets.ADOBE_BOT_GITHUB_TOKEN }}
+
   semantic-release:
     runs-on: ubuntu-latest
     needs: [build]
