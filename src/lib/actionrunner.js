@@ -98,7 +98,11 @@ class OpenwhiskActionRunner {
         debug("action:", { ...this.action, exec: {...this.action.exec, code: `(data ${this.action.exec.code.length} bytes)` } });
 
         this.containerName = safeContainerName(options.containerName || `OpenwhiskActionRunner-${this.action.name}`);
-        this.env = options.env;
+
+        this.env = Object.assign({
+            DEBUG: process.env.WORKER_DEBUG
+        }, options.env);
+
         this.mounts = options.mounts;
     }
 
@@ -169,10 +173,9 @@ class OpenwhiskActionRunner {
                 ${mounts}
                 ${this._getImage()}`
         );
-        
+
         const portOutput = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
         this.containerHost = portOutput.split('\n', 1)[0];
-        
 
         debug(`started container, id: ${this.containerId} host: ${this.containerHost}`);
     }

@@ -164,6 +164,14 @@ describe("run-worker command", function() {
                 assert(!fs.existsSync(".nui"));
                 assertMissingOrEmptyDirectory("build", "run-worker");
             });
+
+        testCommand("test-projects/debug-log", "run-worker", ["test/asset-compute/worker/simple/file.jpg", "rendition.jpg"])
+            .prepare(() => {
+                process.env.WORKER_DEBUG = "myworker";
+            })
+            .it("passes WORKER_DEBUG env var through as DEBUG", function(ctx) {
+                assert(ctx.stderr.includes(">>>> debug log is here <<<<"));
+            });
     });
 
     describe("failure", function() {
