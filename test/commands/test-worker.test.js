@@ -22,17 +22,21 @@ const glob = require("glob");
 const rimraf = require("rimraf");
 const nock = require("nock");
 
+function buildPath(action) {
+    return path.join("build", "test-results", `test-${action}`);
+}
+
 function assertTestResults(action) {
-    assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test.log")));
-    assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test-results.xml")));
-    assert(fs.existsSync(path.join("build", "test-results", `test-${action}`, "test-timing-results.csv")));
+    const dir = buildPath(action);
+    assert(fs.existsSync(path.join(dir, "test.log")));
+    assert(fs.existsSync(path.join(dir, "test-results.xml")));
+    assert(fs.existsSync(path.join(dir, "test-timing-results.csv")));
 }
 
 // TODO test ctrl+c (might need a child process)
 // TODO test argument -u
 
 describe("test-worker command", function() {
-
     describe("success", function() {
 
         testCommand("test-projects/multiple-workers", "test-worker")
@@ -228,6 +232,16 @@ describe("test-worker command", function() {
 
                 assert.notStrictEqual(activationOne.__OW_DEADLINE, activationTwo.__OW_DEADLINE, "activation timeout/deadlines are the same for multiple test cases");
                 assert.notStrictEqual(activationOne.__OW_ACTIVATION_ID, activationTwo.__OW_ACTIVATION_ID, "activation ids are the same for multiple test cases");
+            });
+
+        testCommand("test-projects/debug-log", "test-worker")
+            .prepare(() => {
+                process.env.WORKER_DEBUG = "myworker";
+            })
+            .it("passes WORKER_DEBUG env var through as DEBUG", function() {
+                assertTestResults("worker");
+                const testLog = fs.readFileSync(path.join(buildPath("worker"), "test.log"));
+                assert(testLog.includes(">>>> debug log is here <<<<"));
             });
     });
 
