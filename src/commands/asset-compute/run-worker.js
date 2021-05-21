@@ -147,7 +147,7 @@ class RunWorkerCommand extends BaseCommand {
 
         this.workerRunner = new AssetComputeWorkerRunner({
             action: action,
-            containerName: `aio-asset-compute-runworker-${action.name}`,
+            containerName: `aio-asset-compute-runworker-${action.name}-${new Date().toISOString()}`,
             sourceDir: dirs.in,
             targetDir: dirs.out
         });
