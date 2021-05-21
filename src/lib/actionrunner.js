@@ -266,7 +266,6 @@ class OpenwhiskActionRunner {
             }
 
         } finally {
-            // await sleep(2000);
             procDockerLogs.kill();
         }
 
