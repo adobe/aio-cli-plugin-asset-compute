@@ -90,6 +90,9 @@ function testCommand(dir, command, args=[]) {
             if (!fs.existsSync("node_modules")) {
                 execSync("npm install");
             }
+
+            // 1 sec to ensure docker log output
+            process.env.AIO_ASSET_COMPUTE_LOG_DELAY = 1000;
         })
         .do(async ctx => {
             if (prepareFn) {
@@ -110,6 +113,8 @@ function testCommand(dir, command, args=[]) {
         .finally(ctx => {
             // reset any exit code set by failing tests
             delete process.exitCode;
+
+            delete process.env.AIO_ASSET_COMPUTE_LOG_DELAY;
 
             // log stdout/stderr if test failed
             if (ctx.error) {

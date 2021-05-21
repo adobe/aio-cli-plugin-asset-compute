@@ -17,4 +17,6 @@ const fs = require('fs').promises;
 exports.main = worker(async (source, rendition) => {
     // copy source to rendition to transfer 1:1
     await fs.copyFile(source.path, rendition.path);
+},{
+    supportedRenditionFormats: ["png", "jpg", "jpeg", "gif", "tif", "tiff"]
 });

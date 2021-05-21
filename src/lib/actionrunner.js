@@ -228,7 +228,9 @@ class OpenwhiskActionRunner {
         const procDockerLogs = this._dockerSpawn(`logs -t -f --since 0m ${this.containerId}`);
 
         // wait a bit to get docker logs to attach - otherwise we typically loose log output
-        await sleep(50);
+        // better solution: switch to dockerode which gives more stable logs via socket streaming
+        // see https://github.com/apache/openwhisk-wskdebug/blob/f829f91d8e074d0640dbdbe3b78e0b2eca7c2de7/src/invoker.js#L360-L378
+        await sleep(process.env.AIO_ASSET_COMPUTE_LOG_DELAY || 100);
 
         debug(`invoking action '${this.action.name}': POST http://${this.containerHost}/run (timeout ${this.action.limits.timeout/1000} seconds)`);
         debug(prettyJson(params));
@@ -264,6 +266,7 @@ class OpenwhiskActionRunner {
             }
 
         } finally {
+            // await sleep(2000);
             procDockerLogs.kill();
         }
 
