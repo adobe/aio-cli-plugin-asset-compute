@@ -25,6 +25,9 @@ const assert = require("assert");
 const Docker = require("dockerode");
 const fs = require("fs");
 
+const ANSI_RESET = "\x1b[0m";
+const ANSI_RED = "\x1b[31m";
+
 // to enable logging set this before the test:
 // process.env.TEST_OUTPUT = 1;
 
@@ -90,6 +93,9 @@ function testCommand(dir, command, args=[]) {
             if (!fs.existsSync("node_modules")) {
                 execSync("npm install");
             }
+
+            // 1 sec to ensure docker log output
+            process.env.AIO_ASSET_COMPUTE_LOG_DELAY = 1000;
         })
         .do(async ctx => {
             if (prepareFn) {
@@ -101,7 +107,7 @@ function testCommand(dir, command, args=[]) {
         // run the command to test
         .command([command, ...args])
         // npm install can take some time
-        .timeout(30000)
+        .timeout(60000)
         .do(async () => {
             // general assertions for all tests
 
@@ -111,12 +117,23 @@ function testCommand(dir, command, args=[]) {
             // reset any exit code set by failing tests
             delete process.exitCode;
 
+            delete process.env.AIO_ASSET_COMPUTE_LOG_DELAY;
+
             // log stdout/stderr if test failed
             if (ctx.error) {
                 stdmock.stdout.stop();
                 stdmock.stderr.stop();
+
+                console.log(ANSI_RED);
+                console.log("      ---------------------------------------------------------------------------------");
+                console.log("      test failed, possibly because the following output did not meet expectations:");
+                console.log("      ---------------------------------------------------------------------------------");
+                console.log(ANSI_RESET);
+
                 console.log(ctx.stdout);
                 console.error(ctx.stderr);
+
+                console.log(ANSI_RED + "      ---------------------------------------------------------------------------------" + ANSI_RESET);
             }
         });
 
