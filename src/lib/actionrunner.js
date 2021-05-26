@@ -36,6 +36,7 @@ const OPENWHISK_DEFAULTS = {
         // "nodejs:8"   : "openwhisk/action-nodejs-v8:latest",
         "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.22", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
         "nodejs:12"  : "adobeapiplatform/adobe-action-nodejs-v12:3.0.22", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v12/tags
+        "nodejs:14"  : "adobeapiplatform/adobe-action-nodejs-v14:3.0.27", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v14/tags
         // "python"     : "openwhisk/python2action:latest",
         // "python:2"   : "openwhisk/python2action:latest",
         // "python:3"   : "openwhisk/python3action:latest",
