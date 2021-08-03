@@ -170,6 +170,8 @@ describe("run-worker command", function() {
                 process.env.WORKER_DEBUG = "myworker";
             })
             .it("passes WORKER_DEBUG env var through as DEBUG", function(ctx) {
+                console.log("~~~~~~~~~~~~~ STDERR", ctx.stderr);
+                console.log("~~~~~~~~~~~~~ STDOUT", ctx.stdout);
                 assert(ctx.stderr.includes(">>>> debug log is here <<<<"));
             });
     });
