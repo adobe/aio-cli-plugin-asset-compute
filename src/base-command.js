@@ -85,9 +85,12 @@ class BaseCommand extends Command {
     }
 
     get actions() {
-        const appPackage = ASSET_COMPUTE_ACTION_PATH || "__APP_PACKAGE__";
-        if (this.manifest.packages && this.manifest.packages[appPackage]) {
-            return this.manifest.packages[appPackage].actions;
+        console.log('~~~~~MANIFEST', JSON.stringify(this.manifest.packages, null, 2))
+        if (this.manifest.packages) {
+            const appPackage =  this.manifest.packages[ASSET_COMPUTE_ACTION_PATH] || this.manifest.packages.__APP_PACKAGE__;
+            if (appPackage) {
+                return appPackage.actions;
+            }
         }
         return {};
     }
@@ -130,7 +133,8 @@ class BaseCommand extends Command {
             actionZip = path.join(this.aioConfig.actions.dist, `${actionName}.zip`);
         } else {
             // Stay backwards compatible with older aio project structure (aio-cli v7 and below)
-            actionZip = path.resolve("dist/actions", `${actionName}.zip`);
+            // actionZip = path.resolve("dist/actions", `${actionName}.zip`);
+            actionZip = path.resolve("dist/application/actions", `${actionName}.zip`);
         }
         if (!fs.existsSync(actionZip)) {
             throw new Error(`Building action failed, did not create ${actionZip}`);
