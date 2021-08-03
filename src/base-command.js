@@ -85,7 +85,6 @@ class BaseCommand extends Command {
     }
 
     get actions() {
-        console.log('~~~~~MANIFEST', JSON.stringify(this.manifest.packages, null, 2))
         if (this.manifest.packages) {
             const appPackage =  this.manifest.packages[ASSET_COMPUTE_ACTION_PATH] || this.manifest.packages.__APP_PACKAGE__;
             if (appPackage) {
@@ -123,7 +122,7 @@ class BaseCommand extends Command {
 
     async buildActionZip(actionName) {
         try {
-            await this.runAioCommand("app:build", ["-a", actionName]);
+            await this.runAioCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
         } catch (e) {
             throw new Error(`Failed to build action: ${e.message}`);
         }
