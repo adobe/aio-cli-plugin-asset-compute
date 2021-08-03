@@ -35,6 +35,25 @@ function assertTestResults(action) {
 
 // TODO test ctrl+c (might need a child process)
 // TODO test argument -u
+describe("test-worker command in new aio structure", function() {
+    testCommand("test-projects/aio-v8-project", "test-worker")
+        .it("runs tests in a project with new aio structure", function(ctx) {
+            assertExitCode(undefined);
+            assert(ctx.stdout.includes(" - simple"));
+            assert(ctx.stdout.includes(" - corrupt"));
+            assert(ctx.stdout.includes("✔  Succeeded."));
+            assert(ctx.stdout.includes("✔︎ All tests were successful."));
+            assert(ctx.stdout.includes("- Tests run      : 2"));
+            assert(ctx.stdout.includes("- Failures       : 0"));
+            assert(ctx.stdout.includes("- Errors         : 0"));
+            assert(ctx.stdout.includes("- Expected errors: 1"));
+
+            assert(!fs.existsSync(".nui"));
+            assert(!fs.existsSync(path.join("actions", "worker", "build")));
+            assertMissingOrEmptyDirectory("build", "test-worker");
+            assertTestResults("worker");
+        });
+});
 
 describe("test-worker command", function() {
     describe("success", function() {

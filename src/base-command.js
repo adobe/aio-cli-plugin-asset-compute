@@ -18,8 +18,12 @@ const yaml = require('js-yaml');
 const path = require('path');
 const libRuntime = require("@adobe/aio-lib-runtime");
 const debug = require('debug')('aio-asset-compute.base');
+const {loadConfig} = require('@adobe/aio-cli-plugin-app/src/lib/config-loader');
 // imported like this so that we can overwrite child_process.spawnSync in unit tests
 const child_process = require("child_process");
+
+const ASSET_COMPUTE_EXT_PATH = "dx/asset-compute/worker/1"; // path to asset compute extension
+const ASSET_COMPUTE_ACTION_PATH = "dx-asset-compute-worker-1"; // path to Asset Compute Worker actions in manifest
 
 // converts action object from manifest.yml to openwhisk rest API json format
 function aioManifestToOpenwhiskAction(manifestAction) {
@@ -50,16 +54,40 @@ async function execute(command, args) {
 
 class BaseCommand extends Command {
 
+    // Get config object in newer version of aio projects (aio-cli v8 and above)
+    // app structure is more flexible now and Asset Compute Extensions can be anywhere in the project
+    // Use AIO's config loader to find all Asset Compute Extension configs: 
+    // https://github.com/adobe/aio-cli-plugin-app/blob/master/src/lib/config-loader.js
+    get aioConfig() {
+        if (!this._aioConfig) {
+            try {
+                const fullConfig = loadConfig();
+                const assetComputeConfig = fullConfig.all[ASSET_COMPUTE_EXT_PATH];
+                this._aioConfig = assetComputeConfig;
+            } catch (error) {
+                console.log("Error loading AIO Asset Compute Extension config. This is likely because you are using an older version of the aio cli", error.message);
+            }
+        }
+        return this._aioConfig;
+    }
+
     get manifest() {
         if (!this._manifest) {
-            this._manifest = yaml.safeLoad(fs.readFileSync('manifest.yml', 'utf8'));
+
+            if (this.aioConfig) {
+                this._manifest = this.aioConfig.manifest.full;
+            } else {
+                // Stay backwards compatible with older aio project structure (aio-cli v7 and below)
+                this._manifest = yaml.safeLoad(fs.readFileSync('manifest.yml', 'utf8'));
+            }
         }
         return this._manifest;
     }
 
     get actions() {
-        if (this.manifest.packages && this.manifest.packages.__APP_PACKAGE__) {
-            return this.manifest.packages.__APP_PACKAGE__.actions;
+        const appPackage = ASSET_COMPUTE_ACTION_PATH || "__APP_PACKAGE__";
+        if (this.manifest.packages && this.manifest.packages[appPackage]) {
+            return this.manifest.packages[appPackage].actions;
         }
         return {};
     }
@@ -92,16 +120,22 @@ class BaseCommand extends Command {
 
     async buildActionZip(actionName) {
         try {
-            await this.runAioCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+            await this.runAioCommand("app:build", ["-a", actionName]);
         } catch (e) {
             throw new Error(`Failed to build action: ${e.message}`);
         }
 
-        const zip = path.resolve("dist/actions", `${actionName}.zip`);
-        if (!fs.existsSync(zip)) {
-            throw new Error(`Building action failed, did not create ${zip}`);
+        let actionZip;
+        if (this.aioConfig) {
+            actionZip = path.join(this.aioConfig.actions.dist, `${actionName}.zip`);
+        } else {
+            // Stay backwards compatible with older aio project structure (aio-cli v7 and below)
+            actionZip = path.resolve("dist/actions", `${actionName}.zip`);
         }
-        return zip;
+        if (!fs.existsSync(actionZip)) {
+            throw new Error(`Building action failed, did not create ${actionZip}`);
+        }
+        return actionZip;
     }
 
     async openwhiskAction(name) {
