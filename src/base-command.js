@@ -18,7 +18,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const libRuntime = require("@adobe/aio-lib-runtime");
 const debug = require('debug')('aio-asset-compute.base');
-const {loadConfig} = require('@adobe/aio-cli-plugin-app/src/lib/config-loader');
+const loadConfig = require('@adobe/aio-cli-lib-app-config');
 // imported like this so that we can overwrite child_process.spawnSync in unit tests
 const child_process = require("child_process");
 
