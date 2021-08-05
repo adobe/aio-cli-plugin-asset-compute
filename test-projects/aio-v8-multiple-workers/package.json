@@ -1,0 +1,8 @@
+{
+  "name": "myproject",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@adobe/asset-compute-sdk": "^2.10.6"
+  }
+}
