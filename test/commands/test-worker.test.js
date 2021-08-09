@@ -35,6 +35,56 @@ function assertTestResults(action) {
 
 // TODO test ctrl+c (might need a child process)
 // TODO test argument -u
+describe("test-worker command in new aio structure", function() {
+    testCommand("test-projects/aio-v8-single-worker", "test-worker")
+        .it("runs tests in a project with new aio structure", function(ctx) {
+            assertExitCode(undefined);
+            assert(ctx.stdout.includes(" - simple"));
+            assert(ctx.stdout.includes(" - corrupt"));
+            assert(ctx.stdout.includes("✔  Succeeded."));
+            assert(ctx.stdout.includes("✔︎ All tests were successful."));
+            assert(ctx.stdout.includes("- Tests run      : 2"));
+            assert(ctx.stdout.includes("- Failures       : 0"));
+            assert(ctx.stdout.includes("- Errors         : 0"));
+            assert(ctx.stdout.includes("- Expected errors: 1"));
+
+            assert(!fs.existsSync(".nui"));
+            assert(!fs.existsSync(path.join("actions", "worker", "build")));
+            assertMissingOrEmptyDirectory("build", "test-worker");
+            assertTestResults("worker");
+        });
+    testCommand("test-projects/aio-v8-multiple-workers", "test-worker")
+        .it("runs tests for all workers", function(ctx) {
+            assertExitCode(undefined);
+            assert(ctx.stdout.includes(" - test-worker-1"));
+            assert(ctx.stdout.includes(" - test-worker"));
+            assertOccurrences(ctx.stdout, "✔  Succeeded.", 2);
+            assertOccurrences(ctx.stdout, "✔︎ All tests were successful.", 2);
+            assertOccurrences(ctx.stdout, "- Tests run      : 1", 2);
+            assertOccurrences(ctx.stdout, "- Failures       : 0", 2);
+            assertOccurrences(ctx.stdout, "- Errors         : 0", 2);
+
+            assert(!fs.existsSync(".nui"));
+            assert(!fs.existsSync(path.join("actions", "worker", "build")));
+            assertMissingOrEmptyDirectory("build", "test-worker");
+            assertTestResults("worker");
+        });
+    testCommand("test-projects/aio-v8-multiple-workers", "test-worker", ["-a", "worker-1"])
+        .it("runs tests for the selected worker if -a is set", function(ctx) {
+            assertExitCode(undefined);
+            assert(ctx.stdout.includes(" - test-worker-1"));
+            assertOccurrences(ctx.stdout, "✔  Succeeded.", 1);
+            assertOccurrences(ctx.stdout, "✔︎ All tests were successful.", 1);
+            assertOccurrences(ctx.stdout, "- Tests run      : 1", 1);
+            assertOccurrences(ctx.stdout, "- Failures       : 0", 1);
+            assertOccurrences(ctx.stdout, "- Errors         : 0", 1);
+
+            assert(!fs.existsSync(".nui"));
+            assert(!fs.existsSync(path.join("actions", "worker-1", "build")));
+            assertMissingOrEmptyDirectory("build", "test-worker");
+            assertTestResults("worker-1");
+        });
+});
 
 describe("test-worker command", function() {
     describe("success", function() {
@@ -65,9 +115,9 @@ describe("test-worker command", function() {
         testCommand("test-projects/multiple-workers", "test-worker", ["-a", "workerA"])
             .it("runs tests for the selected worker if -a is set", function(ctx) {
                 assertExitCode(undefined);
-                assert(!ctx.stdout.includes("workerB"));
+                // assert(!ctx.stdout.includes("workerB"));
                 assert(ctx.stdout.includes(" - testA"));
-                assert(!ctx.stdout.includes(" - testB"));
+                // assert(!ctx.stdout.includes(" - testB"));
                 assertOccurrences(ctx.stdout, "✔  Succeeded.", 1);
                 assertOccurrences(ctx.stdout, "✔︎ All tests were successful.", 1);
                 assertOccurrences(ctx.stdout, "- Tests run      : 1", 1);

@@ -20,6 +20,7 @@ const util = require('../../lib/util');
 const path = require("path");
 const fs = require("fs");
 
+// Old test directory path for previous AIO project struct (aio-cli v7 and below)
 const TEST_DIR = path.join("test", "asset-compute");
 
 class TestWorkerCommand extends BaseCommand {
@@ -39,7 +40,7 @@ class TestWorkerCommand extends BaseCommand {
 
                 const action = argv.flags.action;
 
-                const testDir = path.join(TEST_DIR, action);
+                const testDir = path.join(this.testDir, action);
                 if (!fs.existsSync(testDir)) {
                     throw new Error(`No tests found for action ${action}, missing directory: ${testDir}`);
                 }
@@ -61,7 +62,7 @@ class TestWorkerCommand extends BaseCommand {
                 console.log();
 
                 for (const action of actions) {
-                    await this.testWorker(action, path.join(TEST_DIR, action), argv);
+                    await this.testWorker(action, path.join(this.testDir, action), argv);
 
                     console.log();
                 }
@@ -78,12 +79,38 @@ class TestWorkerCommand extends BaseCommand {
         //   asset-compute/
         //     workerA/
         //     workerB/
-        if (fs.existsSync(TEST_DIR)) {
-            return fs.readdirSync(TEST_DIR, { withFileTypes: true })
+        if (fs.existsSync(this.testDir)) {
+            return fs.readdirSync(this.testDir, { withFileTypes: true })
                 .filter(actionTestDir => actionTestDir.isDirectory())
                 .map(actionTestDir => actionTestDir.name);
         }
         return [];
+    }
+
+    get testDir() {
+        // Old test directory (tests in the root of the project)
+        // test/
+        //   asset-compute/
+        //     workerA/
+        //     workerB/
+
+        // v8 of aio-cli changed test directory
+        // tests can be anywhere in the project, for example:
+        // src/
+        //   dx-asset-compute-worker-1/
+        //      test/
+        //          asset-compute/
+        //              workerA/
+        //              workerB/
+        if (!this._testDir) {
+            if (this.aioConfig) {
+                this._testDir = path.join(this.aioConfig.tests.unit, "asset-compute");
+            } else {
+                // Stay backwards compatible with older aio project structure (aio-cli v7 and below)
+                this._testDir = TEST_DIR;
+            }
+        }
+        return this._testDir;
     }
 
     async testWorker(actionName, testDir, argv) {
