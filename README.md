@@ -37,7 +37,7 @@ When `aio asset-compute` is run inside a project directory with a `package.json`
 
 ### Use as project Dependency
 
-Inside Asset Compute [Firefly](https://www.adobe.io/apis/experienceplatform/project-firefly/docs.html) projects, `@adobe/aio-cli-plugin-asset-compute` will also be present as npm [devDependency](https://docs.npmjs.com/specifying-dependencies-and-devdependencies-in-a-package-json-file). This is used by `aio app test` and `aio app run`.
+Inside Asset Compute [App Builder](https://www.adobe.io/app-builder/) projects, `@adobe/aio-cli-plugin-asset-compute` will also be present as npm [devDependency](https://docs.npmjs.com/specifying-dependencies-and-devdependencies-in-a-package-json-file). This is used by `aio app test` and `aio app run`.
 
 Projects created using `aio app init` with the Asset Compute Worker generator will automatically be include this dependency in their `package.json`, so no separate installation is required.
 
