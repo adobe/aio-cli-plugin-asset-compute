@@ -8,7 +8,7 @@
   "dependencies": {
     "@adobe/aio-cli-lib-app-config": "^0.2.1",
     "@adobe/aio-lib-runtime": "^3.0.0",
-    "@adobe/asset-compute-devtool": "^2.3.0",
+    "@adobe/asset-compute-devtool": "^3.0.0",
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-help": "^3.2.2",
