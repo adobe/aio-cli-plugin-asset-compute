@@ -18,6 +18,7 @@ const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
 
+const MOCHA_TEST_TIMEOUT_MSEC = 60000; // 1 minute timeout due to npm install
 describe("init - plugin devDependency", function() {
 
     const GLOBAL_INSTALLED_PLUGIN_ROOT = "/usr/local/lib/node_modules/@adobe/aio-cli-plugin-asset-compute";
@@ -73,7 +74,7 @@ describe("init - plugin devDependency", function() {
                       && plugin.options.root === path.resolve("node_modules/@adobe/aio-cli-plugin-asset-compute")
         ), "local devDependency plugin is missing");
 
-    }).timeout(60000); // because of the npm install
+    }).timeout(MOCHA_TEST_TIMEOUT_MSEC); // because of the npm install
 
     it("adds itself even if it can't find itself in the plugin list", async function() {
         const config = makeOclifConfig({
@@ -164,7 +165,7 @@ describe("init - plugin devDependency", function() {
         // verify there is only one plugin with our name
         assert.strictEqual(1, config.plugins.reduce((count, plugin) => plugin.options.name === "@adobe/aio-cli-plugin-asset-compute" ? count + 1 : count, 0));
 
-    }).timeout(60000); // because of the npm install
+    }).timeout(MOCHA_TEST_TIMEOUT_MSEC); // because of the npm install
 });
 
 describe("init - plugin command prefixes", function() {
