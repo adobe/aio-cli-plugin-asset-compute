@@ -27,6 +27,7 @@ const fs = require("fs");
 
 const ANSI_RESET = "\x1b[0m";
 const ANSI_RED = "\x1b[31m";
+const MOCHA_TEST_TIMEOUT_MSEC = 70000;
 
 // to enable logging set this before the test:
 // process.env.TEST_OUTPUT = 1;
@@ -107,7 +108,7 @@ function testCommand(dir, command, args=[]) {
         // run the command to test
         .command([command, ...args])
         // npm install can take some time
-        .timeout(60000)
+        .timeout(MOCHA_TEST_TIMEOUT_MSEC)
         .do(async () => {
             // general assertions for all tests
 
