@@ -107,7 +107,7 @@ function testCommand(dir, command, args=[]) {
         // run the command to test
         .command([command, ...args])
         // npm install can take some time
-        .timeout(60000)
+        .timeout(70000)
         .do(async () => {
             // general assertions for all tests
 
