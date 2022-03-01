@@ -20,7 +20,7 @@
     "js-yaml": "^3.14.1",
     "minimatch": "^3.0.4",
     "request": "^2.88.2",
-    "requestretry": "^4.1.2",
+    "requestretry": "^7.0.0",
     "rimraf": "^3.0.2",
     "xml": "^1.0.1"
   },
