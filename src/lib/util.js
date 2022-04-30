@@ -78,9 +78,6 @@ module.exports = {
             return;
         }
         fse.removeSync(dirs.in);
-        if (dirExistsAndEmpty(dirs.errors)) {
-            fse.removeSync(dirs.errors);
-        }
         fse.removeSync(dirs.out);
         fse.removeSync(dirs.mock_crt);
         if (dirExistsAndEmpty(dirs.failed)) {
