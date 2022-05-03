@@ -49,6 +49,7 @@ module.exports = {
             work:     path.resolve(buildDir, uniqueName),
             in:       path.resolve(buildDir, uniqueName, 'in'),
             out:      path.resolve(buildDir, uniqueName, 'out'),
+            errors:   path.resolve(buildDir, uniqueName, 'out', 'errors'),
             failed:   path.resolve(buildDir, uniqueName, 'failed'),
             mock_crt: path.resolve(buildDir, uniqueName, 'mock-crt')
         };
@@ -58,6 +59,9 @@ module.exports = {
         fse.ensureDirSync(dirs.out);
         // ensure writeable by mounted docker container by giving everyone read+write
         fse.chmodSync(dirs.out, 0o777);
+        // pre-create nested out/errors directory for reliable access to shellscript worker error.json and type.txt files
+        fse.ensureDirSync(dirs.errors);
+        fse.chmodSync(dirs.errors, 0o777);
         fse.ensureDirSync(dirs.failed);
         // ensure writeable by mounted docker container by giving everyone read+write
         fse.chmodSync(dirs.failed, 0o777);
