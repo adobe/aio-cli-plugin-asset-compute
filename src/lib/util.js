@@ -96,6 +96,9 @@ module.exports = {
     emptyInOutDir: function (dirs) {
         rimraf.sync(`${dirs.in}/*`);
         rimraf.sync(`${dirs.out}/*`);
+        // re-create nested out/errors directory after rimraf-ing its parent dir
+        fse.ensureDirSync(dirs.errors);
+        fse.chmodSync(dirs.errors, 0o777);
     },
 
     extension: function (file) {
