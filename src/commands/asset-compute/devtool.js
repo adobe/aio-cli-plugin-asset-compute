@@ -15,12 +15,12 @@
 const { DevtoolServer } = require('@adobe/asset-compute-devtool');
 const { createHttpTerminator } = require('http-terminator');
 const BaseCommand = require('../../base-command');
-const { flags } = require('@oclif/command');
+const { Flags } = require('@oclif/core');
 
 class DevToolCommand extends BaseCommand {
 
     async run() {
-        const { flags } = this.parse(DevToolCommand); // eslint-disable-line no-unused-vars
+        const { flags } = await this.parse(DevToolCommand); // eslint-disable-line no-unused-vars
         this.devtool = new DevtoolServer();
         await this.devtool.run(flags.port);
         const httpTerminator = createHttpTerminator({ server: this.devtool.server });
@@ -40,7 +40,7 @@ class DevToolCommand extends BaseCommand {
 DevToolCommand.description = 'Starts the Asset Compute Developer Tool';
 
 DevToolCommand.flags = {
-    port: flags.integer({
+    port: Flags.integer({
         description: 'Http port of the Asset Compute Developer Tool Server',
         default: 9000
     }),

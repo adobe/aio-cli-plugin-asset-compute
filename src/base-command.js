@@ -12,7 +12,7 @@
 
 "use strict";
 
-const { Command, flags } = require('@oclif/command');
+const { Command, Flags } = require('@oclif/core');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
 const path = require('path');
@@ -185,8 +185,8 @@ class BaseCommand extends Command {
 }
 
 BaseCommand.flags = {
-    verbose: flags.boolean({ char: 'v', description: 'Verbose output' }),
-    version: flags.boolean({ description: 'Show version' })
+    verbose: Flags.boolean({ char: 'v', description: 'Verbose output' }),
+    version: Flags.boolean({ description: 'Show version' })
 };
 
 BaseCommand.args = [];

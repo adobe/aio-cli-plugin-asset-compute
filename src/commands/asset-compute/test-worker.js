@@ -13,7 +13,7 @@
 'use strict';
 
 const debug = require('debug')('aio-asset-compute.test-worker');
-const { flags } = require('@oclif/command');
+const { Flags } = require('@oclif/core');
 const BaseCommand = require('../../base-command');
 const WorkerTestRunner = require("../../lib/testrunner");
 const util = require('../../lib/util');
@@ -32,7 +32,7 @@ class TestWorkerCommand extends BaseCommand {
             }
         });
 
-        const argv = this.parse(TestWorkerCommand);
+        const argv = await this.parse(TestWorkerCommand);
 
         try {
             if (argv.flags.action) {
@@ -151,12 +151,12 @@ TestWorkerCommand.args = [    {
 TestWorkerCommand.flags = {
     ...BaseCommand.flags,
 
-    action: flags.string({
+    action: Flags.string({
         char: 'a',
         description: 'Worker to test. Use action name from manifest. If not set, runs tests for all workers.'
     }),
 
-    updateRenditions: flags.boolean({
+    updateRenditions: Flags.boolean({
         char: 'u',
         description: 'Replace expected renditions of failing test cases with the generated rendition.'
     })
