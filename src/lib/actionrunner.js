@@ -206,7 +206,7 @@ class OpenwhiskActionRunner {
                 maxAttempts: this.action.limits.timeout / RETRY_DELAY_MS,
                 retryDelay: RETRY_DELAY_MS,
 
-                retryStrategy: (err, response, body) => {
+                retryStrategy: async function(err, response, body) {
                     const errStr = err ? JSON.stringify(err) : "No error message";
                     const responseStr = response ? JSON.stringify(response) : "No response object";
                     const bodyStr = body ? JSON.stringify(body) : "No body";
