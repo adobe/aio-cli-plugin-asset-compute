@@ -178,7 +178,7 @@ class OpenwhiskActionRunner {
         const portOutput = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
         this.containerHost = portOutput.split('\n', 1)[0];
         if (this.containerHost.startsWith("0.0.0.0")) {
-            this.containerHost.replace("0.0.0.0","127.0.0.1");
+            this.containerHost = this.containerHost.replace("0.0.0.0", "127.0.0.1");
             debug("IP address provided was 0.0.0.0 (all hosts), using 127.0.0.1");
         }
 
