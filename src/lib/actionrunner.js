@@ -168,7 +168,6 @@ class OpenwhiskActionRunner {
             `run -d
                 --rm
                 --name "${this.containerName}"
-                --bind 0.0.0.0
                 -p ${port}
                 -m ${memoryBytes}
                 ${customEnvVars}
