@@ -188,6 +188,7 @@ class OpenwhiskActionRunner {
     async _initAction() {
         const url = `http://${this.containerHost}/init`;
         debug(`initializing action: POST ${url}`);
+        const thiss = this;
 
         try {
             const response = await request.post({
@@ -210,6 +211,7 @@ class OpenwhiskActionRunner {
                     const responseStr = response ? JSON.stringify(response) : "No response object";
                     const bodyStr = body ? JSON.stringify(body) : "No body";
                     debug(`retrying /init: err:${errStr}; response:${responseStr}; body:${bodyStr}`);
+                    const logs = await thiss._docker(`logs -t ${this.containerId}`);
                     return request.RetryStrategies.NetworkError(err, response, body);
                 }
             });
