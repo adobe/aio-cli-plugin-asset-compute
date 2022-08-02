@@ -167,6 +167,7 @@ class OpenwhiskActionRunner {
         //                --rm
         this.containerId = await this._docker(
             `run -d
+                --security-opt seccomp=unconfined
                 --name "${this.containerName}"
                 -p ${port}
                 -m ${memoryBytes}
