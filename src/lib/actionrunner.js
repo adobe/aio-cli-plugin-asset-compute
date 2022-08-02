@@ -143,12 +143,13 @@ class OpenwhiskActionRunner {
 
     async _startContainer() {
         // make sure a left over container (same name) is removed
-        await this._removeContainer(this.containerName);
+        // await this._removeContainer(this.containerName);
 
         const memoryBytes = this.action.limits.memory * 1024 * 1024;
 
         let customEnvVars = "";
         if (this.env) {
+            debug("Setting up environment variables...");
             for (const key of Object.keys(this.env)) {
                 customEnvVars += `-e ${key}='${this.env[key]}' `;
             }
@@ -156,6 +157,7 @@ class OpenwhiskActionRunner {
 
         let mounts = "";
         if (this.mounts) {
+            debug("Setting up mounts...");
             for (const key of Object.keys(this.mounts)) {
                 mounts += `-v '${key}:${this.mounts[key]}' `;
             }
@@ -181,6 +183,7 @@ class OpenwhiskActionRunner {
                 ${this._getImage()}`
         );
 
+        debug(`Running on port ${RUNTIME_PORT} (container id: ${this.containerId})`);
         const portOutput = await this._docker(`port ${this.containerId} ${RUNTIME_PORT}`);
         this.containerHost = portOutput.split('\n', 1)[0];
         if (this.containerHost.startsWith("0.0.0.0")) {
@@ -212,6 +215,7 @@ class OpenwhiskActionRunner {
                 retryDelay: RETRY_DELAY_MS,
 
                 retryStrategy: (err, response, body) => {
+                    debug(err);
                     const errStr = err ? JSON.stringify(err) : "No error message";
                     const responseStr = response ? JSON.stringify(response) : "No response object";
                     const bodyStr = body ? JSON.stringify(body) : "No body";

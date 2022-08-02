@@ -66,6 +66,7 @@ class WorkerTestRunner {
     }
 
     async run() {
+        console.log("Running test runner...");
         // --------------------------------------------------------------------------------------
         // overview
 
@@ -104,6 +105,7 @@ class WorkerTestRunner {
     // -------------------------------< internal >--------------------------
 
     async _prepare() {
+        console.log("Preparing test run...");
         this.testLogFile = path.join(this.testResultDirectory, LOG_FILE);
         fse.removeSync(this.testLogFile);
         util.setLogFile(this.testLogFile);
@@ -150,6 +152,7 @@ class WorkerTestRunner {
             runnerOptions.env.NODE_EXTRA_CA_CERTS = "/mock-crt/CertificateAuthorityCertificate.pem";
         }
 
+        console.log(runnerOptions);
         this.workerRunner = new AssetComputeWorkerRunner(runnerOptions);
 
         // 2. start container
