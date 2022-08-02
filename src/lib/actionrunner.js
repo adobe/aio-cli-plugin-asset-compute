@@ -210,7 +210,7 @@ class OpenwhiskActionRunner {
                     const errStr = err ? JSON.stringify(err) : "No error message";
                     const responseStr = response ? JSON.stringify(response) : "No response object";
                     const bodyStr = body ? JSON.stringify(body) : "No body";
-                    const logs = await thiss._docker(`logs -t ${this.containerId}`);
+                    const logs = await thiss._docker(`logs -t ${thiss.containerId}`);
                     debug(`retrying /init: err:${errStr}; response:${responseStr}; body:${bodyStr}; logs ${logs}`);
                     return request.RetryStrategies.NetworkError(err, response, body);
                 }
