@@ -188,7 +188,6 @@ class OpenwhiskActionRunner {
     async _initAction() {
         const url = `http://${this.containerHost}/init`;
         debug(`initializing action: POST ${url}`);
-        const thiss = this;
 
         try {
             const response = await request.post({
@@ -206,12 +205,11 @@ class OpenwhiskActionRunner {
                 maxAttempts: this.action.limits.timeout / RETRY_DELAY_MS,
                 retryDelay: RETRY_DELAY_MS,
 
-                retryStrategy: async function(err, response, body) {
+                retryStrategy: (err, response, body) => {
                     const errStr = err ? JSON.stringify(err) : "No error message";
                     const responseStr = response ? JSON.stringify(response) : "No response object";
                     const bodyStr = body ? JSON.stringify(body) : "No body";
-                    const logs = await thiss._docker(`logs -t ${thiss.containerId}`);
-                    debug(`retrying /init: err:${errStr}; response:${responseStr}; body:${bodyStr}; logs ${logs}`);
+                    debug(`retrying /init: err:${errStr}; response:${responseStr}; body:${bodyStr}`);
                     return request.RetryStrategies.NetworkError(err, response, body);
                 }
             });
