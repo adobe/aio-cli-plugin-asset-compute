@@ -136,9 +136,7 @@ class WorkerTestRunner {
             sourceDir: this.dirs.in,
             targetDir: this.dirs.out,
             mounts: {},
-            env: {
-                DEBUG: process.env.DEBUG
-            }
+            env: {}
         };
 
         // go through test cases to see if there are any cases that use mocks
