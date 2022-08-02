@@ -188,7 +188,7 @@ class OpenwhiskActionRunner {
             debug("IP address provided was 0.0.0.0 (all hosts), using 127.0.0.1");
         }
 
-        debug(`started container, id: ${this.containerId} host: ${this.containerHost}`);
+        debug(`!!! started container, id: ${this.containerId} host: ${this.containerHost}`);
     }
 
     async _initAction() {
