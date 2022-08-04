@@ -529,6 +529,7 @@ class WorkerTestRunner {
             try {
                 util.cleanupInOutDir(this.dirs);
             } catch (e) {
+                debug(e);
                 util.logWarn('Problem while cleaning up temporary directories:', e.message || e);
             }
         }
