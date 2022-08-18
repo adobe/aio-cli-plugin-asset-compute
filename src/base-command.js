@@ -110,10 +110,9 @@ class BaseCommand extends Command {
     async runAioCommand(command, args) {
         const CommandClass = this.config.findCommand(command);
         if (CommandClass) {
-            // if run as aio plugin
-            const cmd = CommandClass.load();
+            // if run as aio plugin, note: oclif2 class loader is async
+            const cmd = await CommandClass.load();
             await cmd.run(args);
-
         } else {
             // if run as standalone cli
             await execute("aio", [command, ...args]);
