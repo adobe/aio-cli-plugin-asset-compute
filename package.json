@@ -38,7 +38,7 @@
     "mock-require": "^3.0.3",
     "nock": "^13.0.11",
     "nyc": "^15.1.0",
-    "oclif": "^3.0.1",
+    "oclif": "^3.2.0",
     "semantic-release": "^17.2.2",
     "stdout-stderr": "^0.1.13"
   },
@@ -75,7 +75,7 @@
     }
   },
   "scripts": {
-    "prepare": "oclif manifest && oclif readme",
+    "prepare": "oclif manifest && oclif readme --no-aliases",
     "version": "npm run prepare && git add README.md",
     "postpack": "rm -f oclif.manifest.json",
     "test": "nyc -r=text -r=lcov mocha --recursive --exit",
