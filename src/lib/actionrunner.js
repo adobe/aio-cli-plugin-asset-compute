@@ -167,6 +167,7 @@ class OpenwhiskActionRunner {
         this.containerId = await this._docker(
             `run -d
                 --rm
+                --security-opt seccomp=unconfined
                 --name "${this.containerName}"
                 -p ${port}
                 -m ${memoryBytes}
@@ -202,7 +203,10 @@ class OpenwhiskActionRunner {
                 retryDelay: RETRY_DELAY_MS,
 
                 retryStrategy: (err, response, body) => {
-                    debug("retrying /init...");
+                    const errStr = err ? JSON.stringify(err) : "No error message";
+                    const responseStr = response ? JSON.stringify(response) : "No response object";
+                    const bodyStr = body ? JSON.stringify(body) : "No body";
+                    debug(`retrying /init: err:${errStr}; response:${responseStr}; body:${bodyStr}`);
                     return request.RetryStrategies.NetworkError(err, response, body);
                 }
             });
