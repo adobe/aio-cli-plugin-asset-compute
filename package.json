@@ -6,10 +6,10 @@
   "license": "Apache-2.0",
   "repository": "adobe/aio-cli-plugin-asset-compute",
   "dependencies": {
-    "@adobe/aio-cli-lib-app-config": "^0.2.1",
-    "@adobe/aio-lib-runtime": "^3.0.0",
+    "@adobe/aio-cli-lib-app-config": "^1.0.0",
+    "@adobe/aio-lib-runtime": "^5.0.0",
     "@adobe/asset-compute-devtool": "^3.0.0",
-    "@oclif/core": "^1.9.5",
+    "@oclif/core": "^1.15.0",
     "amazon-s3-uri": "0.1.1",
     "cachedir": "^2.3.0",
     "fast-csv": "^4.3.6",
@@ -66,7 +66,7 @@
   },
   "oclif": {
     "commands": "./src/commands",
-    "bin": "aio asset-compute",
+    "bin": "aio",
     "devPlugins": [
       "@oclif/plugin-help"
     ],
