@@ -121,7 +121,7 @@ class BaseCommand extends Command {
 
     async buildActionZip(actionName) {
         try {
-            await this.runAioCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+            await this.runAioCommand("app:build", ["-a", actionName]);
         } catch (e) {
             throw new Error(`Failed to build action: ${e.message}`);
         }

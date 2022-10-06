@@ -226,7 +226,7 @@ describe("run-worker command", function() {
 
                 assert.equal(ctx.spawnSyncInvoked.length, 1);
                 assert.strictEqual(ctx.spawnSyncInvoked[0].cmd, "aio");
-                assert.deepEqual(ctx.spawnSyncInvoked[0].args, ["app:deploy", "--skip-deploy", "-a", "worker"]);
+                assert.deepEqual(ctx.spawnSyncInvoked[0].args, ["app:build", "-a", "worker"]);
 
                 assert(!fs.existsSync("rendition.jpg"));
                 assert(!fs.existsSync(".nui"));
