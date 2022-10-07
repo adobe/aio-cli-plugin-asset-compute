@@ -15,7 +15,7 @@
 const MockServer = require("../../src/lib/mockserver");
 const WorkerTestRunner = require("../../src/lib/testrunner");
 
-const Config = require("@oclif/config");
+const { Config } = require("@oclif/core");
 const { test: oclifTest } = require("@oclif/test");
 const stdmock = require("stdout-stderr");
 const path = require("path");
