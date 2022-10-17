@@ -16,5 +16,8 @@
 // support -h in addition to --help everywhere
 process.argv = process.argv.map(v => v === "-h" ? "--help" : v);
 
-require('@oclif/command').run()
-    .catch(require('@oclif/errors/handle'));
+const oclif = require('@oclif/core')
+
+oclif.run()
+  .then(require('@oclif/core/flush'))
+  .catch(require('@oclif/core/handle'))
