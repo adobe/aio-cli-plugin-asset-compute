@@ -75,10 +75,6 @@ patchOclifFindCommand();
 function testCommand(dir, command, args=[]) {
     let prepareFn, customCommands = COMMANDS;
 
-    if (command.startsWith("asset-compute:")) {
-        command = command.substring("asset-compute:".length);
-    }
-
     const chain = oclifTest
         .stdout()
         .stderr()
