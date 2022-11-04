@@ -84,6 +84,13 @@ describe("test-worker command in new aio structure", function() {
             assertMissingOrEmptyDirectory("build", "test-worker");
             assertTestResults("worker-1");
         });
+
+    testCommand("test-projects/aio-v8-single-worker-bad-config", "asset-compute:test-worker")
+        .it("fails to build actions if worker has a bad config", function(ctx) {
+            assertExitCode(3);
+            assert(ctx.stderr.includes("Error: Failed to build action"));
+            assertMissingOrEmptyDirectory("build", "test-worker");
+        });
 });
 
 describe("test-worker command", function() {
