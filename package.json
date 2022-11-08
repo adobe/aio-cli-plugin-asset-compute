@@ -38,7 +38,7 @@
     "nock": "^13.0.11",
     "nyc": "^15.1.0",
     "oclif": "^3.2.0",
-    "semantic-release": "^17.2.2",
+    "semantic-release": "^19.0.3",
     "stdout-stderr": "^0.1.13"
   },
   "engines": {
