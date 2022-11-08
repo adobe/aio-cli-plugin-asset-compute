@@ -15,7 +15,6 @@
 const MockServer = require("../../src/lib/mockserver");
 const WorkerTestRunner = require("../../src/lib/testrunner");
 
-const { Config } = require("@oclif/core");
 const { test: oclifTest } = require("@oclif/test");
 const stdmock = require("stdout-stderr");
 const path = require("path");
@@ -34,50 +33,8 @@ const MOCHA_TEST_TIMEOUT_MSEC = 70000;
 
 const baseDir = process.cwd();
 
-const COMMANDS = {
-    "app:deploy": "@adobe/aio-cli-plugin-app/src/commands/app/deploy"
-};
-
-let CUSTOM_COMMANDS = {};
-
-function patchOclifFindCommand() {
-    // tests are not running in a full oclif enviroment with the aio app plugin present,
-    // so we have to include it as a dev dependency and manually load and run the commands
-    // the code is invoking dynamically, by patching oclif Config.findCommand() function
-    // which we use in our base-command.js
-    const originalLoad = Config.load;
-    Config.load = async function(opts) {
-        const config = await originalLoad.call(this, opts);
-        const originalFindCommand = config.findCommand;
-        config.findCommand = function(id, opts) {
-            if (CUSTOM_COMMANDS[id]) {
-                if (typeof CUSTOM_COMMANDS[id] !== "string") {
-                    return null;
-                }
-
-                const cmd = require(CUSTOM_COMMANDS[id]);
-                return {
-                    load: function() {
-                        cmd.id = id;
-                        return cmd;
-                    }
-                };
-            } else {
-                return originalFindCommand.call(this, id, opts);
-            }
-        };
-        return config;
-    };
-}
-
-patchOclifFindCommand();
-
 function testCommand(dir, command, args=[]) {
-    let prepareFn, customCommands = COMMANDS;
-
-    if (command.startsWith("asset-compute:")) {
-        command = command.substring("asset-compute:".length);
-    }
+    let prepareFn;
 
     const chain = oclifTest
         .stdout()
@@ -102,8 +59,7 @@ function testCommand(dir, command, args=[]) {
             if (prepareFn) {
                 await prepareFn(ctx);
             }
-
-            CUSTOM_COMMANDS = customCommands;
+            
         })
         // run the command to test
         .command([command, ...args])
@@ -140,11 +96,6 @@ function testCommand(dir, command, args=[]) {
 
     chain.prepare = function(fn) {
         prepareFn = fn;
-        return this;
-    };
-
-    chain.customCommands = function(cmds) {
-        customCommands = cmds;
         return this;
     };
 

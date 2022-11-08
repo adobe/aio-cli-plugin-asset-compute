@@ -36,7 +36,7 @@ function assertTestResults(action) {
 // TODO test ctrl+c (might need a child process)
 // TODO test argument -u
 describe("test-worker command in new aio structure", function() {
-    testCommand("test-projects/aio-v8-single-worker", "test-worker")
+    testCommand("test-projects/aio-v8-single-worker", "asset-compute:test-worker")
         .it("runs tests in a project with new aio structure", function(ctx) {
             assertExitCode(undefined);
             assert(ctx.stdout.includes(" - simple"));
@@ -53,7 +53,7 @@ describe("test-worker command in new aio structure", function() {
             assertMissingOrEmptyDirectory("build", "test-worker");
             assertTestResults("worker");
         });
-    testCommand("test-projects/aio-v8-multiple-workers", "test-worker")
+    testCommand("test-projects/aio-v8-multiple-workers", "asset-compute:test-worker")
         .it("runs tests for all workers", function(ctx) {
             assertExitCode(undefined);
             assert(ctx.stdout.includes(" - test-worker-1"));
@@ -69,7 +69,7 @@ describe("test-worker command in new aio structure", function() {
             assertMissingOrEmptyDirectory("build", "test-worker");
             assertTestResults("worker");
         });
-    testCommand("test-projects/aio-v8-multiple-workers", "test-worker", ["-a", "worker-1"])
+    testCommand("test-projects/aio-v8-multiple-workers", "asset-compute:test-worker", ["-a", "worker-1"])
         .it("runs tests for the selected worker if -a is set", function(ctx) {
             assertExitCode(undefined);
             assert(ctx.stdout.includes(" - test-worker-1"));
@@ -84,12 +84,19 @@ describe("test-worker command in new aio structure", function() {
             assertMissingOrEmptyDirectory("build", "test-worker");
             assertTestResults("worker-1");
         });
+
+    testCommand("test-projects/aio-v8-single-worker-bad-config", "asset-compute:test-worker")
+        .it("fails to build actions if worker has a bad config", function(ctx) {
+            assertExitCode(3);
+            assert(ctx.stderr.includes("Error: Failed to build action"));
+            assertMissingOrEmptyDirectory("build", "test-worker");
+        });
 });
 
 describe("test-worker command", function() {
     describe("success", function() {
 
-        testCommand("test-projects/multiple-workers", "test-worker")
+        testCommand("test-projects/multiple-workers", "asset-compute:test-worker")
             .it("runs tests for all workers", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes("Actions:\n- workerA\n- workerB"));
@@ -112,7 +119,7 @@ describe("test-worker command", function() {
                 assertTestResults("workerB");
             });
 
-        testCommand("test-projects/multiple-workers", "test-worker", ["-a", "workerA"])
+        testCommand("test-projects/multiple-workers", "asset-compute:test-worker", ["-a", "workerA"])
             .it("runs tests for the selected worker if -a is set", function(ctx) {
                 assertExitCode(undefined);
                 // assert(!ctx.stdout.includes("workerB"));
@@ -130,7 +137,7 @@ describe("test-worker command", function() {
                 assertTestResults("workerA");
             });
 
-        testCommand("test-projects/single-worker", "test-worker")
+        testCommand("test-projects/single-worker", "asset-compute:test-worker")
             .it("runs tests for a single worker at the root", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
@@ -146,7 +153,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/test-expected-error", "test-worker")
+        testCommand("test-projects/test-expected-error", "asset-compute:test-worker")
             .it("runs tests with an expected error", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - testcase"));
@@ -163,7 +170,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/mockserver", "test-worker")
+        testCommand("test-projects/mockserver", "asset-compute:test-worker")
             .it("runs successful tests with a mocked domain", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - mock"));
@@ -179,7 +186,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/cloudfiles", "test-worker")
+        testCommand("test-projects/cloudfiles", "asset-compute:test-worker")
             .prepare(() => {
                 process.env.AWS_ACCESS_KEY_ID = "key";
                 process.env.AWS_SECRET_ACCESS_KEY = "secret";
@@ -206,14 +213,14 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/no-tests", "test-worker")
+        testCommand("test-projects/no-tests", "asset-compute:test-worker")
             .it("succeeds with non-zero exit code if there are no tests", function() {
                 assertExitCode(undefined);
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
 
-        testCommand("test-projects/with space", "test-worker")
+        testCommand("test-projects/with space", "asset-compute:test-worker")
             .it("runs tests in a project with a space in the path", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
@@ -229,7 +236,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/node12", "test-worker")
+        testCommand("test-projects/node12", "asset-compute:test-worker")
             .it("runs tests in a project using kind nodejs:12", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
@@ -244,7 +251,7 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
-        testCommand("test-projects/node14", "test-worker")
+        testCommand("test-projects/node14", "asset-compute:test-worker")
             .it("runs tests in a project using kind nodejs:14", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
@@ -260,7 +267,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/test-hidden-file", "test-worker")
+        testCommand("test-projects/test-hidden-file", "asset-compute:test-worker")
             .it("runs tests for a single worker with a hidden file in the test cases", function(ctx) {
                 assertExitCode(undefined);
                 assert(ctx.stdout.includes(" - simple"));
@@ -276,7 +283,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/deadlines", "test-worker")
+        testCommand("test-projects/deadlines", "asset-compute:test-worker")
             .it("gives each test/activation different deadline and activation id", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - one"));
@@ -299,7 +306,7 @@ describe("test-worker command", function() {
                 assert.notStrictEqual(activationOne.__OW_ACTIVATION_ID, activationTwo.__OW_ACTIVATION_ID, "activation ids are the same for multiple test cases");
             });
 
-        testCommand("test-projects/debug-log", "test-worker")
+        testCommand("test-projects/debug-log", "asset-compute:test-worker")
             .prepare(() => {
                 process.env.WORKER_DEBUG = "myworker";
             })
@@ -312,7 +319,7 @@ describe("test-worker command", function() {
 
     describe("failure", function() {
 
-        testCommand("test-projects/test-failure-rendition", "test-worker")
+        testCommand("test-projects/test-failure-rendition", "asset-compute:test-worker")
             .it("fails with exit code 1 if test fails due to a different rendition result", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
@@ -326,7 +333,7 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/test-failure-missing-rendition", "test-worker")
+        testCommand("test-projects/test-failure-missing-rendition", "asset-compute:test-worker")
             .it("fails with exit code 1 if test fails due to a missing rendition", function(ctx) {
                 assertExitCode(1);
                 assert(ctx.stdout.includes(" - fails"));
@@ -339,14 +346,14 @@ describe("test-worker command", function() {
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/invocation-error", "test-worker")
+        testCommand("test-projects/invocation-error", "asset-compute:test-worker")
             .it("fails with exit code 2 if the worker invocation errors", function() {
                 assertExitCode(2);
                 assertMissingOrEmptyDirectory("build", "test-worker");
                 assertTestResults("worker");
             });
 
-        testCommand("test-projects/build-error", "test-worker")
+        testCommand("test-projects/build-error", "asset-compute:test-worker")
             .it("fails with exit code 3 if the worker does not build (has no manifest)", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*manifest.yml/i));
@@ -354,7 +361,7 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
 
-        testCommand("test-projects/test-name-mismatch", "test-worker")
+        testCommand("test-projects/test-name-mismatch", "asset-compute:test-worker")
             .it("fails with exit code 3 if the test folder does not match an action name", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*incorrect/i));
@@ -362,7 +369,7 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
 
-        testCommand("test-projects/multiple-workers", "test-worker", ["-a", "doesNotExist"])
+        testCommand("test-projects/multiple-workers", "asset-compute:test-worker", ["-a", "doesNotExist"])
             .it("fails with exit code 3 if the action specified with -a does not exist", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.match(/error.*doesNotExist/i));
@@ -370,7 +377,7 @@ describe("test-worker command", function() {
                 assertMissingOrEmptyDirectory("build", "test-results");
             });
 
-        testCommand("test-projects/unsupportedkind", "test-worker")
+        testCommand("test-projects/unsupportedkind", "asset-compute:test-worker")
             .it("fails with exit code 3 if the worker has an unexpected kind (runtime)", function(ctx) {
                 assertExitCode(3);
                 assert(ctx.stderr.includes("Unsupported kind: does-not-exist"));

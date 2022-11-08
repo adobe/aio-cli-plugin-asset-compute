@@ -19,8 +19,6 @@ const path = require('path');
 const libRuntime = require("@adobe/aio-lib-runtime");
 const debug = require('debug')('aio-asset-compute.base');
 const loadConfig = require('@adobe/aio-cli-lib-app-config');
-// imported like this so that we can overwrite child_process.spawnSync in unit tests
-const child_process = require("child_process");
 
 const ASSET_COMPUTE_EXT_PATH = "dx/asset-compute/worker/1"; // path to asset compute extension
 const ASSET_COMPUTE_ACTION_PATH = "dx-asset-compute-worker-1"; // path to Asset Compute Worker actions in manifest
@@ -37,19 +35,6 @@ function aioManifestToOpenwhiskAction(manifestAction) {
     owAction.name = manifestAction.name;
 
     return owAction;
-}
-
-async function execute(command, args) {
-    // shell => required for Windows
-    const result = child_process.spawnSync(command, args, {shell: true, stdio: "inherit"});
-
-    if (result.error) {
-        if (result.error.code === 'ENOENT') {
-            throw new Error(`Could not find command '${command}': ${result.error.message}`);
-        } else {
-            throw new Error(`Failed to execute '${command} ${args.join(" ")}': ${result.error.message}`);
-        }
-    }
 }
 
 class BaseCommand extends Command {
@@ -107,21 +92,16 @@ class BaseCommand extends Command {
         return action;
     }
 
-    async runAioCommand(command, args) {
-        const CommandClass = this.config.findCommand(command);
-        if (CommandClass) {
-            // if run as aio plugin, note: oclif2 class loader is async
-            const cmd = await CommandClass.load();
-            await cmd.run(args);
-        } else {
-            // if run as standalone cli
-            await execute("aio", [command, ...args]);
-        }
-    }
-
     async buildActionZip(actionName) {
         try {
-            await this.runAioCommand("app:deploy", ["--skip-deploy", "-a", actionName]);
+            const fullConfig = loadConfig();
+            const keys = Object.keys(fullConfig.all);
+            const values = Object.values(fullConfig.all);
+
+            for (let i = 0; i < keys.length; ++i) {
+                const config = values[i];
+                await libRuntime.buildActions(config, [actionName], true);
+            }
         } catch (e) {
             throw new Error(`Failed to build action: ${e.message}`);
         }
