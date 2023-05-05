@@ -67,67 +67,75 @@ WORKER_DEBUG=mystuff aio asset-compute test-worker
 ## Commands
 
 <!-- commands -->
-* [`aio asset-compute devtool`](#aio-asset-compute-devtool)
-* [`aio asset-compute run-worker FILE RENDITION`](#aio-asset-compute-run-worker-file-rendition)
-* [`aio asset-compute test-worker [TESTCASE]`](#aio-asset-compute-test-worker-testcase)
+* [`aio devtool`](#aio-devtool)
+* [`aio run-worker FILE RENDITION`](#aio-run-worker-file-rendition)
+* [`aio test-worker [TESTCASE]`](#aio-test-worker-testcase)
 
-## `aio asset-compute devtool`
+## `aio devtool`
 
 Starts the Asset Compute Developer Tool
 
 ```
 USAGE
-  $ aio asset-compute devtool
+  $ aio devtool [-v] [--version] [--port <value>]
 
-OPTIONS
-  -v, --verbose  Verbose output
-  --port=port    [default: 9000] Http port of the Asset Compute Developer Tool Server
-  --version      Show version
+FLAGS
+  -v, --verbose   Verbose output
+  --port=<value>  [default: 9000] Http port of the Asset Compute Developer Tool Server
+  --version       Show version
+
+DESCRIPTION
+  Starts the Asset Compute Developer Tool
 ```
 
-## `aio asset-compute run-worker FILE RENDITION`
+## `aio run-worker FILE RENDITION`
 
 Run worker from local project using Docker
 
 ```
 USAGE
-  $ aio asset-compute run-worker FILE RENDITION
+  $ aio run-worker [FILE] [RENDITION] [-v] [--version] [-a <value>] [-d <value> | -P <value> | -p <value>]
 
 ARGUMENTS
   FILE       Path to input file for worker
-
   RENDITION  Path where to create output rendition.
              Single file for single rendition, or directory to create multiple renditions, in which case the full
              parameter json including rendition names must be provided using --data.
 
-OPTIONS
-  -P, --paramFile=paramFile  Path to parameter json file.
-  -a, --action=action        Worker to run. Use action name from manifest. Not required if there is only one.
-  -d, --data=data            Complete input parameters as JSON string. Allows multiple renditions.
-  -p, --param=param          <key> <value> - Set parameters for rendition, can be used multiple times
-  -v, --verbose              Verbose output
-  --version                  Show version
+FLAGS
+  -P, --paramFile=<value>  Path to parameter json file.
+  -a, --action=<value>     Worker to run. Use action name from manifest. Not required if there is only one.
+  -d, --data=<value>       Complete input parameters as JSON string. Allows multiple renditions.
+  -p, --param=<value>...   <key> <value> - Set parameters for rendition, can be used multiple times
+  -v, --verbose            Verbose output
+  --version                Show version
+
+DESCRIPTION
+  Run worker from local project using Docker
 ```
 
-## `aio asset-compute test-worker [TESTCASE]`
+## `aio test-worker [TESTCASE]`
 
 Run tests from local project
 
 ```
 USAGE
-  $ aio asset-compute test-worker [TESTCASE]
+  $ aio test-worker [TESTCASE] [-v] [--version] [-a <value>] [-u]
 
 ARGUMENTS
   TESTCASE  Test case(s) to run. Supports glob patterns. If not set, runs all tests.
 
-OPTIONS
-  -a, --action=action     Worker to test. Use action name from manifest. If not set, runs tests for all workers.
+FLAGS
+  -a, --action=<value>    Worker to test. Use action name from manifest. If not set, runs tests for all workers.
   -u, --updateRenditions  Replace expected renditions of failing test cases with the generated rendition.
   -v, --verbose           Verbose output
   --version               Show version
 
+DESCRIPTION
+  Run tests from local project
+
 ALIASES
-  $ aio asset-compute tw
+  $ aio tw
 ```
 <!-- commandsstop -->
 

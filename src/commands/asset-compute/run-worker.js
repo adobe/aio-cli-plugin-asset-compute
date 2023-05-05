@@ -20,7 +20,7 @@ const getCloudFile = require('../../lib/cloudfiles');
 const util = require('../../lib/util');
 
 const BaseCommand = require('../../base-command');
-const { flags } = require('@oclif/command');
+const { Flags } = require('@oclif/core');
 
 class RunWorkerCommand extends BaseCommand {
 
@@ -31,7 +31,7 @@ class RunWorkerCommand extends BaseCommand {
             }
         });
 
-        const argv = this.parse(RunWorkerCommand);
+        const argv = await this.parse(RunWorkerCommand);
 
         try {
             const actionName = await this.selectAction(argv);
@@ -202,27 +202,27 @@ RunWorkerCommand.args = [
 
 RunWorkerCommand.flags = {
     ...BaseCommand.flags,
-    action: flags.string(
+    action: Flags.string(
         {
             char: 'a',
             description: 'Worker to run. Use action name from manifest. Not required if there is only one.'
         }
     ),
-    param: flags.string(
+    param: Flags.string(
         {
             char: 'p',
             description: '<key> <value> - Set parameters for rendition, can be used multiple times',
             multiple: true
         }
     ),
-    paramFile: flags.string(
+    paramFile: Flags.string(
         {
             char: 'P',
             parse: p => path.resolve(p),
             description: 'Path to parameter json file.'
         }
     ),
-    data: flags.string(
+    data: Flags.string(
         {
             char: 'd',
             description: 'Complete input parameters as JSON string. Allows multiple renditions.',

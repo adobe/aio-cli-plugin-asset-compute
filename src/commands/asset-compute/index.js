@@ -12,13 +12,13 @@
 
 'use strict';
 
-const HHelp = require('@oclif/plugin-help').default;
+const { Help } = require('@oclif/core');
 const BaseCommand = require('../../base-command');
 
 class IndexCommand extends BaseCommand {
     async run() {
-        const help = new HHelp(this.config);
-        help.showHelp(['asset-compute', '--help']);
+        const help = new Help(this.config);
+        await help.showHelp(['asset-compute', '--help']);
     }
 }
 
