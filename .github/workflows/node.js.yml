@@ -24,6 +24,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Docker login
+      run: docker login -u $REGISTRY_ID -p $REGISTRY_SECRET adobeassetcompute.azurecr.io
+      env:
+        REGISTRY_ID: ${{ secrets.AZURE_CONTAINER_REGISTRY_ID }}
+        REGISTRY_SECRET: ${{ secrets.AZURE_CONTAINER_REGISTRY_SECRET }} 
     - run: npm ci
     - run: npm test
     - run: npm run report-coverage
