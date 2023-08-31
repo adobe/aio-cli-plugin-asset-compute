@@ -93,6 +93,7 @@ class BaseCommand extends Command {
     }
 
     async buildActionZip(actionName) {
+        let builtList = [];
         try {
             const fullConfig = loadConfig();
             const keys = Object.keys(fullConfig.all);
@@ -100,20 +101,18 @@ class BaseCommand extends Command {
 
             for (let i = 0; i < keys.length; ++i) {
                 const config = values[i];
-                await libRuntime.buildActions(config, [actionName], true);
+                builtList = [...builtList, ...await libRuntime.buildActions(config, [actionName], true)];
             }
+            debug(`builtList ${JSON.stringify(builtList, null, 2)}`);
+            if (builtList.length === 0) {
+                throw new Error('No action was built.');
+            }
+
         } catch (e) {
             throw new Error(`Failed to build action: ${e.message}`);
         }
 
-        let actionZip;
-        if (this.aioConfig) {
-            actionZip = path.join(this.aioConfig.actions.dist, `${actionName}.zip`);
-        } else {
-            // Stay backwards compatible with older aio project structure (aio-cli v7 and below)
-            // actionZip = path.resolve("dist/actions", `${actionName}.zip`);
-            actionZip = path.resolve("dist/application/actions", `${actionName}.zip`);
-        }
+        const actionZip = builtList[0];
         if (!fs.existsSync(actionZip)) {
             throw new Error(`Building action failed, did not create ${actionZip}`);
         }
@@ -129,7 +128,7 @@ class BaseCommand extends Command {
         debug("building action zip...");
         manifestAction.function = await this.buildActionZip(name);
 
-        debug("aio manifest action:", manifestAction);
+        debug(`aio manifest action:  ${JSON.stringify(manifestAction)}`);
 
         return aioManifestToOpenwhiskAction(manifestAction);
     }
