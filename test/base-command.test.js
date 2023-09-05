@@ -25,6 +25,9 @@ mock('@adobe/aio-cli-lib-app-config', loadConfigStub);
 const buildActionsStub = sinon.stub();
 mock('@adobe/aio-lib-runtime', { buildActions: buildActionsStub });
 
+const existsSyncStub = sinon.stub();
+mock('fs-extra', { existsSync: existsSyncStub });
+
 const BaseCommand = require('../src/base-command');
 const { Command } = require('@oclif/core');
 
@@ -39,27 +42,45 @@ describe('buildActionZip', () => {
     beforeEach(() => {
         loadConfigStub.reset();
         buildActionsStub.reset();
+        existsSyncStub.reset();
     });
 
     it('function exists', () => {
         expect(typeof cmd.buildActionZip).equal('function');
     });
 
-    it('general error', async () => {
+    it('error: general error', async () => {
         const error = new Error('some error');
         loadConfigStub.throws(error);
 
-        expect(cmd.buildActionZip('some-action')).to.eventually.be.rejectedWith(error);
+        const promise = cmd.buildActionZip('some-action');
+        expect(promise).to.eventually.be.rejectedWith(error);
     });
 
-    it('built zip does not exist', () => {
-        loadConfigStub.returns({});
+    it('error: no actions built', async () => {
+        loadConfigStub.returns({ all: {}});
         buildActionsStub.returns(['foo.zip']);
 
-        expect(cmd.buildActionZip('some-action')).to.eventually.be.rejectedWith('foo');
+        const promise = cmd.buildActionZip('some-action');
+        return expect(promise).to.eventually.be.rejectedWith('Failed to build action: No action was built.');
+    });
+
+    it('error: built zip does not exist', async () => {
+        loadConfigStub.returns({ all: { a: {} }}); // dummy config
+        const zipFile = 'foo.zip';
+        buildActionsStub.returns([zipFile]);
+
+        const promise = cmd.buildActionZip('some-action');
+        return expect(promise).to.eventually.be.rejectedWith(`Building action failed, did not create ${zipFile}`);
     });
 
     it('success', () => {
+        loadConfigStub.returns({ all: { a: {} }}); // dummy config
+        const zipFile = 'foo.zip';
+        buildActionsStub.returns([zipFile]);
+        existsSyncStub.returns(true);
 
+        const promise = cmd.buildActionZip('some-action');
+        return expect(promise).to.eventually.equal(zipFile);
     });
 });
