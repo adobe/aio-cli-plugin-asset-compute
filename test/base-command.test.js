@@ -12,7 +12,7 @@
 
 'use strict';
 
-const mock = require('mock-require');
+const proxyQuire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -20,15 +20,14 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const loadConfigStub = sinon.stub();
-mock('@adobe/aio-cli-lib-app-config', loadConfigStub);
-
 const buildActionsStub = sinon.stub();
-mock('@adobe/aio-lib-runtime', { buildActions: buildActionsStub });
-
 const existsSyncStub = sinon.stub();
-mock('fs-extra', { existsSync: existsSyncStub });
 
-const BaseCommand = require('../src/base-command');
+const BaseCommand = proxyQuire('../src/base-command', {
+    '@adobe/aio-cli-lib-app-config': loadConfigStub,
+    '@adobe/aio-lib-runtime': { buildActions: buildActionsStub },
+    'fs-extra': { existsSync: existsSyncStub }
+});
 const { Command } = require('@oclif/core');
 
 it('exports', async () => {
