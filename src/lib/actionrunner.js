@@ -34,10 +34,12 @@ const OPENWHISK_DEFAULTS = {
         // "nodejs"     : "openwhisk/nodejsaction:latest", // deprecated, image no longer available
         // "nodejs:6"   : "openwhisk/nodejs6action:latest",
         // "nodejs:8"   : "openwhisk/action-nodejs-v8:latest",
-        "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.27", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
-        "nodejs:12"  : "adobeapiplatform/adobe-action-nodejs-v12:3.0.27", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v12/tags
-        "nodejs:14"  : "adobeapiplatform/adobe-action-nodejs-v14:3.0.27", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v14/tags
-        "nodejs:16"  : "adobeapiplatform/adobe-action-nodejs-v16:3.0.34", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v14/tags
+        "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.41", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
+        "nodejs:12"  : "adobeapiplatform/adobe-action-nodejs-v12:3.0.41", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v12/tags
+        "nodejs:14"  : "adobeapiplatform/adobe-action-nodejs-v14:3.0.41", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v14/tags
+        "nodejs:16"  : "adobeapiplatform/adobe-action-nodejs-v16:3.0.41", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v16/tags
+        "nodejs:18"  : "adobeapiplatform/adobe-action-nodejs-v18:3.0.41", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v18/tags
+        "nodejs:20"  : "adobeapiplatform/adobe-action-nodejs-v20:3.0.41", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v20/tags
         // "python"     : "openwhisk/python2action:latest",
         // "python:2"   : "openwhisk/python2action:latest",
         // "python:3"   : "openwhisk/python3action:latest",
