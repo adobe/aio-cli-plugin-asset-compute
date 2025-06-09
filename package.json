@@ -8,7 +8,7 @@
   "dependencies": {
     "@adobe/aio-cli-lib-app-config": "^1.0.0",
     "@adobe/aio-lib-runtime": "^5.0.0",
-    "@adobe/asset-compute-devtool": "^3.0.0",
+    "@adobe/asset-compute-devtool": "^4.0.0",
     "@oclif/core": "^1.15.0",
     "amazon-s3-uri": "0.1.1",
     "cachedir": "^2.3.0",
