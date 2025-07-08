@@ -34,7 +34,7 @@ const OPENWHISK_DEFAULTS = {
         // "nodejs"     : "openwhisk/nodejsaction:latest", // deprecated, image no longer available
         // "nodejs:6"   : "openwhisk/nodejs6action:latest",
         // "nodejs:8"   : "openwhisk/action-nodejs-v8:latest",
-        "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.27", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
+        // "nodejs:10"  : "adobeapiplatform/adobe-action-nodejs-v10:3.0.27", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v10/tags
         // "nodejs:12"  : removed - Node.js 12 is end-of-life and incompatible with modern dependencies
         "nodejs:14"  : "adobeapiplatform/adobe-action-nodejs-v14:3.0.43", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v14/tags
         "nodejs:16"  : "adobeapiplatform/adobe-action-nodejs-v16:3.0.43", // see: https://hub.docker.com/r/adobeapiplatform/adobe-action-nodejs-v16/tags
