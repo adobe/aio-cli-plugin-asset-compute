@@ -3,7 +3,7 @@ packages:
     actions:
       worker:
         function: 'echo.js'
-        runtime: 'nodejs:10'
+        runtime: 'nodejs:16'
         web: true
         annotations:
           require-adobe-auth: true

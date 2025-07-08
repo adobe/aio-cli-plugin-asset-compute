@@ -26,7 +26,7 @@ const OPENWHISK_DEFAULTS = {
     timeoutMsec: 60000,
     memoryLimitMB: 256,
 
-    defaultKind: "nodejs:10",
+    defaultKind: "nodejs:16",
 
     // https://github.com/apache/incubator-openwhisk/blob/master/ansible/files/runtimes.json
     // note: openwhisk deployments might have their own versions

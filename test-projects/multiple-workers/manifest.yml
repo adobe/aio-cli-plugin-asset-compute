@@ -3,13 +3,13 @@ packages:
     actions:
       workerA:
         function: 'actions/workerA/workerA.js'
-        runtime: 'nodejs:10'
+        runtime: 'nodejs:16'
         web: true
         annotations:
           require-adobe-auth: true
       workerB:
         function: 'actions/workerB/workerB.js'
-        runtime: 'nodejs:10'
+        runtime: 'nodejs:16'
         web: true
         annotations:
           require-adobe-auth: true
