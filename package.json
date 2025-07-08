@@ -28,7 +28,6 @@
     "@semantic-release/git": "9.0.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "codecov": "^3.8.1",
     "conventional-changelog-eslint": "3.0.8",
     "dockerode": "^3.2.1",
     "eslint": "^7.24.0",
@@ -82,7 +81,8 @@
     "postpack": "rm -f oclif.manifest.json",
     "test": "nyc -r=text -r=lcov mocha --recursive --exit",
     "posttest": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "generate-coverage": "nyc report --reporter=text-lcov > coverage.lcov",
+    "report-coverage": "npm run generate-coverage",
     "clean": "for d in test-projects/*; do pushd \"$d\"; rm -rf package-lock.json node_modules dist build .nui .asset-compute; popd; done",
     "semantic-release": "semantic-release"
   }

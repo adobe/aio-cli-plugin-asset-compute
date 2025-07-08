@@ -31,7 +31,14 @@ jobs:
         REGISTRY_SECRET: ${{ secrets.AZURE_CONTAINER_REGISTRY_SECRET }} 
     - run: npm ci
     - run: npm test
-    - run: npm run report-coverage
+    - run: npm run generate-coverage
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.lcov
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
 
   sizewatcher:
     runs-on: ubuntu-latest
