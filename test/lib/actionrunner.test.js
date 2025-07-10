@@ -33,7 +33,7 @@ describe("actionrunner tests", function() {
         const actionRunner = new OpenwhiskActionRunner({
             action: {
                 exec: {
-                    kind: 'nodejs:10',
+                    kind: 'nodejs:16',
                     binary: true,
                     code: '2435'
                 }

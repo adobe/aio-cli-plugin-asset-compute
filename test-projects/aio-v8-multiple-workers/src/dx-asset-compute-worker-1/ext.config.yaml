@@ -14,7 +14,7 @@ runtimeManifest:
         worker:
           function: actions/worker/index.js
           web: 'yes'
-          runtime: 'nodejs:14'
+          runtime: 'nodejs:16'
           limits:
             concurrency: 10
           annotations:
@@ -22,7 +22,7 @@ runtimeManifest:
         worker-1:
           function: actions/worker-1/index.js
           web: 'yes'
-          runtime: 'nodejs:14'
+          runtime: 'nodejs:16'
           limits:
             concurrency: 10
           annotations:
