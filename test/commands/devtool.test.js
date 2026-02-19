@@ -108,7 +108,7 @@ describe("devtool command", function() {
             await fetch(url);
             assert.fail('Should have failed');
         } catch (error) {
-            assert.ok(error.message.includes('ECONNREFUSED')); // should fail because server is no longer running
+            assert.ok(error.message.includes('ECONNREFUSED') || error.code === 'ECONNREFUSED');
         }
           
     });
