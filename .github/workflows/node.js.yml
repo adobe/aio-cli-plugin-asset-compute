@@ -16,12 +16,12 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
-        node-version: [14.18, 16.13, 18]
+        node-version: [14.18, 16.13, 18, 24]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: Docker login
@@ -33,7 +33,7 @@ jobs:
     - run: npm test
     - run: npm run generate-coverage
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         file: ./coverage.lcov
         flags: unittests
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - run: npx @adobe/sizewatcher
       env:
         GITHUB_TOKEN: ${{ secrets.ADOBE_BOT_GITHUB_TOKEN }}
@@ -54,13 +54,13 @@ jobs:
     needs: [build]
     if: ${{  !contains(github.event.head_commit.message, '[ci skip]') && github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.13'
+          node-version: '18'
       - run: npm install
       - run: npm run semantic-release
         env:
