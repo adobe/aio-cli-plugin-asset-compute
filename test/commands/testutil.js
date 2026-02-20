@@ -72,7 +72,9 @@ function testCommand(dir, command, args=[]) {
         })
         .finally(ctx => {
             // reset any exit code set by failing tests
-            delete process.exitCode;
+            // Note: `delete process.exitCode` does not work in Node.js 24+,
+            // must assign undefined instead
+            process.exitCode = undefined;
 
             delete process.env.AIO_ASSET_COMPUTE_LOG_DELAY;
 
