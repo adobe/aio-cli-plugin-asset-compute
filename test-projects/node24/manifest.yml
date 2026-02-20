@@ -3,7 +3,7 @@ packages:
     actions:
       worker:
         function: 'worker.js'
-        runtime: 'nodejs:14'
+        runtime: 'nodejs:24'
         web: true
         annotations:
           require-adobe-auth: true

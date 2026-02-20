@@ -39,7 +39,7 @@ describe("actionrunner tests", function() {
                 }
             }
         });
-        const containerHost = '0.0.0.0:2435\n::::2345';
+        const containerHost = '0.0.0.0:2435';
         nock(`http://${containerHost}`).post("/init").reply(400);
 
         // mock docker to avoid errors with trying to get logs
@@ -48,8 +48,35 @@ describe("actionrunner tests", function() {
         actionRunner.containerHost = containerHost;
         try {
             await actionRunner._initAction();
+            assert.fail('should have thrown');
         } catch (error) {
-            assert.strictEqual(error.message, 'Could not init action on container (POST http://0.0.0.0:2435\n::::2345/init: responded with error: 400');
+            assert.ok(error.message.includes('Could not init action on container'));
+            assert.ok(error.message.includes('/init'));
+            assert.ok(error.message.includes('400'));
+        }
+    });
+    it("failure during action initalization with nodejs:24 kind, body is empty", async function() {
+        const actionRunner = new OpenwhiskActionRunner({
+            action: {
+                exec: {
+                    kind: 'nodejs:24',
+                    binary: true,
+                    code: '2435'
+                }
+            }
+        });
+        const containerHost = '0.0.0.0:2435';
+        nock(`http://${containerHost}`).post("/init").reply(400);
+
+        actionRunner._docker = () => {};
+        actionRunner.containerHost = containerHost;
+        try {
+            await actionRunner._initAction();
+            assert.fail('should have thrown');
+        } catch (error) {
+            assert.ok(error.message.includes('Could not init action on container'));
+            assert.ok(error.message.includes('/init'));
+            assert.ok(error.message.includes('400'));
         }
     });
 
