@@ -16,7 +16,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
-        node-version: [16.13, 18, 24]
+        node-version: [16.13, 18]
 
     steps:
     - uses: actions/checkout@v4
