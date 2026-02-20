@@ -237,21 +237,7 @@ describe("test-worker command", function() {
             });
 
         // nodejs:12 test removed - Node.js 12 is end-of-life and incompatible with modern dependencies
-        testCommand("test-projects/node14", "asset-compute:test-worker")
-            .it("runs tests in a project using kind nodejs:14", function(ctx) {
-                assertExitCode(undefined);
-                assert(ctx.stdout.includes(" - simple"));
-                assert(ctx.stdout.includes("✔  Succeeded."));
-                assert(ctx.stdout.includes("✔︎ All tests were successful."));
-                assert(ctx.stdout.includes("- Tests run      : 1"));
-                assert(ctx.stdout.includes("- Failures       : 0"));
-                assert(ctx.stdout.includes("- Errors         : 0"));
-
-                assert(!fs.existsSync(".nui"));
-                assert(!fs.existsSync(path.join("actions", "worker", "build")));
-                assertMissingOrEmptyDirectory("build", "test-worker");
-                assertTestResults("worker");
-            });
+        // nodejs:14 test removed - Node.js 14 is end-of-life and incompatible with modern dependencies
 
         testCommand("test-projects/node24", "asset-compute:test-worker")
             .it("runs tests in a project using kind nodejs:24", function(ctx) {
